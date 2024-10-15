@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    height: 56px;
+    background-color: white;
+    border-bottom: 1px solid #ccc;
+}
+
+.body-container {
+    display: flex;
+    flex-direction: row;
+    height: calc(100vh - 56px);
+}
+
+.code-container, .result-container, .output-graph {
+    flex: 1;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+}
+
+.output-graph {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.toggle-button {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.block-code, .python-code, .block-code-result, .python-code-result {
+    display: none;
+}
