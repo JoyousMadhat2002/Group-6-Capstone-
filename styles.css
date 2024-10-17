@@ -49,3 +49,13 @@ body {
 .block-code, .python-code, .block-code-result, .python-code-result {
     display: none;
 }
+
+
+.box {
+    width: 100px;
+    height: 100px;
+    background-color: lightblue;
+    margin-bottom: 10px;
+    border: 1px solid black;
+    
+  }

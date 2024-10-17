@@ -28,16 +28,35 @@
         <div class="code-container">
             <div class="block-code"></div>
             <div class="python-code"></div>
+            <!-- Block Area -->           
+
+            <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic --> 
+            <p><button id="createBoxButton" name="For" onclick="newBlock(name)">Create For Loop</button></p>
+            <p><button id="createBoxButton" name="While" onclick="newBlock(name)">Create While Loop</button></p>
+            <p><button id="createBoxButton" name="If" onclick="newBlock(name)">Create If Statement</button></p>
+            <p><button id="createBoxButton" name="For Range" onclick="newBlock(name)">Create For Range Loop</button></p>
+            
         </div>
 
         <div class="result-container">
             <div class="block-code-result"></div>
             <div class="python-code-result"></div>
+            <!-- Code Area -->      
+
+            <!-- Container added to test, used as reference for where to place block objects --> 
+            <div id="container"></div>
+
         </div>
 
-        <div class="output-graph"></div>
+        <div class="output-graph">
+            <!-- Output Area -->      
+        </div>
     </div>
     </div>
+    </div>
+    
+    <!-- link to script file for functions --> 
+    <script src="/scripts.js"></script>
 </body>
 
 </html>
