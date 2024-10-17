@@ -4,11 +4,6 @@ body {
 }
 
 .header {
-<<<<<<< Updated upstream
-    height: 56px;
-    background-color: white;
-    border-bottom: 1px solid #ccc;
-=======
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -26,7 +21,6 @@ body {
     background-color: #fff;
     color: #000000;
     padding: 5px 10px;
->>>>>>> Stashed changes
 }
 
 .body-container {
@@ -60,8 +54,6 @@ body {
 .block-code-result,
 .python-code-result {
     display: none;
-<<<<<<< Updated upstream
-=======
 }
 
 button {
@@ -81,5 +73,4 @@ button {
     border: 1px solid black;
     cursor: pointer;
 
->>>>>>> Stashed changes
 }
