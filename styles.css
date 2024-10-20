@@ -3,6 +3,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
+/* Top Navigation Bar */
 .header {
     display: flex;
     justify-content: space-between;
