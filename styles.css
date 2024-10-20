@@ -12,10 +12,12 @@ body {
     color: white;
     padding: 15px 20px;
 }
+
 .top-bar .nav-left {
     display: flex;
     gap: 10px;
 }
+
 .nav-right button {
     background-color: #fff;
     color: #000000;
@@ -28,7 +30,9 @@ body {
     height: calc(100vh - 56px);
 }
 
-.code-container, .result-container, .output-graph {
+.code-container,
+.result-container,
+.output-graph {
     flex: 1;
     padding: 10px;
     border-right: 1px solid #ccc;
@@ -46,6 +50,28 @@ body {
     margin-bottom: 10px;
 }
 
-.block-code, .python-code, .block-code-result, .python-code-result {
+.block-code,
+.python-code,
+.block-code-result,
+.python-code-result {
     display: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+.box-container {
+    position: relative;
+    flex-direction: column;
+}
+
+.box {
+    width: 100px;
+    height: 100px;
+    background-color: lightblue;
+    margin-bottom: 10px;
+    border: 1px solid black;
+    cursor: pointer;
+
 }
