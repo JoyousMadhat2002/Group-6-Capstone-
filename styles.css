@@ -39,12 +39,6 @@ body {
     overflow-y: auto;
 }
 
-.output-graph {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-}
-
 .toggle-button {
     display: block;
     margin-bottom: 10px;
@@ -73,5 +67,12 @@ button {
     margin-bottom: 10px;
     border: 1px solid black;
     cursor: pointer;
+
+}
+
+.textarea {
+    resize: none;
+    width: calc((100vw / 3) - 35px);
+    height: calc(100vh - 90px);
 
 }
