@@ -71,8 +71,8 @@ button {
 }
 
 .textarea {
-    resize: none;
-    width: calc((100vw / 3) - 35px);
-    height: calc(100vh - 90px);
+    resize: none; /*  No resizing */ 
+    width: calc((100vw / 3) - 35px); /* Width is 1/3rd of total viewport width minus 35 pixels */ 
+    height: calc(100vh - 90px); /* Height is viewport height minus 90 pixels */ 
 
 }
