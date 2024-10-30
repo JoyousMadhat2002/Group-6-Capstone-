@@ -2,10 +2,10 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="6.0900249mm"
-   height="2.7802501mm"
+   width="6.0900002mm"
+   height="2.78mm"
    version="1.1"
-   viewBox="0 0 6.090025 2.7802501"
+   viewBox="0 0 6.0900002 2.78"
    xml:space="preserve"
    id="svg2"
    sodipodi:docname="Block_Code_Template_Operator.svg"
@@ -29,20 +29,17 @@
    inkscape:deskcolor="#d1d1d1"
    inkscape:document-units="mm"
    inkscape:zoom="32"
-   inkscape:cx="11.734375"
-   inkscape:cy="7.984375"
+   inkscape:cx="11.75"
+   inkscape:cy="5.390625"
    inkscape:window-width="1324"
    inkscape:window-height="897"
    inkscape:window-x="756"
    inkscape:window-y="272"
    inkscape:window-maximized="0"
-   inkscape:current-layer="g1"
-   inkscape:clip-to-page="false"
-   showgrid="true"
-   showguides="false" />
+   inkscape:current-layer="g1" />
 
    <g
-   transform="translate(-56.792214,-106.04125)"
+   transform="translate(-56.716206,-106.04125)"
    id="g2">
 
       <g
@@ -54,8 +51,8 @@
          <path
    id="bracket-top"
    style="stroke:none"
-   d="m 36.106205,118.37 -0.199988,0.0698 -0.260449,0.26045 -0.06976,0.19999 v 0.25993 1.19993 l 0.0098,0.25993 0.05994,0.19999 0.260449,0.25993 0.199988,0.0703 h 5.029667 l 0.199988,-0.0703 0.259933,-0.25993 0.06046,-0.19999 0.0098,-0.25993 -0.0098,-1.19993 v -0.25993 l -0.07028,-0.19999 -0.259932,-0.26045 -0.199988,-0.0698 z m 0.259933,0.5302 h 0.759126 l 0.26045,0.25993 v 1.19993 l -0.26045,0.25993 h -0.759126 l -0.259933,-0.25993 v -1.19993 z m 3.74034,0 h 0.759643 l 0.259933,0.25993 0.0098,1.19993 -0.259932,0.25993 H 40.10646 l -0.259933,-0.25993 v -1.19993 z m -1.97559,0.23047 h 0.981335 l 0.259933,0.25994 v 0.75964 l -0.259933,0.25993 h -0.981335 l -0.259932,-0.25993 v -0.75964 z"
-   sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccccccccccccccc" />
+   d="m 36.03,118.37 -0.2,0.07 -0.26,0.26 -0.07,0.2 v 0.26 1.2 l 0.01,0.26 0.06,0.2 0.26,0.26 0.2,0.07 h 5.03 l 0.2,-0.07 0.26,-0.26 0.06,-0.2 0.01,-0.26 -0.01,-1.2 v -0.26 l -0.07,-0.2 -0.26,-0.26 -0.2,-0.07 h -0.26 -1.06 -4.23 4.23 l -1.688822,10e-6 z m 0.26,0.53 h 1.32 l 0.26,0.26 v 1.2 l -0.26,0.26 h -1.32 l -0.26,-0.26 v -1.2 z m 3.18,0 h 1.32 l 0.26,0.26 0.01,1.2 -0.26,0.26 h -1.33 l -0.26,-0.26 v -1.2 z"
+   sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccccccccccc" />
       </g>
    </g>
 </svg>
