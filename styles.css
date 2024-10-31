@@ -58,6 +58,7 @@ button {
 .box-container {
     position: relative;
     flex-direction: column;
+    color: black;
 }
 
 .box {

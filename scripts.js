@@ -72,5 +72,17 @@ function PullBlob(){
     t.value = text; // sends contents of blob to textarea
 });
 
-    // t.value = ptext;
+    // t.value = ptext; // less useful way to store information
+}
+
+function toggleView() {
+    var x = document.getElementById("python-code-result");
+    var y = document.getElementById("box-container");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+        y.style.display = "none"
+    } else {
+        x.style.display = "none";
+        y.style.display = "block"
+    }
 }

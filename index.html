@@ -27,6 +27,7 @@
             <div class="block-code"></div>
             <div class="python-code"></div>
             <!-- Block Area -->
+            <button onclick="toggleView()">toggle block/python view</button>
 
             <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
             <p><button id="createBoxButton" name="For" onclick="newBlock(name)">Create For Loop</button></p>
@@ -40,7 +41,12 @@
             <div class="block-code-result">
                 
             </div>
-            <div class="python-code-result"></div>
+            <div class="python-code-result" id="python-code-result">
+                <!-- Python text input area -->
+                <button type = "button" onclick = "StoreBlob();">Store text</button>
+                <button type = "button" onclick = "PullBlob();">Pull text</button>
+                <textarea id="pythontext" class="textarea"></textarea>
+            </div>
             <!-- Code Area -->
 
             <!-- Container added to test, used as reference for where to place block objects -->
@@ -53,10 +59,7 @@
         <div class="output-graph">
             <!-- Output Area -->
 
-            <!-- Python script text area -->
-            <button type = "button" onclick = "StoreBlob();">Store text</button>
-            <button type = "button" onclick = "PullBlob();">Pull text</button>
-             <textarea id="pythontext" class="textarea"></textarea>
+            
              
              
         </div>
