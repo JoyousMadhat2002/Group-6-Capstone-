@@ -4,6 +4,8 @@ The new element is added to the "container" in the Result-Container section.
 */
 let blockCounter = 0;
 
+
+
 function newBlock(s) {
     stringText = s;
     const button = document.getElementById("createBlocksButton"); //default text
@@ -52,3 +54,35 @@ boxes.forEach(box => {
     box.addEventListener("dragover", dragOver);
     box.addEventListener("drop", drop);
 });
+
+
+const t = document.getElementById("pythontext"); // creating const for element to pull from
+ptext = t.value; // initializing variable.
+
+// test function for storing textarea input as variable
+function StoreBlob(){
+    ptext = t.value;
+    ptext = ptext.toString();
+}
+
+// test function for sending stored state to blob to read into textarea
+function PullBlob(){
+    const blob = new Blob([ptext], { type: 'text/plain' })
+    blob.text().then(text => {
+    t.value = text; // sends contents of blob to textarea
+});
+
+    // t.value = ptext; // less useful way to store information
+}
+
+function toggleView() {
+    var x = document.getElementById("python-code-result");
+    var y = document.getElementById("box-container");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+        y.style.display = "none"
+    } else {
+        x.style.display = "none";
+        y.style.display = "block"
+    }
+}
