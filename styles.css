@@ -77,3 +77,14 @@ button {
     height: calc(100vh - 90px); /* Height is viewport height minus 90 pixels */ 
 
 }
+
+.console-output {
+    background-color: #f8f5f5;
+    border: 1px solid #000000;
+    padding: 10px;
+    height: 50px;
+    overflow-y: scroll;
+    font-family: monospace;
+    color: #333;
+    margin-top: 10px;
+}

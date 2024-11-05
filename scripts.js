@@ -86,3 +86,38 @@ function toggleView() {
         y.style.display = "block"
     }
 }
+
+
+// Placeholder functions for future implementation of running/stopping code; added for implementation of CTRL+ENTER
+let isRunning = false; // tracks if the program is running
+
+// placeholder function: start code
+function runCode() {
+    if (isRunning == true) {
+        // if program currently running, and CTRL+ENTER hit again, stop code
+        stopCode();
+        return;
+    }
+
+    isRunning = true; // set flag for code running
+
+    // REPLACE BELOW WITH FUTURE IMPLEMENTATION LATER
+    console.log("test: code running"); 
+}
+
+// placeholder function: stop code
+function stopCode() {
+    isRunning = false; // reset flag
+
+    // REPLACE BELOW WITH FUTURE IMPLEMENTATION LATER
+    console.log("test: code stopped");
+}
+
+
+// Event listener for CTRL + ENTER
+document.addEventListener("keydown", function(event) {
+    if (event.ctrlKey && event.key === "Enter") {
+        runCode();
+    }
+});
+// Placeholder end
