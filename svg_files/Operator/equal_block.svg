@@ -30,9 +30,9 @@
    inkscape:window-width="1161"
    inkscape:window-height="1341"
    inkscape:window-x="1349"
-   inkscape:window-y="26"
+   inkscape:window-y="0"
    inkscape:window-maximized="0"
-   inkscape:current-layer="svg1" />
+   inkscape:current-layer="equal_sign" />
 
    <g
    transform="translate(-36.03 -118.9)"
@@ -57,7 +57,7 @@
      inkscape:label="equal_top"
      transform="translate(-0.00407834,-0.28675283)" /><path
      style="opacity:0.83;fill:#241f1c;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
-     d="m 36.31,120.14 v -0.2 h 0.91 v 0.2 z"
+     d="m 36.307077,120.24231 v -0.2 h 0.91 v 0.2 z"
      id="equal_bottom"
      sodipodi:nodetypes="ccccc"
      inkscape:label="equal_bottom" /></g></g>
