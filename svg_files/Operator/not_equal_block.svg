@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1.4101mm"
+   height="1.7198mm"
+   version="1.1"
+   viewBox="0 0 1.4101 1.7198"
+   xml:space="preserve"
+   id="svg1"
+   sodipodi:docname="not_equal_block.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs1" /><sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="mm"
+   inkscape:zoom="90.509668"
+   inkscape:cx="1.9169223"
+   inkscape:cy="2.9554854"
+   inkscape:window-width="1161"
+   inkscape:window-height="1341"
+   inkscape:window-x="1349"
+   inkscape:window-y="0"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="g1" />
+
+   <g
+   transform="translate(-36.03 -118.9)"
+   fill="#80cbc4"
+   id="g1">
+
+      <path
+   id="block"
+   d="m36.29 118.9h0.88207l0.2621 0.25993 6e-3 1.1999-0.25776 0.25993h-0.89245l-0.25993-0.25993v-1.1999z"
+   fill="#80cbc4"
+   opacity=".83"
+   stroke-width="0"
+   style="paint-order:fill markers stroke" />
+   <g
+   id="equal_not_sign"
+   transform="translate(-0.02995001,-0.1801)"
+   inkscape:label="not_equal_sign"><path
+     style="opacity:0.83;fill:#241f1c;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+     d="m 36.31,120.14 v -0.2 h 0.91 v 0.2 z"
+     id="equal_top"
+     sodipodi:nodetypes="ccccc"
+     inkscape:label="equal_top"
+     transform="translate(-0.00407834,-0.28675283)" /><path
+     style="opacity:0.83;fill:#241f1c;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+     d="m 36.63,120.41 -0.17,-0.11 0.5,-0.77 0.17,0.11 z"
+     id="equal_not"
+     sodipodi:nodetypes="ccccc"
+     inkscape:label="equal_not" /><path
+     style="opacity:0.83;fill:#241f1c;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+     d="m 36.307077,120.24231 v -0.2 h 0.91 v 0.2 z"
+     id="equal_bottom"
+     sodipodi:nodetypes="ccccc"
+     inkscape:label="equal_bottom" /></g></g>
+</svg>
