@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="6.5929mm" height="2.7803mm" version="1.1" viewBox="0 0 6.5929 2.7803" xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg">
+
+   <g transform="translate(-56.716 -106.04)">
+
+      <path id="bracket" transform="translate(21.216 -12.329)"
+         d="m36.03 118.37-0.19999 0.0698-0.13022 0.13023-0.13022 0.13022-0.069763 0.19995v1.7115l0.06976 0.20826 0.26045 0.25993 0.19999 0.0703h5.5299l0.19999-0.0703 0.25993-0.25993 0.07286-0.20412v-1.7322l-0.08268-0.18345-0.26045-0.26045-0.19999-0.0698zm0.25993 0.5302 0.88212 1e-5 0.2621 0.25992 6e-3 1.1999-0.25776 0.25993h-0.89245l-0.25993-0.25993v-1.1999zm4.1165 2e-5 0.8832-2e-5 0.25993 0.25993 0.01033 1.1999-0.25993 0.25993-0.89353-1e-5 -0.25993-0.25992v-1.1999zm-2.0546 0 0.88212-1e-5 0.2621 0.25992 6e-3 1.1999-0.25776 0.25993h-0.89245l-0.25993-0.25993v-1.1999z"
+         fill="#c6e1a6" />
+
+      <g fill="#80cbc4">
+         <path id="right_block" transform="translate(21.216 -12.329)"
+            d="m40.407 118.9h0.8832l0.25993 0.25993 0.01033 1.1999-0.25993 0.25993h-0.89353l-0.25993-0.25993v-1.1999z"
+            opacity=".83" style="paint-order:fill markers stroke" />
+
+         <path id="left_block" transform="translate(21.216 -12.329)"
+            d="m36.29 118.9h0.88207l0.2621 0.25993 6e-3 1.1999-0.25776 0.25993h-0.89245l-0.25993-0.25993v-1.1999z"
+            opacity=".83" style="paint-order:fill markers stroke" />
+            
+         <path id="center_block" transform="translate(21.216 -12.329)"
+            d="m38.352 118.9 0.88212-1e-5 0.2621 0.25991 6e-3 1.1999-0.25776 0.25993h-0.89245l-0.25993-0.25992v-1.1999z"
+            opacity=".83" style="paint-order:fill markers stroke" />
+      </g>
+   </g>
+</svg>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="6.0900249mm" height="3.3120799mm" version="1.1" viewBox="0 0 6.090025 3.3120799" xml:space="preserve"
+   id="svg2" sodipodi:docname="Block_Code_Template_with_Text_and_Extensions.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+
+   <defs id="defs2" />
+
+   <sodipodi:namedview id="namedview2" pagecolor="#ffffff" bordercolor="#000000" borderopacity="0.25"
+      inkscape:showpageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0" inkscape:deskcolor="#d1d1d1"
+      inkscape:document-units="mm" inkscape:zoom="32" inkscape:cx="11.75" inkscape:cy="5.390625"
+      inkscape:window-width="1324" inkscape:window-height="897" inkscape:window-x="756" inkscape:window-y="272"
+      inkscape:window-maximized="0" inkscape:current-layer="g1" />
+
+   <g transform="translate(-56.716209,-106.04131)" id="g2">
+
+      <g transform="translate(21.216206,-12.32875)" fill="#8c8f98" id="g1" style="stroke:none">
+
+         <path id="bracket-top" style="stroke:none"
+            d="m 36.03,118.37 -0.2,0.07 -0.26,0.26 -0.07,0.2 v 0.26 1.2 l 0.01,0.26 0.06,0.2 0.26,0.26 0.2,0.07 h 0.26 1.06 l 0.2,0.07 0.39,0.39 0.2,0.07 h 0.81 l 0.2,-0.07 0.39,-0.39 0.2,-0.07 h 1.32 l 0.2,-0.07 0.26,-0.26 0.06,-0.2 0.01,-0.26 -0.01,-1.2 v -0.26 l -0.07,-0.2 -0.26,-0.26 -0.2,-0.07 h -0.26 -1.06 l -0.2,0.07 -0.39,0.39 -0.2,0.07 h -0.79 l -0.21,-0.07 -0.39,-0.39 -0.2,-0.07 z m 0.26,0.53 h 1.32 l 0.26,0.26 v 1.2 l -0.26,0.26 H 36.29 L 36.03,120.36 v -1.2 z m 3.18,0 h 1.32 l 0.26,0.26 0.01,1.2 -0.26,0.26 h -1.33 l -0.26,-0.26 v -1.2 z"
+            sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" />
+      </g>
+   </g>
+</svg>
