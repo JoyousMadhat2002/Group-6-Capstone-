@@ -88,6 +88,37 @@ function toggleView() {
 }
 
 
+// Run Code button logic for swapping between Run/Stop
+function toggleRunButton() {
+    const button = document.getElementById("run-code-btn");
+    const icon = button.querySelector("i");
+
+    if (button.classList.contains("stop")) {
+        button.classList.remove("stop");
+        button.style.backgroundColor = "green"; // Change to green
+        icon.className = "icon-play"; // Change icon to play
+        button.setAttribute("data-tooltip", "Run Program (Ctrl+Enter)"); // Update tooltip
+        stopCode();
+        isRunning = false; // Update running state
+    } else {
+        button.classList.add("stop");
+        button.style.backgroundColor = "red"; // Change to red
+        icon.className = "icon-stop"; // Change icon to stop
+        button.setAttribute("data-tooltip", "Stop Program (Ctrl+Enter)"); // Update tooltip
+        runCode();
+        isRunning = true; // Update running state
+    }
+}
+// Event listener for button click
+document.getElementById("run-code-btn").addEventListener("click", toggleRunButton);
+// Event listener for CTRL + ENTER
+document.addEventListener("keydown", function(event) {
+    if (event.ctrlKey && event.key === "Enter") {
+        toggleRunButton();
+    }
+});
+
+
 // Placeholder functions for future implementation of running/stopping code; added for implementation of CTRL+ENTER
 let isRunning = false; // tracks if the program is running
 
@@ -113,11 +144,3 @@ function stopCode() {
     console.log("test: code stopped");
 }
 // Placeholder end
-
-
-// Event listener for CTRL + ENTER
-document.addEventListener("keydown", function(event) {
-    if (event.ctrlKey && event.key === "Enter") {
-        runCode();
-    }
-});
