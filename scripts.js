@@ -112,6 +112,7 @@ function stopCode() {
     // REPLACE BELOW WITH FUTURE IMPLEMENTATION LATER
     console.log("test: code stopped");
 }
+// Placeholder end
 
 
 // Event listener for CTRL + ENTER
@@ -120,4 +121,3 @@ document.addEventListener("keydown", function(event) {
         runCode();
     }
 });
-// Placeholder end

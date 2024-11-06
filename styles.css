@@ -31,12 +31,24 @@ body {
 }
 
 .code-container,
-.result-container,
-.output-graph {
+.result-container {
     flex: 1;
     padding: 10px;
     border-right: 1px solid #ccc;
     overflow-y: auto;
+}
+
+
+.output-graph {
+    flex: 1;
+    position: relative;
+    display: block;
+    width: 100%; /* Adjust width as needed */
+    height: 100%; /* Adjust height as needed */
+    background: linear-gradient(to right, #e0e0e0 1px, transparent 1px),
+                linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
+    background-size: 25px 25px; /* Adjust the size of the grid squares */
+    overflow: hidden;
 }
 
 .toggle-button {
@@ -79,12 +91,15 @@ button {
 }
 
 .console-output {
+    position: absolute; /* Align console box with bottom of container */
+    bottom: 0;
+    left: 0;
+    right: 0;
     background-color: #f8f5f5;
-    border: 1px solid #000000;
+    border-top: 1px solid #ccc;
     padding: 10px;
     height: 50px;
     overflow-y: scroll;
     font-family: monospace;
     color: #333;
-    margin-top: 10px;
 }
