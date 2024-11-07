@@ -3,49 +3,75 @@ newBlock(s, id) takes the name string from the button and creates a new element.
 The new element is added to the "container" in the Result-Container section.
 */
 let blockCounter = 0;
-
+let dragged = null;
+let highlightedBlock = null;
 
 
 function newBlock(s) {
-    stringText = s;
-    const button = document.getElementById("createBlocksButton"); //default text
     const container = document.getElementById("box-container");
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
+    newBlock.id = "box_" + ++blockCounter;
+
+    const svgImage = document.createElement("img");
+    svgImage.width = 24;
+    svgImage.height = 24; 
+
+    
+    if (s === "greater_than") {
+        svgImage.src = "svg_files/Operator/inequality_greater_than_block.svg";
+    } else if (s === "less_than") {
+        svgImage.src = "svg_files/Operator/inequality_less_than_block.svg";
+    } else if (s === "equal") {
+        svgImage.src = "svg_files/Operator/equal_block.svg";
+    } else if (s === "not_equal") {
+        svgImage.src = "svg_files/Operator/not_equal_block.svg";
+    }
+
+    // Append the new block to the container
+    newBlock.appendChild(svgImage);
     container.appendChild(newBlock);
-    newBlock.append(stringText);
 
+    // Add event listeners
     newBlock.draggable = true;
-
-    blockCounter++;
-    newBlock.id = "box_" + blockCounter;
-
     newBlock.addEventListener("dragstart", dragStart);
     newBlock.addEventListener("dragover", dragOver);
     newBlock.addEventListener("drop", drop);
-    newBlock.addEventListener("click", selectBlock); // To highlight/select block
+    newBlock.addEventListener("click", selectBlock);
 
 }
 
-let dragged;
-
 function dragStart(event) {
-    dragged = event.target;
-    event.dataTransfer.effectAllowed = 'move';
+    // Ensure the dragged element is the box container itself, not just the SVG img
+    dragged = event.target.closest(".box");
+    
+    if (dragged) {
+        event.dataTransfer.effectAllowed = 'move';
+    }
 }
 
 function dragOver(event) {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    const targetBlock = event.target.closest(".box");
+    if (targetBlock) {
+        targetBlock.classList.add('drop-target');
+    }
 }
+
 
 function drop(event) {
     event.preventDefault();
 
-    if (event.target.className === "box") {
-        event.target.parentNode.insertBefore(dragged, event.target.nextSibling);
-    } else {
-        event.target.parentNode.appendChild(dragged);
+    if (dragged) {
+        const targetBlock = event.target.closest(".box");
+        if (targetBlock) {
+            targetBlock.classList.remove('drop-target');
+            targetBlock.parentNode.insertBefore(dragged, targetBlock);
+        } else if (event.target.id === "box-container") {
+            event.target.appendChild(dragged);
+        }
+
+        dragged = null;
     }
 }
 
@@ -62,18 +88,28 @@ codeContainer.addEventListener("drop", function(event) {
         dragged = null; // Reset the dragged element
     }
 });
+document.addEventListener('dragleave', function (event) {
+    const targetBlock = event.target.closest(".box");
+    if (targetBlock) {
+        targetBlock.classList.remove('drop-target');
+    }
+});
 
 // Function to select a block and add highlight
-let highlightedBlock = null; // Tracks the highlighted block
 
 function selectBlock(event) {
+    // Check if the clicked element is an image inside a block
+    const targetBlock = event.target.closest(".box");
+
+    if (!targetBlock) return; // If no block is found, exit
+
     // Clear previous selection if a block is already highlighted
     if (highlightedBlock) {
         highlightedBlock.classList.remove("selected");
     }
 
     // Mark clicked block as highlighted
-    highlightedBlock = event.target;
+    highlightedBlock = targetBlock;
     highlightedBlock.classList.add("selected");
 
     // Prevent click event from being repeated multiple times
