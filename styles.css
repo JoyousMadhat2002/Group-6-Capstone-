@@ -31,12 +31,24 @@ body {
 }
 
 .code-container,
-.result-container,
-.output-graph {
+.result-container {
     flex: 1;
     padding: 10px;
     border-right: 1px solid #ccc;
     overflow-y: auto;
+}
+
+
+.output-graph {
+    flex: 1;
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #e0e0e0 1px, transparent 1px),
+                linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
+    background-size: 25px 25px; /* Adjust the size of the grid squares */
+    overflow: visible;
 }
 
 .toggle-button {
@@ -71,9 +83,77 @@ button {
 
 }
 
+.box.selected {
+    border: 2px solid red;
+}
+
 .textarea {
     resize: none; /*  No resizing */ 
     width: calc((100vw / 3) - 35px); /* Width is 1/3rd of total viewport width minus 35 pixels */ 
     height: calc(100vh - 90px); /* Height is viewport height minus 90 pixels */ 
 
+}
+
+.console-output {
+    position: absolute; /* Align console box with bottom of container */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #f8f5f5;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+    height: 50px;
+    overflow-y: scroll;
+    font-family: monospace;
+    color: #333;
+}
+
+.run-code-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: green;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s;
+    z-index: 10;
+}
+.run-code-btn .icon-play::before {
+    content: "\25BA"; /* Unicode for play icon */
+}
+.run-code-btn .icon-stop::before {
+    content: "\25A0"; /* Unicode for stop icon */
+}
+.run-code-btn.stop {
+    background-color: red;
+}
+
+.run-code-btn::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 110%; /* Slightly below the button */
+    left: 60%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-size: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 100;
+}
+.run-code-btn:hover::after {
+    opacity: 1;
+    visibility: visible;
 }
