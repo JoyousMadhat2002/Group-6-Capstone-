@@ -39,6 +39,9 @@ function newBlock(s) {
     newBlock.addEventListener("drop", drop);
     newBlock.addEventListener("click", selectBlock);
 
+     // Get depth from container, increase by 1. Change to parent container in future!
+     var parentDepth = Number(container.dataset.depth) + 1;
+
 }
 
 function dragStart(event) {
@@ -141,12 +144,12 @@ boxes.forEach(box => {
 });
 
 
-const t = document.getElementById("pythontext"); // creating const for element to pull from
-ptext = t.value; // initializing variable.
+const pythonTextarea = document.getElementById("pythontext"); // creating const for element to pull from
+ptext = pythonTextarea.value; // initializing variable.
 
 // test function for storing textarea input as variable
 function StoreBlob(){
-    ptext = t.value;
+    ptext = pythonTextarea.value;
     ptext = ptext.toString();
 }
 
@@ -154,7 +157,7 @@ function StoreBlob(){
 function PullBlob(){
     const blob = new Blob([ptext], { type: 'text/plain' })
     blob.text().then(text => {
-    t.value = text; // sends contents of blob to textarea
+    pythonTextarea.value = text; // sends contents of blob to textarea
 });
 
     // t.value = ptext; // less useful way to store information
@@ -171,6 +174,22 @@ function toggleView() {
         y.style.display = "block"
     }
 }
+
+
+const blockContainer = document.getElementById("box-container"); // Gets box container, could use as global variable?
+
+
+function blockToText() {
+    pythonTextarea.value = ""; // Clear text area
+    let blockChildElements = blockContainer.children; // Assigns all children/blocks from box-container
+    for (let i = 0; i < blockChildElements.length; i++) { // Loop through children/blocks to print to text area
+        pythonTextarea.value += blockChildElements[i].id;
+        pythonTextarea.value += "\n";
+        console.log(blockChildElements[i]); 
+      }
+
+}
+
 
 
 // Run Code button logic for swapping between Run/Stop
