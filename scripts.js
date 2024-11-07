@@ -2,9 +2,15 @@
 newBlock(s, id) takes the name string from the button and creates a new element.
 The new element is added to the "container" in the Result-Container section.
 */
+
+
 let blockCounter = 0;
 let dragged = null;
 let highlightedBlock = null;
+
+
+
+
 
 
 function newBlock(s) {
@@ -40,7 +46,7 @@ function newBlock(s) {
     newBlock.addEventListener("click", selectBlock);
 
      // Get depth from container, increase by 1. Change to parent container in future!
-     var parentDepth = Number(container.dataset.depth) + 1;
+     newBlock.blockDepth  = Number(container.dataset.depth) + 1;
 
 }
 
@@ -182,7 +188,12 @@ const blockContainer = document.getElementById("box-container"); // Gets box con
 function blockToText() {
     pythonTextarea.value = ""; // Clear text area
     let blockChildElements = blockContainer.children; // Assigns all children/blocks from box-container
+    
     for (let i = 0; i < blockChildElements.length; i++) { // Loop through children/blocks to print to text area
+        for (let j = 0; j <  blockChildElements[i].blockDepth; j++ ){
+        pythonTextarea.value += "    ";
+        }
+
         pythonTextarea.value += blockChildElements[i].id;
         pythonTextarea.value += "\n";
         console.log(blockChildElements[i]); 
