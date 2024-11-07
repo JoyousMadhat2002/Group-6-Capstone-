@@ -42,22 +42,36 @@ function newBlock(s) {
 }
 
 function dragStart(event) {
-    dragged = event.target;
-    event.dataTransfer.effectAllowed = 'move';
+    // Ensure the dragged element is the box container itself, not just the SVG img
+    dragged = event.target.closest(".box");
+    
+    if (dragged) {
+        event.dataTransfer.effectAllowed = 'move';
+    }
 }
 
 function dragOver(event) {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    const targetBlock = event.target.closest(".box");
+    if (targetBlock) {
+        targetBlock.classList.add('drop-target');
+    }
 }
+
 
 function drop(event) {
     event.preventDefault();
 
-    if (event.target.className === "box") {
-        event.target.parentNode.insertBefore(dragged, event.target.nextSibling);
-    } else {
-        event.target.parentNode.appendChild(dragged);
+    if (dragged) {
+        const targetBlock = event.target.closest(".box");
+        if (targetBlock) {
+            targetBlock.classList.remove('drop-target');
+            targetBlock.parentNode.insertBefore(dragged, targetBlock);
+        } else if (event.target.id === "box-container") {
+            event.target.appendChild(dragged);
+        }
+
+        dragged = null;
     }
 }
 
@@ -74,17 +88,28 @@ codeContainer.addEventListener("drop", function(event) {
         dragged = null; // Reset the dragged element
     }
 });
+document.addEventListener('dragleave', function (event) {
+    const targetBlock = event.target.closest(".box");
+    if (targetBlock) {
+        targetBlock.classList.remove('drop-target');
+    }
+});
 
 // Function to select a block and add highlight
 
 function selectBlock(event) {
+    // Check if the clicked element is an image inside a block
+    const targetBlock = event.target.closest(".box");
+
+    if (!targetBlock) return; // If no block is found, exit
+
     // Clear previous selection if a block is already highlighted
     if (highlightedBlock) {
         highlightedBlock.classList.remove("selected");
     }
 
     // Mark clicked block as highlighted
-    highlightedBlock = event.target;
+    highlightedBlock = targetBlock;
     highlightedBlock.classList.add("selected");
 
     // Prevent click event from being repeated multiple times
