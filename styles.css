@@ -83,6 +83,10 @@ button {
 
 }
 
+.box.selected {
+    border: 2px solid red;
+}
+
 .textarea {
     resize: none; /*  No resizing */ 
     width: calc((100vw / 3) - 35px); /* Width is 1/3rd of total viewport width minus 35 pixels */ 
@@ -132,7 +136,7 @@ button {
 }
 
 .run-code-btn::after {
-    content: attr(data-tooltip); /* Use the data-tooltip attribute for content */
+    content: attr(data-tooltip);
     position: absolute;
     top: 110%; /* Slightly below the button */
     left: 60%;

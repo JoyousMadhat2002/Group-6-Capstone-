@@ -23,6 +23,7 @@ function newBlock(s) {
     newBlock.addEventListener("dragstart", dragStart);
     newBlock.addEventListener("dragover", dragOver);
     newBlock.addEventListener("drop", drop);
+    newBlock.addEventListener("click", selectBlock); // To highlight/select block
 
 }
 
@@ -47,6 +48,54 @@ function drop(event) {
         event.target.parentNode.appendChild(dragged);
     }
 }
+
+// Function to delete a block by dragging to code-container (left side)
+const codeContainer = document.querySelector(".code-container");
+
+codeContainer.addEventListener("dragover", function(event) {
+    event.preventDefault(); // Allow dropping
+});
+codeContainer.addEventListener("drop", function(event) {
+    event.preventDefault();
+    if (dragged) {
+        dragged.remove(); // Delete the dragged block
+        dragged = null; // Reset the dragged element
+    }
+});
+
+// Function to select a block and add highlight
+let highlightedBlock = null; // Tracks the highlighted block
+
+function selectBlock(event) {
+    // Clear previous selection if a block is already highlighted
+    if (highlightedBlock) {
+        highlightedBlock.classList.remove("selected");
+    }
+
+    // Mark clicked block as highlighted
+    highlightedBlock = event.target;
+    highlightedBlock.classList.add("selected");
+
+    // Prevent click event from being repeated multiple times
+    event.stopPropagation();
+}
+
+// Event listener to deselect block when clicking outside
+document.addEventListener("click", function(event) {
+    if (highlightedBlock && !highlightedBlock.contains(event.target)) {
+        // Remove highlight and deselect the block
+        highlightedBlock.classList.remove("selected");
+        highlightedBlock = null;
+    }
+});
+
+// Event listener to delete block when block is highlighted and "Delete" key is pressed
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Delete" && highlightedBlock) {
+        highlightedBlock.remove(); // Delete highlighted block
+        highlightedBlock = null; // Reset highlighted block
+    }
+});
 
 const boxes = document.querySelectorAll(".box");
 boxes.forEach(box => {
