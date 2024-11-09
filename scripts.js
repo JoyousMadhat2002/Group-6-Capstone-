@@ -228,6 +228,7 @@ function stopCode() {
 }
 // Placeholder end
 
+// login button functionality
 const loginButton = document.getElementById("loginButton");
 loginButton.addEventListener("click", function() {
     const username = prompt("Enter Username:");
@@ -241,6 +242,7 @@ loginButton.addEventListener("click", function() {
     }
 });
 
+// save button functionality
 const saveButton = document.getElementById("saveButton");
 saveButton.addEventListener("click", function() {
     const pythonCode = document.getElementById("pythontext").value;
