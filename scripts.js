@@ -228,7 +228,7 @@ function stopCode() {
 }
 // Placeholder end
 
-const loginButton = document.querySelector("button:contains('save')");
+const loginButton = document.getElementById("loginButton");
 loginButton.addEventListener("click", function() {
     const username = prompt("Enter Username:");
     const password = prompt("Enter Password:");
@@ -241,7 +241,7 @@ loginButton.addEventListener("click", function() {
     }
 });
 
-const saveButton = document.querySelector("button:contains('Save')");
+const saveButton = document.getElementById("saveButton");
 saveButton.addEventListener("click", function() {
     const pythonCode = document.getElementById("pythontext").value;
     localStorage.setItem("savedCode", pythonCode);
