@@ -241,9 +241,9 @@ loginButton.addEventListener("click", function() {
     }
 });
 
-const saveButton = document.getElementById("saveButton");
+/* const saveButton = document.getElementById("saveButton");
 saveButton.addEventListener("click", function() {
     const pythonCode = document.getElementById("pythontext").value;
     localStorage.setItem("savedCode", pythonCode);
     alert("Code saved locally!");
-});
+}); */
