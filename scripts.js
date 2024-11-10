@@ -58,7 +58,6 @@ function dragOver(event) {
     }
 }
 
-
 function drop(event) {
     event.preventDefault();
 
@@ -96,7 +95,6 @@ document.addEventListener('dragleave', function (event) {
 });
 
 // Function to select a block and add highlight
-
 function selectBlock(event) {
     // Check if the clicked element is an image inside a block
     const targetBlock = event.target.closest(".box");
@@ -140,7 +138,6 @@ boxes.forEach(box => {
     box.addEventListener("drop", drop);
 });
 
-
 const t = document.getElementById("pythontext"); // creating const for element to pull from
 ptext = t.value; // initializing variable.
 
@@ -172,7 +169,6 @@ function toggleView() {
     }
 }
 
-
 // Run Code button logic for swapping between Run/Stop
 function toggleRunButton() {
     const button = document.getElementById("run-code-btn");
@@ -194,11 +190,13 @@ function toggleRunButton() {
         isRunning = true; // Update running state
     }
 }
+
 // Event listener for button click
 document.getElementById("run-code-btn").addEventListener("click", toggleRunButton);
 // Event listener for CTRL + ENTER
 document.addEventListener("keydown", function(event) {
-    if (event.ctrlKey && event.key === "Enter") {
+    if (event
+        .ctrlKey && event.key === "Enter") {
         toggleRunButton();
     }
 });
@@ -229,3 +227,25 @@ function stopCode() {
     console.log("test: code stopped");
 }
 // Placeholder end
+
+// login button functionality
+const loginButton = document.getElementById("loginButton");
+loginButton.addEventListener("click", function() {
+    const username = prompt("Enter Username:");
+    const password = prompt("Enter Password:");
+
+    if (username === "user" && password === "password") {
+        localStorage.setItem("loggedIn", "true");
+        alert("Login successful!");
+    } else {
+        alert("Invalid credentials");
+    }
+});
+
+// save button functionality
+const saveButton = document.getElementById("saveButton");
+saveButton.addEventListener("click", function() {
+    const pythonCode = document.getElementById("pythontext").value;
+    localStorage.setItem("savedCode", pythonCode);
+    alert("Code saved locally!");
+}); 
