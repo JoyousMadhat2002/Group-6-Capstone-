@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive SVG Rectangle with Dropdown</title>
+  <style>
+    /* Initial rotation style for the arrow */
+    #arrow {
+      transition: transform 0.3s ease; /* Smooth transition for rotation */
+    }
+    /* Rotated state for the arrow */
+    .rotated {
+      transform: rotate(180deg);
+    }
+
+    /* Dropdown menu styling */
+    #mathSignsDropdown {
+      position: absolute;
+      display: none;
+      border: 1px solid #ccc;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rectangle with default ID -->
+  <rect id="rectangle" width="100" height="50" x="50" y="25" fill="lightblue" stroke="black" stroke-width="2"></rect>
+  
+  <!-- Down arrow icon (right side of rectangle) -->
+  <polygon id="arrow" points="150,50 140,45 140,55" fill="black" style="cursor: pointer;"></polygon>
+  
+  <!-- Text element to display the chosen sign on the rectangle -->
+  <text id="signText" x="90" y="55" font-size="20" text-anchor="middle" fill="black"></text>
+</svg>
+
+<!-- Dropdown for selecting a mathematical sign -->
+<select id="mathSignsDropdown" onchange="updateRectangleIdAndText()">
+  <option value="">Select Sign</option>
+  <option value="+">+</option>
+  <option value="-">-</option>
+  <option value="/">/</option>
+  <option value="*">*</option>
+  <!-- Add more options as needed -->
+</select>
+
+<script>
+  const rectangle = document.getElementById('rectangle');
+  const arrow = document.getElementById('arrow');
+  const dropdown = document.getElementById('mathSignsDropdown');
+  const signText = document.getElementById('signText');
+  let dropdownVisible = false;
+
+  // Toggle dropdown visibility and arrow rotation
+  arrow.addEventListener('click', function(event) {
+    dropdownVisible = !dropdownVisible;
+    if (dropdownVisible) {
+      // Show dropdown and rotate arrow
+      dropdown.style.display = 'block';
+      dropdown.style.left = `${event.clientX}px`;
+      dropdown.style.top = `${event.clientY}px`;
+      arrow.classList.add('rotated');
+    } else {
+      // Hide dropdown and reset arrow rotation
+      dropdown.style.display = 'none';
+      arrow.classList.remove('rotated');
+    }
+  });
+
+  // Update the rectangle ID and display the sign inside the rectangle based on dropdown selection
+  function updateRectangleIdAndText() {
+    const selectedSign = dropdown.value;
+    if (selectedSign) {
+      rectangle.id = `rectangle_${selectedSign}`; // Update ID
+      signText.textContent = selectedSign; // Display sign inside rectangle
+    } else {
+      rectangle.id = 'rectangle'; // Reset ID if no selection
+      signText.textContent = ''; // Clear text if no selection
+    }
+    // Hide dropdown and reset arrow rotation after selection
+    dropdown.style.display = 'none';
+    arrow.classList.remove('rotated');
+    dropdownVisible = false;
+  }
+
+  // Hide dropdown if clicked outside
+  document.addEventListener('click', function(event) {
+    if (!dropdown.contains(event.target) && !arrow.contains(event.target)) {
+      dropdown.style.display = 'none';
+      arrow.classList.remove('rotated');
+      dropdownVisible = false;
+    }
+  });
+</script>
+
+</body>
+</html>
