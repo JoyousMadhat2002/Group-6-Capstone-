@@ -57,10 +57,10 @@
   arrow.addEventListener('click', function(event) {
     dropdownVisible = !dropdownVisible;
     if (dropdownVisible) {
-      // Show dropdown and rotate arrow
+      // Show dropdown below the arrow and rotate arrow
       dropdown.style.display = 'block';
-      dropdown.style.left = `${event.clientX}px`;
-      dropdown.style.top = `${event.clientY}px`;
+      dropdown.style.left = `${event.clientX - dropdown.offsetWidth / 2}px`; // Center dropdown below arrow
+      dropdown.style.top = `${event.clientY + 15}px`; // Position dropdown slightly below the arrow
       arrow.classList.add('rotated');
     } else {
       // Hide dropdown and reset arrow rotation
