@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="1.9733mm" height="4.255mm" version="1.1" viewBox="0 0 1.9733 4.255" xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+   <defs>
+      <linearGradient id="swatch22">
+         <stop offset="0" />
+      </linearGradient>
+      <linearGradient id="linearGradient22" x1="-.039579" x2="1.9294" y1="4.9764" y2="4.9764"
+         gradientUnits="userSpaceOnUse" xlink:href="#swatch22" />
+      <linearGradient id="linearGradient23" x1="-.039579" x2="1.9294" y1="4.4764" y2="4.4764"
+         gradientUnits="userSpaceOnUse" xlink:href="#swatch22" />
+      <linearGradient id="linearGradient24" x1="-.039579" x2="1.9294" y1="3.9764" y2="3.9764"
+         gradientUnits="userSpaceOnUse" xlink:href="#swatch22" />
+      <linearGradient id="linearGradient25" x1="-.039579" x2="1.9294" y1="3.4764" y2="3.4764"
+         gradientUnits="userSpaceOnUse" xlink:href="#swatch22" />
+      <linearGradient id="linearGradient26" x1="-.039579" x2="1.9294" y1="2.9764" y2="2.9764"
+         gradientUnits="userSpaceOnUse" xlink:href="#swatch22" />
+      <linearGradient id="linearGradient27" x1="-.039579" x2="1.9294" y1="2.4764" y2="2.4764"
+         gradientUnits="userSpaceOnUse" xlink:href="#swatch22" />
+      <linearGradient id="linearGradient28" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
+         gradientUnits="userSpaceOnUse" xlink:href="#swatch22" />
+      <linearGradient id="linearGradient55" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
+         gradientUnits="userSpaceOnUse">
+         <stop offset="0" />
+      </linearGradient>
+   </defs>
+
+
+
+   <g id="operator-block" transform="translate(-.0088404)">
+      <path id="block-operator"
+         d="m0.26711 0c-0.14 0-0.25 0.11-0.25 0.25v0.5c0 0.14 0.11 0.25 0.25 0.25h1.46c0.14 0 0.25-0.11 0.25-0.25v-0.5c0-0.14-0.11-0.25-0.25-0.25z"
+         fill="#80cbc4" opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" />
+   </g>
+   <g id="dropdown" transform="translate(.05212 -1.2264)">
+      <path id="dropdown-menu-arithmetic"
+         d="m0.20615 1.2264c-0.14 0-0.25033 0.11-0.25 0.25l0.00827 3.5c3.307e-4 0.14 0.11 0.25 0.25 0.25h1.46c0.14 0 0.25033-0.11 0.25-0.25l-0.00827-3.5c-3.307e-4 -0.14-0.11-0.25-0.25-0.25z"
+         fill="#80cbc4" fill-opacity=".70417" opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" />
+      <g id="dropdown-bar" transform="translate(.72757 -4.7413)" stroke-width="0">
+         <path id="dropdown-bar-container" transform="matrix(.9958 0 0 .49583 -.7339 3.3804)" x="0.21337062"
+            y="5.2180309" width="1.4971825" height="0.48752856" ry="0.24376428"
+            d="m0.45713 5.218h1.0097c0.13505 0 0.24376 0.10872 0.24376 0.24376s-0.10872 0.24376-0.24376 0.24376h-1.0097c-0.13505 0-0.24376-0.10872-0.24376-0.24376s0.10872-0.24376 0.24376-0.24376z"
+            style="paint-order:markers fill stroke" />
+         <path id="dropdown-arrow" transform="matrix(-1.2905 -.0021314 .0029663 -.92727 1.478 11.111)"
+            d="m1.033 5.4141-0.049228 0.085031-0.098049-0.1703 0.19651 2.352e-4z" fill="#80cbc4" fill-opacity=".70588"
+            style="paint-order:markers fill stroke" />
+      </g>
+      <g id="exponentiation" stroke="url(#linearGradient22)" stroke-linecap="round" stroke-linejoin="round"><text
+            id="EXP" transform="scale(.99761 1.0024)" x="0.68720961" y="5.1825452" fill="#000000" font-size=".40862px"
+            opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" xml:space="preserve">
+            <tspan x="0.68720961" y="5.1825452" fill="#000000" stroke="url(#linearGradient22)" stroke-width="0">**
+            </tspan>
+         </text>
+         <rect x="-.034579" y="4.7264" width="1.959" height=".5" rx=".24995" ry=".23826" fill="none" opacity=".83"
+            stroke-width=".01" style="paint-order:fill markers stroke" />
+      </g>
+      <g id="modulus" stroke="url(#linearGradient23)" stroke-linecap="round" stroke-linejoin="round"><text id="MOD"
+            transform="scale(.99761 1.0024)" x="0.72731346" y="4.6141076" fill="#000000" font-size=".40862px"
+            opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" xml:space="preserve">
+            <tspan x="0.72731346" y="4.6141076" fill="#000000" stroke="url(#linearGradient23)" stroke-width="0">%
+            </tspan>
+         </text>
+         <rect x="-.034579" y="4.2264" width="1.959" height=".5" rx=".24995" ry=".23826" fill="none" opacity=".83"
+            stroke-width=".01" style="paint-order:fill markers stroke" />
+      </g>
+      <g id="floor-division" stroke="url(#linearGradient24)" stroke-linecap="round" stroke-linejoin="round"><text
+            id="FDIV" transform="scale(.99761 1.0024)" x="0.77160722" y="4.0917597" fill="#000000" font-size=".40862px"
+            opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" xml:space="preserve">
+            <tspan x="0.77160722" y="4.0917597" fill="#000000" stroke="url(#linearGradient24)" stroke-width="0">//
+            </tspan>
+         </text>
+         <rect x="-.034579" y="3.7264" width="1.959" height=".5" rx=".24995" ry=".23826" fill="none" opacity=".83"
+            stroke-width=".01" style="paint-order:fill markers stroke" />
+      </g>
+      <g id="division" stroke="url(#linearGradient25)" stroke-linecap="round" stroke-linejoin="round"><text id="DIV"
+            transform="scale(.99761 1.0024)" x="0.86438471" y="3.5929558" fill="#000000" font-size=".40862px"
+            opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" xml:space="preserve">
+            <tspan x="0.86438471" y="3.5929558" fill="#000000" stroke="url(#linearGradient25)" stroke-width="0">/
+            </tspan>
+         </text>
+         <rect x="-.034579" y="3.2264" width="1.959" height=".5" rx=".24995" ry=".23826" fill="none" opacity=".83"
+            stroke-width=".01" style="paint-order:fill markers stroke" />
+      </g>
+      <g id="multiplication" stroke="url(#linearGradient26)" stroke-linecap="round" stroke-linejoin="round"><text
+            id="MUL" transform="scale(.99761 1.0024)" x="0.81709808" y="3.1873281" fill="#000000" font-size=".40862px"
+            opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" xml:space="preserve">
+            <tspan x="0.81709808" y="3.1873281" fill="#000000" stroke="url(#linearGradient26)" stroke-width="0">*
+            </tspan>
+         </text>
+         <rect x="-.034579" y="2.7264" width="1.959" height=".5" rx=".24995" ry=".23826" fill="none" opacity=".83"
+            stroke-width=".01" style="paint-order:fill markers stroke" />
+      </g>
+      <g id="subtraction" stroke="url(#linearGradient27)" stroke-linecap="round" stroke-linejoin="round"><text id="SUB"
+            transform="scale(.99761 1.0024)" x="0.85440862" y="2.6004353" fill="#000000" font-size=".40862px"
+            opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" xml:space="preserve">
+            <tspan x="0.85440862" y="2.6004353" fill="#000000" stroke="url(#linearGradient27)" stroke-width="0">-
+            </tspan>
+         </text>
+         <rect x="-.034579" y="2.2264" width="1.959" height=".5" rx=".24995" ry=".23826" fill="none" opacity=".83"
+            stroke-width=".01" style="paint-order:fill markers stroke" />
+      </g>
+      <g id="addition" stroke-linecap="round" stroke-linejoin="round"><text id="ADD" transform="scale(.99761 1.0024)"
+            x="0.7799871" y="2.1017308" fill="#000000" font-size=".40862px" opacity=".83"
+            stroke="url(#linearGradient55)" stroke-width="0" style="paint-order:fill markers stroke"
+            xml:space="preserve">
+            <tspan x="0.7799871" y="2.1017308" fill="#000000" stroke="url(#linearGradient55)" stroke-width="0">+</tspan>
+         </text>
+         <rect x="-.034579" y="1.7264" width="1.959" height=".5" rx=".24995" ry=".23826" fill="none" opacity=".83"
+            stroke="url(#linearGradient28)" stroke-width=".01" style="paint-order:fill markers stroke" />
+      </g>
+   </g>
+</svg>

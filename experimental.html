@@ -3,97 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive SVG Rectangle with Dropdown</title>
-  <style>
-    /* Initial rotation style for the arrow */
-    #arrow {
-      transition: transform 0.3s ease; /* Smooth transition for rotation */
-    }
-    /* Rotated state for the arrow */
-    .rotated {
-      transform: rotate(180deg);
-    }
-
-    /* Dropdown menu styling */
-    #mathSignsDropdown {
-      position: absolute;
-      display: none;
-      border: 1px solid #ccc;
-      padding: 5px;
-    }
-  </style>
+  <title>Document</title>
 </head>
-<body>
-
-<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
-  <!-- Rectangle with default ID -->
-  <rect id="rectangle" width="100" height="50" x="50" y="25" fill="lightblue" stroke="black" stroke-width="2"></rect>
-  
-  <!-- Down arrow icon (right side of rectangle) -->
-  <polygon id="arrow" points="150,50 140,45 140,55" fill="black" style="cursor: pointer;"></polygon>
-  
-  <!-- Text element to display the chosen sign on the rectangle -->
-  <text id="signText" x="90" y="55" font-size="20" text-anchor="middle" fill="black"></text>
-</svg>
-
-<!-- Dropdown for selecting a mathematical sign -->
-<select id="mathSignsDropdown" onchange="updateRectangleIdAndText()">
-  <option value="">Select Sign</option>
-  <option value="+">+</option>
-  <option value="-">-</option>
-  <option value="/">/</option>
-  <option value="*">*</option>
-  <!-- Add more options as needed -->
-</select>
-
-<script>
-  const rectangle = document.getElementById('rectangle');
-  const arrow = document.getElementById('arrow');
-  const dropdown = document.getElementById('mathSignsDropdown');
-  const signText = document.getElementById('signText');
-  let dropdownVisible = false;
-
-  // Toggle dropdown visibility and arrow rotation
-  arrow.addEventListener('click', function(event) {
-    dropdownVisible = !dropdownVisible;
-    if (dropdownVisible) {
-      // Show dropdown below the arrow and rotate arrow
-      dropdown.style.display = 'block';
-      dropdown.style.left = `${event.clientX - dropdown.offsetWidth / 2}px`; // Center dropdown below arrow
-      dropdown.style.top = `${event.clientY + 15}px`; // Position dropdown slightly below the arrow
-      arrow.classList.add('rotated');
-    } else {
-      // Hide dropdown and reset arrow rotation
-      dropdown.style.display = 'none';
-      arrow.classList.remove('rotated');
-    }
-  });
-
-  // Update the rectangle ID and display the sign inside the rectangle based on dropdown selection
-  function updateRectangleIdAndText() {
-    const selectedSign = dropdown.value;
-    if (selectedSign) {
-      rectangle.id = `rectangle_${selectedSign}`; // Update ID
-      signText.textContent = selectedSign; // Display sign inside rectangle
-    } else {
-      rectangle.id = 'rectangle'; // Reset ID if no selection
-      signText.textContent = ''; // Clear text if no selection
-    }
-    // Hide dropdown and reset arrow rotation after selection
-    dropdown.style.display = 'none';
-    arrow.classList.remove('rotated');
-    dropdownVisible = false;
+<style>
+  .dropdown {
+    display: inline-block;
   }
 
-  // Hide dropdown if clicked outside
-  document.addEventListener('click', function(event) {
-    if (!dropdown.contains(event.target) && !arrow.contains(event.target)) {
-      dropdown.style.display = 'none';
-      arrow.classList.remove('rotated');
-      dropdownVisible = false;
-    }
-  });
-</script>
+  .dropdown button {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+  }
 
+  .dropdown a {
+    display: block;
+    color: black;
+    text-decoration: none;
+    padding: 10px 15px;
+  }
+
+  .dropdown .content {
+    display: none;
+    background-color: blanchedalmond;
+    position: absolute;
+    min-width: 100px;
+    box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.8);
+  }
+
+  .dropdown button:active {
+    background-color: #000;
+  }
+
+  .dropdown a:hover {
+    background-color: #f1f1f1;
+  }
+
+  .arrow {
+    margin-left: 10px;
+    font-size: 16px;
+    transition: transform 0.3s ease;
+    visibility: hidden;  /* Hide arrow by default */
+  }
+
+  .dropdown:hover .arrow {
+    visibility: visible;  /* Show arrow on hover */
+  }
+
+  .arrow.up {
+    transform: rotate(180deg);
+  }
+</style>
+<body>
+  <div class="dropdown">
+    <button id="dropdownButton">
+      Arithmetic 
+      <span id="arrow" class="arrow">&#9660;</span> <!-- Down arrow -->
+    </button>
+    <div class="content" id="dropdownContent">
+      <a href="#" onclick="setText('Addition')">Addition</a>
+      <a href="#" onclick="setText('Subtraction')">Subtraction</a>
+      <a href="#" onclick="setText('Multiplication')">Multiplication</a>
+      <a href="#" onclick="setText('Division')">Division</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('arrow').addEventListener('click', function(event) {
+      event.stopPropagation(); // Prevent event bubbling to button
+      toggleDropdown(); // Toggle dropdown when arrow is clicked
+    });
+
+    function toggleDropdown() {
+      const content = document.getElementById('dropdownContent');
+      const arrow = document.getElementById('arrow');
+      
+      // Toggle the display of the dropdown content
+      if (content.style.display === 'block') {
+        content.style.display = 'none';
+        arrow.classList.remove('up');
+      } else {
+        content.style.display = 'block';
+        arrow.classList.add('up');
+      }
+    }
+
+    function setText(text) {
+      // Update the button text
+      const button = document.getElementById('dropdownButton');
+      const arrow = document.getElementById('arrow');
+      button.innerHTML = text + ' ';
+      button.appendChild(arrow); // Keep the arrow after the text
+
+      // Hide the dropdown content and reset arrow
+      document.getElementById('dropdownContent').style.display = 'none';
+      arrow.classList.remove('up');
+    }
+
+    // Close the dropdown if clicking outside of it
+    document.addEventListener('click', function(event) {
+      const dropdown = document.querySelector('.dropdown');
+      const content = document.getElementById('dropdownContent');
+      const arrow = document.getElementById('arrow');
+      if (!dropdown.contains(event.target)) {
+        content.style.display = 'none';
+        arrow.classList.remove('up');
+      }
+    });
+  </script>
 </body>
 </html>
