@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Textfield</title>
+    <style>
+        svg {
+            width: 100%;
+            height: auto;
+            max-width: 300px;
+        }
+
+        #text-box {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <svg width="1.51mm" height="2mm" version="1.1" viewBox="0 0 1.51 2" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs>
+            <linearGradient id="linearGradient1" x1="51.82" x2="53.33" y1="99.16" y2="99.16"
+                gradientTransform="translate(-51.82,-98.16)" gradientUnits="userSpaceOnUse">
+                <stop offset="0" />
+            </linearGradient>
+        </defs>
+        <g id="text-box">
+            <path id="block"
+                d="M 0.25,0 C 0.11,0 0,0.11 0,0.25 v 1.5 C 0,1.89 0.11,2 0.25,2 H 1.26 C 1.4,2 1.51,1.89 1.51,1.75 V 0.25 C 1.51,0.11 1.4,0 1.26,0 Z"
+                fill="none" opacity=".83" stroke="url(#linearGradient1)" stroke-width=".025"
+                style="paint-order:fill markers stroke" />
+            <text id="text-element" x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
+                font-family="sans-serif" font-size="0.655px" fill="#000000" stroke-width=".094488">
+                txt
+            </text>
+        </g>
+    </svg>
+
+    <script>
+        const textBox = document.getElementById('text-box');
+        const textElement = document.getElementById('text-element');
+
+        // Add event listener to the text box for click
+        textBox.addEventListener('click', function () {
+            // Change the text inside the text element when clicked
+            textElement.textContent = "";
+        });
+
+
+
+    </script>
+</body>
+
+</html>
