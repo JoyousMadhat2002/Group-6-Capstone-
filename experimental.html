@@ -23,13 +23,13 @@
       z-index: 1;
     }
 
-    #dropdown-menu div {
+    .dropdown-item {
       padding: 5px;
       cursor: pointer;
       text-align: center;
     }
 
-    #dropdown-menu div:hover {
+    .dropdown-item:hover {
       background-color: #b2dfdb;
     }
 
@@ -41,86 +41,96 @@
 
 <body>
 
-  <svg viewBox="0 0 1.9692 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <defs>
-      <linearGradient id="linearGradient185" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
-        gradientTransform="translate(.0013967 -.010816)" gradientUnits="userSpaceOnUse">
-        <stop offset="0" />
-      </linearGradient>
-    </defs>
-    <g id="arithmetic" transform="matrix(1 0 0 1.0281 -.012517 0)">
-      <path id="arithmetic-block"
-        d="m0.26711 0c-0.14 0-0.25 0.11-0.25 0.25v0.5c0 0.14 0.10997 0.22267 0.24997 0.22267h1.46c0.14 0 0.25003-0.08267 0.25003-0.22267v-0.5c0-0.14-0.11-0.25-0.25-0.25z"
-        fill="#80cbc4" opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" />
-      <g id="select-bar-container" transform="matrix(1.0001 0 0 .95918 .0511 -1.3853)" stroke-linecap="round"
-        stroke-linejoin="round" onclick="toggleDropdown(event)">
-        <rect id="select-bar" x="-.033183" y="1.7156" width="1.959" height=".5" rx=".24995" ry=".23826"
-          fill-opacity=".24335" opacity=".83" stroke="url(#linearGradient185)" stroke-width=".01007"
-          style="paint-order:fill markers stroke" />
-        <text id="select-txt" itemid="select-text" x="0.98" y="1.9656" fill="#000000" font-family="sans-serif"
-          font-size="2.05%" stroke="url(#linearGradient7)" stroke-width="0" text-anchor="middle"
-          alignment-baseline="middle"
-          style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:fill markers stroke">
-          Select
-        </text>
-      </g>
-    </g>
-  </svg>
+  <!-- Button to insert SVG -->
+  <button onclick="insertSVG()">Insert SVG</button>
 
-  <!-- Dropdown menu -->
-  <div id="dropdown-menu">
-    <div onclick="selectOperator('Select')">Select</div>
-    <div onclick="selectOperator('+')">+</div>
-    <div onclick="selectOperator('-')">-</div>
-    <div onclick="selectOperator('/')">/</div>
-    <div onclick="selectOperator('*')">*</div>
-    <div onclick="selectOperator('%')">%</div>
-    <div onclick="selectOperator('**')">**</div>
-    <div onclick="selectOperator('//')">//</div>
-  </div>
+  <!-- Placeholder for SVG -->
+  <div id="svg-container"></div>
 
   <script>
-    const dropdownMenu = document.getElementById('dropdown-menu');
-    const selectBar = document.getElementById('select-bar');
+    const dropdownMenu = document.createElement('div');
+    dropdownMenu.id = 'dropdown-menu';
 
-    // Function to toggle dropdown menu visibility
+    const operators = ['Select', '+', '-', '/', '*', '%', '**', '//'];
+
+    operators.forEach(operator => {
+      const item = document.createElement('div');
+      item.className = 'dropdown-item';
+      item.textContent = operator;
+      item.onclick = () => selectOperator(operator);
+      dropdownMenu.appendChild(item);
+    });
+
+    document.body.appendChild(dropdownMenu);
+
+    // Function to insert SVG into the container
+    function insertSVG() {
+      const svgContainer = document.getElementById('svg-container');
+      svgContainer.innerHTML = `
+        <svg version="1.1" viewBox="0 0 7 3" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="linearGradient185" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
+              gradientTransform="translate(.0013967 -.010816)" gradientUnits="userSpaceOnUse">
+              <stop offset="0" />
+            </linearGradient>
+          </defs>
+          <g id="operator">
+            <g id="arithmetic" transform="matrix(1 0 0 1.0281 2.5029 1)">
+              <path id="arithmetic-block"
+                d="m0.26711 0c-0.14 0-0.25 0.11-0.25 0.25v0.5c0 0.14 0.10997 0.22267 0.24997 0.22267h1.46c0.14 0 0.25003-0.08267 0.25003-0.22267v-0.5c0-0.14-0.11-0.25-0.25-0.25z"
+                fill="#80cbc4" opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" />
+              <g id="select-bar-container" transform="matrix(1.0001 0 0 .95918 .0511 -1.3853)" stroke-linecap="round"
+                stroke-linejoin="round" onclick="toggleDropdown(event)">
+                <rect id="select-bar" x="-.033183" y="1.7156" width="1.9588" height=".5" rx=".24995" ry=".23826"
+                  fill-opacity=".24335" opacity=".83" stroke="url(#linearGradient185)" stroke-width=".01007"
+                  style="paint-order:fill markers stroke" />
+                <text id="select-txt" x="0.98000002" y="1.9656" alignment-baseline="middle" fill="#000000"
+                  font-family="sans-serif" font-size="2.05%" stroke="url(#linearGradient7)" stroke-width="0"
+                  text-anchor="middle"
+                  style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:fill markers stroke"
+                  itemid="select-text">Select</text>
+              </g>
+            </g>
+            <g stroke-width=".094488">
+              <path id="left-block"
+                d="m0.755 0.5c-0.14 0-0.25 0.11-0.25 0.25v1.5c0 0.14 0.11 0.25 0.25 0.25h1.02c0.14 0 0.25-0.11 0.25-0.25v-1.5c0-0.14-0.11-0.25-0.25-0.25z"
+                fill="#80cbc4" />
+              <path id="right-block"
+                d="m5.23 0.5c-0.14 0-0.25 0.11-0.25 0.25v1.5c0 0.14 0.11 0.25 0.25 0.25h1.02c0.14 0 0.25-0.11 0.25-0.25v-1.5c0-0.14-0.11-0.25-0.25-0.25z"
+                fill="#80cbc4" />
+              <path id="operator-block"
+                d="m0.25 0c-0.14 0-0.25 0.11-0.25 0.25v2.49c0 0.14 0.12 0.26 0.26 0.26h6.49c0.14 0 0.25-0.11 0.25-0.25v-2.5c0-0.14-0.11-0.25-0.25-0.25zm0.51 0.5h1.01c0.14 0 0.25 0.11 0.25 0.25v1.5c0 0.14-0.11 0.25-0.25 0.25h-1.01c-0.14 0-0.25-0.11-0.25-0.25v-1.5c0-0.14 0.11-0.25 0.25-0.25zm4.47 0h1.02c0.14 0 0.25 0.11 0.25 0.25v1.5c0 0.14-0.11 0.25-0.25 0.25h-1.02c-0.14 0-0.25-0.11-0.25-0.25v-1.5c0-0.14 0.11-0.25 0.25-0.25zm-2.46 0.5h1.46c0.14 0 0.25 0.11 0.25 0.25v0.5c0 0.14-0.11 0.25-0.25 0.25h-1.46c-0.14 0-0.25-0.11-0.25-0.25v-0.5c0-0.14 0.11-0.25 0.25-0.25z"
+                fill="#c6e1a6" />
+            </g>
+          </g>
+        </svg>
+      `;
+    }
+
     function toggleDropdown(event) {
-      const rect = selectBar.getBoundingClientRect();
+      const rect = document.getElementById('select-bar').getBoundingClientRect();
       dropdownMenu.style.left = `${rect.left}px`;
       dropdownMenu.style.top = `${rect.bottom}px`;
       dropdownMenu.style.width = `${rect.width}px`;
       dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
     }
 
-    // Function to select an operator and display it
     function selectOperator(operator) {
       const selectText = document.getElementById('select-txt');
       selectText.textContent = operator;
 
-      // Set itemid based on the selected operator
-      if (operator === '+') {
-        selectText.setAttribute('itemid', "ADD");
-      } else if (operator === '-') {
-        selectText.setAttribute('itemid', "SUB");
-      } else if (operator === '/') {
-        selectText.setAttribute('itemid', "DIV");
-      } else if (operator === '*') {
-        selectText.setAttribute('itemid', "MUL");
-      } else if (operator === '%') {
-        selectText.setAttribute('itemid', "MOD");
-      } else if (operator === '**') {
-        selectText.setAttribute('itemid', "EXP");
-      } else if (operator === '//') {
-        selectText.setAttribute('itemid', "FLRDIV");
-      } else {
-        selectText.setAttribute('itemid', "select-text");
-      }
+      if (operator === '+') selectText.setAttribute('itemid', "ADD");
+      else if (operator === '-') selectText.setAttribute('itemid', "SUB");
+      else if (operator === '/') selectText.setAttribute('itemid', "DIV");
+      else if (operator === '*') selectText.setAttribute('itemid', "MUL");
+      else if (operator === '%') selectText.setAttribute('itemid', "MOD");
+      else if (operator === '**') selectText.setAttribute('itemid', "EXP");
+      else if (operator === '//') selectText.setAttribute('itemid', "FLRDIV");
+      else selectText.setAttribute('itemid', "select-text");
 
       dropdownMenu.style.display = 'none';
     }
 
-
-    // Hide dropdown when clicking outside
     document.addEventListener('click', (event) => {
       if (!event.target.closest('#select-bar-container') && !event.target.closest('#dropdown-menu')) {
         dropdownMenu.style.display = 'none';
