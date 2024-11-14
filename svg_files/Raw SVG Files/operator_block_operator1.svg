@@ -1,179 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg width="1.9692mm" height="4.2831mm" version="1.1" viewBox="0 0 1.9692 4.2831" xmlns="http://www.w3.org/2000/svg"
-  xmlns:xlink="http://www.w3.org/1999/xlink">
-  <defs>
-    <linearGradient id="swatch157">
-      <stop style="stop-color:#80cbc4;stop-opacity:.47917" offset="0" />
+
+<svg
+   width="1.9691969mm"
+   height="1.000002mm"
+   version="1.1"
+   viewBox="0 0 1.9691969 1.000002"
+   id="svg15"
+   sodipodi:docname="operator_block_operator1.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview15"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="47.655607"
+     inkscape:cx="5.319416"
+     inkscape:cy="5.1935127"
+     inkscape:window-width="1607"
+     inkscape:window-height="1341"
+     inkscape:window-x="943"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="arithmetic" />
+  <defs
+     id="defs7">
+    <linearGradient
+       id="swatch157">
+      <stop
+         style="stop-color:#80cbc4;stop-opacity:.47917"
+         offset="0"
+         id="stop1" />
     </linearGradient>
-    <linearGradient id="swatch155">
-      <stop style="stop-color:#80cbc4;stop-opacity:.47843" offset="0" />
+    <linearGradient
+       id="swatch149">
+      <stop
+         offset="0"
+         id="stop4" />
     </linearGradient>
-    <linearGradient id="swatch151">
-      <stop style="stop-color:#80cbc4;stop-opacity:.53333" offset="0" />
-    </linearGradient>
-    <linearGradient id="swatch149">
-      <stop offset="0" />
-    </linearGradient>
-    <linearGradient id="linearGradient22" x1="-.039579" x2="1.9294" y1="4.9764" y2="4.9764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch149" />
-    <linearGradient id="linearGradient23" x1="-.039579" x2="1.9294" y1="4.4764" y2="4.4764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch149" />
-    <linearGradient id="linearGradient24" x1="-.039579" x2="1.9294" y1="3.9764" y2="3.9764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch149" />
-    <linearGradient id="linearGradient25" x1="-.039579" x2="1.9294" y1="3.4764" y2="3.4764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch149" />
-    <linearGradient id="linearGradient26" x1="-.039579" x2="1.9294" y1="2.9764" y2="2.9764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch149" />
-    <linearGradient id="linearGradient27" x1="-.039579" x2="1.9294" y1="2.4764" y2="2.4764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch149" />
-    <linearGradient id="linearGradient28" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch149" />
-    <linearGradient id="linearGradient55" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
-      gradientUnits="userSpaceOnUse">
-      <stop offset="0" />
-    </linearGradient>
-    <linearGradient id="linearGradient156" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
-      gradientUnits="userSpaceOnUse">
-      <stop style="stop-color:#80cbc4;stop-opacity:.47843" offset="0" />
-    </linearGradient>
-    <linearGradient id="linearGradient157" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch157" />
-    <linearGradient id="linearGradient158" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
-      gradientUnits="userSpaceOnUse">
-      <stop style="stop-color:#80cbc4;stop-opacity:.54583" offset="0" />
-    </linearGradient>
-    <linearGradient id="linearGradient184" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
-      gradientTransform="translate(.0010003)" gradientUnits="userSpaceOnUse" xlink:href="#swatch157" />
-    <linearGradient id="linearGradient185" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
-      gradientTransform="translate(.0010003)" gradientUnits="userSpaceOnUse" xlink:href="#swatch149" />
-    <linearGradient id="linearGradient187" x1="-.039579" x2="1.9294" y1="4.9764" y2="4.9764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch155" />
-    <linearGradient id="linearGradient190" x1="-.039579" x2="1.9294" y1="4.4764" y2="4.4764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch151" />
-    <linearGradient id="linearGradient193" x1="-.039579" x2="1.9294" y1="3.9764" y2="3.9764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch155" />
-    <linearGradient id="linearGradient196" x1="-.039579" x2="1.9294" y1="3.4764" y2="3.4764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch155" />
-    <linearGradient id="linearGradient199" x1="-.039579" x2="1.9294" y1="2.9764" y2="2.9764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch155" />
-    <linearGradient id="linearGradient202" x1="-.039579" x2="1.9294" y1="2.4764" y2="2.4764"
-      gradientUnits="userSpaceOnUse" xlink:href="#swatch155" />
-    <linearGradient id="linearGradient7" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
-      gradientTransform="translate(-.46808 .022446)" gradientUnits="userSpaceOnUse" xlink:href="#swatch149" />
+    <linearGradient
+       id="linearGradient185"
+       x1="-0.039579"
+       x2="1.9294"
+       y1="1.9764"
+       y2="1.9764"
+       gradientTransform="translate(0.00139672,-0.01081581)"
+       gradientUnits="userSpaceOnUse"
+       xlink:href="#swatch149" />
   </defs>
-  <g id="open-layer" transform="translate(1.4374 .081851)">
-    <g id="operator-block" transform="translate(-1.4473 -.081851)">
-      <path id="block-operator"
-        d="m0.26448 0c-0.14 0-0.25 0.11-0.25 0.25v0.5c0 0.14 0.11 0.25 0.25 0.25h1.46c0.14 0 0.25-0.11 0.25-0.25v-0.5c0-0.14-0.11-0.25-0.25-0.25z"
-        fill="#80cbc4" opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" />
-    </g>
-    <g id="dropdown" transform="translate(-1.3961 -1.5301)">
-      <path id="dropdown-menu-arithmetic"
-        d="m0.21629 1.6933c-0.14 0-0.2499 0.11-0.25 0.25l-0.0025004 3.5331c-9.908e-5 0.14 0.091831 0.255 0.23183 0.255h1.4724c0.14 0 0.25463-0.115 0.25477-0.255l0.0035-3.5331c1.385e-4 -0.14-0.11-0.25-0.25-0.25z"
-        fill="#80cbc4" opacity=".83" stroke-width="0" style="fill-opacity:0;paint-order:fill markers stroke" />
-      <g id="exponentiation" transform="translate(-.0016355 .5)"
-        style="fill:url(#linearGradient187);stroke:url(#linearGradient22)">
-        <rect x="-.034579" y="4.7264" width="1.959" height=".5" rx=".24995" ry=".23826"
-          style="fill-opacity:.70417;fill:url(#linearGradient187);opacity:.83;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:.01;stroke:url(#linearGradient22)" />
-        <text id="EXP" transform="scale(.99761 1.0024)" x="0.68720961" y="5.1825452"
-          style="fill:#000000;font-size:.40862px;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:0;stroke:url(#linearGradient22)"
-          xml:space="preserve">
-          <tspan x="0.68720961" y="5.1825452" style="fill:#000000;stroke-width:0;stroke:url(#linearGradient22)">**
-          </tspan>
-        </text>
-      </g>
-      <g id="modulus" transform="translate(-.0016355 .5)"
-        style="fill:url(#linearGradient190);stroke:url(#linearGradient23)">
-        <rect x="-.034579" y="4.2264" width="1.959" height=".5" rx=".24995" ry=".23826"
-          style="fill-opacity:.70417;fill:url(#linearGradient190);opacity:.83;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:.01;stroke:url(#linearGradient23)" />
-        <text id="MOD" transform="scale(.99761 1.0024)" x="0.72731346" y="4.6141076"
-          style="fill:#000000;font-size:.40862px;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:0;stroke:url(#linearGradient23)"
-          xml:space="preserve">
-          <tspan x="0.72731346" y="4.6141076" style="fill:#000000;stroke-width:0;stroke:url(#linearGradient23)">%
-          </tspan>
-        </text>
-      </g>
-      <g id="floor-division" transform="translate(-.0016355 .5)"
-        style="fill:url(#linearGradient193);stroke:url(#linearGradient24)">
-        <rect x="-.034579" y="3.7264" width="1.959" height=".5" rx=".24995" ry=".23826"
-          style="fill-opacity:.70417;fill:url(#linearGradient193);opacity:.83;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:.01;stroke:url(#linearGradient24)" />
-        <text id="FDIV" transform="scale(.99761 1.0024)" x="0.77160722" y="4.0917597"
-          style="fill:#000000;font-size:.40862px;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:0;stroke:url(#linearGradient24)"
-          xml:space="preserve">
-          <tspan x="0.77160722" y="4.0917597" style="fill:#000000;stroke-width:0;stroke:url(#linearGradient24)">//
-          </tspan>
-        </text>
-      </g>
-      <g id="division" transform="translate(-.0016355 .5)"
-        style="fill:url(#linearGradient196);stroke:url(#linearGradient25)">
-        <rect x="-.034579" y="3.2264" width="1.959" height=".5" rx=".24995" ry=".23826"
-          style="fill-opacity:.70417;fill:url(#linearGradient196);opacity:.83;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:.01;stroke:url(#linearGradient25)" />
-        <text id="DIV" transform="scale(.99761 1.0024)" x="0.86438471" y="3.5929558"
-          style="fill:#000000;font-size:.40862px;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:0;stroke:url(#linearGradient25)"
-          xml:space="preserve">
-          <tspan x="0.86438471" y="3.5929558" style="fill:#000000;stroke-width:0;stroke:url(#linearGradient25)">/
-          </tspan>
-        </text>
-      </g>
-      <g id="multiplication" transform="translate(-.0016355 .5)"
-        style="fill:url(#linearGradient199);stroke:url(#linearGradient26)">
-        <rect x="-.034579" y="2.7264" width="1.959" height=".5" rx=".24995" ry=".23826"
-          style="fill-opacity:.70417;fill:url(#linearGradient199);opacity:.83;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:.01;stroke:url(#linearGradient26)" />
-        <text id="MUL" transform="scale(.99761 1.0024)" x="0.81709808" y="3.1873281"
-          style="fill:#000000;font-size:.40862px;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:0;stroke:url(#linearGradient26)"
-          xml:space="preserve">
-          <tspan x="0.81709808" y="3.1873281" style="fill:#000000;stroke-width:0;stroke:url(#linearGradient26)">*
-          </tspan>
-        </text>
-      </g>
-      <g id="subtraction" transform="translate(-.0016355 .5)"
-        style="fill:url(#linearGradient202);stroke:url(#linearGradient27)">
-        <rect x="-.034579" y="2.2264" width="1.959" height=".5" rx=".24995" ry=".23826"
-          style="fill-opacity:.70417;fill:url(#linearGradient202);opacity:.83;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:.01;stroke:url(#linearGradient27)" />
-        <text id="SUB" transform="scale(.99761 1.0024)" x="0.85440862" y="2.6004353"
-          style="fill:#000000;font-size:.40862px;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:0;stroke:url(#linearGradient27)"
-          xml:space="preserve">
-          <tspan x="0.85440862" y="2.6004353" style="fill:#000000;stroke-width:0;stroke:url(#linearGradient27)">-
-          </tspan>
-        </text>
-      </g>
-      <g id="addition" transform="translate(-.0016355 .5)"
-        style="fill:url(#linearGradient156);stroke:url(#linearGradient28)">
-        <rect x="-.034579" y="1.7264" width="1.959" height=".5" rx=".24995" ry=".23826"
-          style="fill-opacity:.70417;fill:url(#linearGradient158);opacity:.83;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:.01;stroke:url(#linearGradient28)" />
-        <text id="ADD" transform="scale(.99761 1.0024)" x="0.7799871" y="2.1017308"
-          style="fill:#000000;font-size:.40862px;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:0;stroke:url(#linearGradient55)"
-          xml:space="preserve">
-          <tspan x="0.7799871" y="2.1017308" style="fill:#000000;stroke-width:0;stroke:url(#linearGradient55)">+</tspan>
-        </text>
-      </g>
-      <g id="select-open-bar" transform="translate(-.0016355)"
-        style="fill:url(#linearGradient157);stroke:url(#linearGradient28)">
-        <rect id="select-bar-open" x="-.034579" y="1.7264" width="1.959" height=".5" rx=".24995" ry=".23826"
-          style="fill-opacity:.70417;fill:url(#linearGradient157);opacity:.83;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:.01;stroke:url(#linearGradient28)" />
-        <text id="select-open-txt" transform="scale(.99761 1.0024)" x="0.31190974" y="2.124177"
-          style="fill:#000000;font-family:sans-serif;font-size:.40862px;font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:0;stroke:url(#linearGradient7)"
-          xml:space="preserve">
-          <tspan x="0.31190974" y="2.124177" style="stroke:url(#linearGradient7)">Select</tspan>
-        </text>
-      </g>
-    </g>
-  </g>
-  <g id="closed-layer" transform="matrix(1 0 0 1.0281 1.4374 .084149)">
-    <g transform="translate(-1.4499 -.081851)">
-      <path
-        d="m0.26711 0c-0.14 0-0.25 0.11-0.25 0.25v0.5c0 0.14 0.11 0.25 0.25 0.25h1.46c0.14 0 0.25-0.11 0.25-0.25v-0.5c0-0.14-0.11-0.25-0.25-0.25z"
-        fill="#80cbc4" opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" />
-    </g>
-    <g id="select-closed-bar" transform="matrix(1.0001 0 0 .95918 -1.3988 -1.4672)"
-      style="fill:url(#linearGradient157);stroke:url(#linearGradient28)">
-      <rect id="select-bar-closed" x="-.033579" y="1.7264" width="1.959" height=".5" rx=".24995" ry=".23826"
-        style="fill-opacity:.70417;fill:url(#linearGradient184);opacity:.83;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:.01;stroke:url(#linearGradient185)" />
-      <text id="select-closed-txt" transform="scale(.99761 1.0024)" x="0.31190974" y="2.124177"
-        style="fill:#000000;font-family:sans-serif;font-size:.40862px;font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:fill markers stroke;stroke-linecap:round;stroke-linejoin:round;stroke-width:0;stroke:url(#linearGradient7)"
-        xml:space="preserve">
-        <tspan x="0.31190974" y="2.124177" style="stroke:url(#linearGradient7)">Select</tspan>
-      </text>
+  <g
+     transform="matrix(1,0,0,1.0281,-0.01251714,0)"
+     id="arithmetic">
+    <path
+       d="m 0.26711,0 c -0.14,0 -0.25,0.11 -0.25,0.25 v 0.5 c 0,0.14 0.10997,0.22266999 0.24997,0.22266999 h 1.46 c 0.14,0 0.25003,-0.08267 0.25003,-0.22266999 v -0.5 c 0,-0.14 -0.11,-0.25 -0.25,-0.25 z"
+       fill="#80cbc4"
+       opacity="0.83"
+       stroke-width="0"
+       style="paint-order:fill markers stroke"
+       id="arithmetic-block"
+       sodipodi:nodetypes="sssssssss" />
+    <g
+       id="select-closed-bar"
+       transform="matrix(1.0001,0,0,0.95918,0.0511,-1.385349)"
+       style="fill:url(#linearGradient157);stroke:url(#linearGradient28)">
+      <rect
+         id="select-bar-closed"
+         x="-0.03318258"
+         y="1.7155842"
+         width="1.959"
+         height="0.5"
+         rx="0.24995001"
+         ry="0.23826"
+         style="opacity:0.83;fill:#000000;fill-opacity:0.24335378;stroke:url(#linearGradient185);stroke-width:0.01006956;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke;stroke-dasharray:none" />
+      <text
+         id="select-closed-txt"
+         transform="scale(0.99761,1.0024)"
+         x="0.31190974"
+         y="2.124177"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.40862px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:url(#linearGradient7);stroke-width:0;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+         xml:space="preserve"><tspan
+           sodipodi:role="line"
+           id="tspan20"
+           style="stroke:url(#linearGradient7)"
+           x="0.31190974"
+           y="2.124177">Select</tspan></text>
     </g>
   </g>
 </svg>

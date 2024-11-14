@@ -1,118 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>SVG Dropdown Example</title>
+  <style>
+    svg {
+      width: 100%;
+      height: auto;
+      max-width: 300px;
+    }
+
+    /* Styling for dropdown */
+    #dropdown-menu {
+      display: none;
+      position: absolute;
+      background-color: rgba(128, 203, 196, 0.83);
+      border: 1px solid #ccc;
+      font-size: 16px;
+      font-family: sans-serif;
+      z-index: 1;
+    }
+
+    #dropdown-menu div {
+      padding: 5px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    #dropdown-menu div:hover {
+      background-color: #b2dfdb;
+    }
+
+    #select-bar-container {
+      cursor: pointer;
+    }
+  </style>
 </head>
-<style>
-  .dropdown {
-    display: inline-block;
-  }
 
-  .dropdown button {
-    background-color: #3498db;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    cursor: pointer;
-    position: relative;
-  }
-
-  .dropdown a {
-    display: block;
-    color: black;
-    text-decoration: none;
-    padding: 10px 15px;
-  }
-
-  .dropdown .content {
-    display: none;
-    background-color: blanchedalmond;
-    position: absolute;
-    min-width: 100px;
-    box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.8);
-  }
-
-  .dropdown button:active {
-    background-color: #000;
-  }
-
-  .dropdown a:hover {
-    background-color: #f1f1f1;
-  }
-
-  .arrow {
-    margin-left: 10px;
-    font-size: 16px;
-    transition: transform 0.3s ease;
-    visibility: hidden;  /* Hide arrow by default */
-  }
-
-  .dropdown:hover .arrow {
-    visibility: visible;  /* Show arrow on hover */
-  }
-
-  .arrow.up {
-    transform: rotate(180deg);
-  }
-</style>
 <body>
-  <div class="dropdown">
-    <button id="dropdownButton">
-      Arithmetic 
-      <span id="arrow" class="arrow">&#9660;</span> <!-- Down arrow -->
-    </button>
-    <div class="content" id="dropdownContent">
-      <a href="#" onclick="setText('Addition')">Addition</a>
-      <a href="#" onclick="setText('Subtraction')">Subtraction</a>
-      <a href="#" onclick="setText('Multiplication')">Multiplication</a>
-      <a href="#" onclick="setText('Division')">Division</a>
-    </div>
+
+  <svg viewBox="0 0 1.9692 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+      <linearGradient id="linearGradient185" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
+        gradientTransform="translate(.0013967 -.010816)" gradientUnits="userSpaceOnUse">
+        <stop offset="0" />
+      </linearGradient>
+    </defs>
+    <g id="arithmetic" transform="matrix(1 0 0 1.0281 -.012517 0)">
+      <path id="arithmetic-block"
+        d="m0.26711 0c-0.14 0-0.25 0.11-0.25 0.25v0.5c0 0.14 0.10997 0.22267 0.24997 0.22267h1.46c0.14 0 0.25003-0.08267 0.25003-0.22267v-0.5c0-0.14-0.11-0.25-0.25-0.25z"
+        fill="#80cbc4" opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" />
+      <g id="select-bar-container" transform="matrix(1.0001 0 0 .95918 .0511 -1.3853)" stroke-linecap="round"
+        stroke-linejoin="round" onclick="toggleDropdown(event)">
+        <rect id="select-bar" x="-.033183" y="1.7156" width="1.959" height=".5" rx=".24995" ry=".23826"
+          fill-opacity=".24335" opacity=".83" stroke="url(#linearGradient185)" stroke-width=".01007"
+          style="paint-order:fill markers stroke" />
+        <text id="select-txt" itemid="select-text" x="0.98" y="1.9656" fill="#000000" font-family="sans-serif"
+          font-size="2.05%" stroke="url(#linearGradient7)" stroke-width="0" text-anchor="middle"
+          alignment-baseline="middle"
+          style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:fill markers stroke">
+          Select
+        </text>
+      </g>
+    </g>
+  </svg>
+
+  <!-- Dropdown menu -->
+  <div id="dropdown-menu">
+    <div onclick="selectOperator('Select')">Select</div>
+    <div onclick="selectOperator('+')">+</div>
+    <div onclick="selectOperator('-')">-</div>
+    <div onclick="selectOperator('/')">/</div>
+    <div onclick="selectOperator('*')">*</div>
+    <div onclick="selectOperator('%')">%</div>
+    <div onclick="selectOperator('**')">**</div>
+    <div onclick="selectOperator('//')">//</div>
   </div>
 
   <script>
-    document.getElementById('arrow').addEventListener('click', function(event) {
-      event.stopPropagation(); // Prevent event bubbling to button
-      toggleDropdown(); // Toggle dropdown when arrow is clicked
-    });
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    const selectBar = document.getElementById('select-bar');
 
-    function toggleDropdown() {
-      const content = document.getElementById('dropdownContent');
-      const arrow = document.getElementById('arrow');
-      
-      // Toggle the display of the dropdown content
-      if (content.style.display === 'block') {
-        content.style.display = 'none';
-        arrow.classList.remove('up');
+    // Function to toggle dropdown menu visibility
+    function toggleDropdown(event) {
+      const rect = selectBar.getBoundingClientRect();
+      dropdownMenu.style.left = `${rect.left}px`;
+      dropdownMenu.style.top = `${rect.bottom}px`;
+      dropdownMenu.style.width = `${rect.width}px`;
+      dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Function to select an operator and display it
+    function selectOperator(operator) {
+      const selectText = document.getElementById('select-txt');
+      selectText.textContent = operator;
+
+      // Set itemid based on the selected operator
+      if (operator === '+') {
+        selectText.setAttribute('itemid', "ADD");
+      } else if (operator === '-') {
+        selectText.setAttribute('itemid', "SUB");
+      } else if (operator === '/') {
+        selectText.setAttribute('itemid', "DIV");
+      } else if (operator === '*') {
+        selectText.setAttribute('itemid', "MUL");
+      } else if (operator === '%') {
+        selectText.setAttribute('itemid', "MOD");
+      } else if (operator === '**') {
+        selectText.setAttribute('itemid', "EXP");
+      } else if (operator === '//') {
+        selectText.setAttribute('itemid', "FLRDIV");
       } else {
-        content.style.display = 'block';
-        arrow.classList.add('up');
+        selectText.setAttribute('itemid', "select-text");
       }
+
+      dropdownMenu.style.display = 'none';
     }
 
-    function setText(text) {
-      // Update the button text
-      const button = document.getElementById('dropdownButton');
-      const arrow = document.getElementById('arrow');
-      button.innerHTML = text + ' ';
-      button.appendChild(arrow); // Keep the arrow after the text
 
-      // Hide the dropdown content and reset arrow
-      document.getElementById('dropdownContent').style.display = 'none';
-      arrow.classList.remove('up');
-    }
-
-    // Close the dropdown if clicking outside of it
-    document.addEventListener('click', function(event) {
-      const dropdown = document.querySelector('.dropdown');
-      const content = document.getElementById('dropdownContent');
-      const arrow = document.getElementById('arrow');
-      if (!dropdown.contains(event.target)) {
-        content.style.display = 'none';
-        arrow.classList.remove('up');
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('#select-bar-container') && !event.target.closest('#dropdown-menu')) {
+        dropdownMenu.style.display = 'none';
       }
     });
   </script>
+
 </body>
+
 </html>
