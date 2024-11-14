@@ -11,7 +11,12 @@ function newBlock(s) {
     const container = document.getElementById("box-container");
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
-    newBlock.id = "box_" + ++blockCounter;
+    newBlock.id = "box_" + ++blockCounter;  
+
+    newBlock.dataset.blockType = s;        // Set block type
+    newBlock.dataset.blockXValue = "4";     // Set block left value
+    newBlock.dataset.blockYValue = "5";    // Set block right value
+    newBlock.dataset.blockOperator = "<";  // Set block operator/comparator
 
     const svgImage = document.createElement("img");
     svgImage.width = 24;
@@ -26,10 +31,20 @@ function newBlock(s) {
         svgImage.src = "svg_files/Operator/equal_block.svg";
     } else if (s === "not_equal") {
         svgImage.src = "svg_files/Operator/not_equal_block.svg";
+    } 
+    // for control blocks, displays block data
+    else {
+        newBlock.textContent = "Type: " + newBlock.dataset.blockType;
+        newBlock.textContent += "\n" + newBlock.dataset.blockXValue + newBlock.dataset.blockOperator + newBlock.dataset.blockYValue;
+        newBlock.style.backgroundColor = 'purple';
+
     }
+   
 
     // Append the new block to the container
+    if (svgImage.src != ""){
     newBlock.appendChild(svgImage);
+    }    
     container.appendChild(newBlock);
 
     // Add event listeners
