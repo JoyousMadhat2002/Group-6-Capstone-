@@ -173,3 +173,28 @@ button {
     opacity: 1;
     visibility: visible;
 }
+
+    /* Styling for dropdown */
+    #dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: rgba(128, 203, 196, 0.83);
+        border: 1px solid #ccc;
+        font-size: 16px;
+        font-family: sans-serif;
+        z-index: 1;
+      }
+  
+      #dropdown-menu div {
+        padding: 5px;
+        cursor: pointer;
+        text-align: center;
+      }
+  
+      #dropdown-menu div:hover {
+        background-color: #b2dfdb;
+      }
+  
+      #select-bar-container {
+        cursor: pointer;
+      }
