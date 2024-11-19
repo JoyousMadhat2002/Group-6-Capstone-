@@ -365,3 +365,16 @@ document.addEventListener('click', (event) => {
         dropdownMenu.style.display = 'none';
     }
 });
+
+(function() {
+    const toolbox = {
+        kind: 'flyoutToolbox',
+        contents: [
+            {
+                kind: 'block',
+                type: 'operator_arithmetic',
+                
+            },
+        ]
+    };
+})();
