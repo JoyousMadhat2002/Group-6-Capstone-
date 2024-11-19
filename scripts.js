@@ -2,12 +2,18 @@
 newBlock(s, id) takes the name string from the button and creates a new element.
 The new element is added to the "container" in the Result-Container section.
 */
+
+
 let blockCounter = 0;
 let dragged = null;
 let highlightedBlock = null;
 
 
-function newBlock(s) {
+
+
+
+
+function newBlock(s, x, o, y) {
     const container = document.getElementById("box-container");
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
@@ -17,6 +23,14 @@ function newBlock(s) {
     newBlock.dataset.blockXValue = "4";     // Set block left value
     newBlock.dataset.blockYValue = "5";    // Set block right value
     newBlock.dataset.blockOperator = "<";  // Set block operator/comparator
+
+    newBlock.dataset.blockType = s; // Set block type
+    newBlock.dataset.blockXValue = x; // Set block left operand
+    newBlock.dataset.blockOperator = o; // Set block operator
+    newBlock.dataset.blockYValue = y; // Set block right operand
+
+    // Set block "depth". Future-proofed for when container is dynamic, will need an update function when block is moved
+    newBlock.dataset.blockDepth = Number(container.getAttribute("data-blockDepth")) + 1;
 
     const svgImage = document.createElement("img");
     svgImage.width = 24;
@@ -36,6 +50,8 @@ function newBlock(s) {
     else {
         newBlock.textContent = "Type: " + newBlock.dataset.blockType;
         newBlock.textContent += "\n" + newBlock.dataset.blockXValue + newBlock.dataset.blockOperator + newBlock.dataset.blockYValue;
+        newBlock.textContent += " Depth: " + newBlock.dataset.blockDepth;
+
         newBlock.style.backgroundColor = 'purple';
 
     }
@@ -55,6 +71,9 @@ function newBlock(s) {
     newBlock.addEventListener("dragover", dragOver);
     newBlock.addEventListener("drop", drop);
     newBlock.addEventListener("click", selectBlock);
+
+     // Get depth from container, increase by 1. Change to parent container in future!
+     newBlock.blockDepth  = Number(container.dataset.depth) + 1;
 
 }
 
@@ -155,12 +174,13 @@ boxes.forEach(box => {
     box.addEventListener("drop", drop);
 });
 
-const t = document.getElementById("pythontext"); // creating const for element to pull from
-ptext = t.value; // initializing variable.
+const pythonTextarea = document.getElementById("pythontext"); // creating const for element to pull from
+ptext = pythonTextarea.value; // initializing variable.
 
 // test function for storing textarea input as variable
-function StoreBlob() {
-    ptext = t.value;
+function StoreBlob(){
+    ptext = pythonTextarea.value;
+
     ptext = ptext.toString();
 }
 
@@ -168,21 +188,79 @@ function StoreBlob() {
 function PullBlob() {
     const blob = new Blob([ptext], { type: 'text/plain' })
     blob.text().then(text => {
-        t.value = text; // sends contents of blob to textarea
-    });
+
+    pythonTextarea.value = text; // sends contents of blob to textarea
+});
+
 
     // t.value = ptext; // less useful way to store information
+}
+
+
+const blockContainer = document.getElementById("box-container"); // Gets box container, could use as global variable?
+
+
+function blockToText() {
+    pythontext.value = ""; // Clear text area
+    let blockChildElements = blockContainer.children; // Assigns all children/blocks from box-container
+    
+    for (let i = 0; i < blockChildElements.length; i++) { // Loop through children/blocks to print to text area
+        for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++ ){
+            pythontext.value += "    ";
+        }
+
+        pythontext.value += blockChildElements[i].dataset.blockType;
+        pythontext.value += " ";
+        pythontext.value += blockChildElements[i].dataset.blockXValue;
+        pythontext.value += " ";
+        pythontext.value += blockChildElements[i].dataset.blockOperator;
+        pythontext.value += " ";
+        pythontext.value += blockChildElements[i].dataset.blockYValue;
+        pythontext.value += "\n";
+        console.log(blockChildElements[i]); 
+
+      }
+
+}
+
+// Function to convert text programming to block programming
+function textToBlock(){
+    let text = pythontext.value;
+
+    let lines = text.split("\n"); // Separate lines for parsing
+    // console.log(lines);
+
+    document.getElementById("box-container").innerHTML = ''; // Clear block container
+
+    let depthBuilder = ["box-container"]; //
+    let currDepth = 0;
+
+    for (let i = 0; i < lines.length; i++){
+        if(lines[i] != ""){
+            lines[i] = lines[i].trim();
+            // line = line.split(" ");
+
+            let tokens = lines[i].split(" ");
+            
+            let a = tokens[0];
+            let b = tokens[1];
+            let c = tokens[2];
+            let d = tokens[3];
+            let builtBlock = newBlock(a, b, c, d);
+        }
+    }
 }
 
 function toggleView() {
     var x = document.getElementById("python-code-result");
     var y = document.getElementById("box-container");
-    if (x.style.display === "none") {
-        x.style.display = "block";
-        y.style.display = "none"
-    } else {
+    if (x.style.display === "block") {
         x.style.display = "none";
         y.style.display = "block"
+        
+    } else {
+        x.style.display = "block";
+        y.style.display = "none"
     }
 }
 
