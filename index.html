@@ -15,10 +15,10 @@
             <span class="logo">Pencil-PythonCode</span>
         </div>
         <div class="nav-right">
-            <button>Save</button>
-            <button>Share</button>
-            <button>Log in</button>
-            <button>Guide</button>
+            <button id="saveButton">Save</button>
+            <button id="shareButton">Share</button>
+            <button id="loginButton">Log in</button>
+            <button id="guideButton">Guide</button>
         </div>
     </div>
 
@@ -30,6 +30,7 @@
             
 
             <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
+
             <p><button id="createBoxButton" name="if" onclick="newBlock(name, '5', '<', '6')">If block</blockquote></blockquote></button></p>
             <p><button id="createBoxButton" name="for" onclick="newBlock(name, '1', '..', '6')">For block</button></p>
             <p><button id="createBoxButton" name="while" onclick="newBlock(name, '5', '<', '6')">While block</button></p>
@@ -37,6 +38,9 @@
             <p><button id="createBoxButton" name="ttb" onclick="textToBlock()">ttb</button></p>
             <button onclick="toggleView()">toggle block/python view</button>
             
+
+               <p><button id="createBoxButton" name="operator" onclick="insertSVG()">Create operator</button></p>
+
         </div>
 
         <div class="result-container">
@@ -53,7 +57,7 @@
 
             <!-- Container added to test, used as reference for where to place block objects -->
             <div id="box-container" data-blockDepth=0>
-                <!-- <div id="svg-container"></div> -->
+                <div id="svg-container"></div>
             </div>
             
             
