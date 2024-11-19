@@ -35,8 +35,6 @@ function newBlock(s) {
         svgImage.src = "svg_files/Operator/equal_block.svg";
     } else if (s === "not_equal") {
         svgImage.src = "svg_files/Operator/not_equal_block.svg";
-<<<<<<< Updated upstream
-=======
     } 
     // for control blocks, displays block data
     else {
@@ -45,7 +43,6 @@ function newBlock(s) {
         newBlock.textContent += " Depth: " + newBlock.dataset.blockDepth;
         newBlock.style.backgroundColor = 'purple';
 
->>>>>>> Stashed changes
     }
 
     // Append the new block to the container
@@ -237,26 +234,6 @@ function toggleView() {
         x.style.display = "block";
         y.style.display = "none"
     }
-}
-
-
-const blockContainer = document.getElementById("box-container"); // Gets box container, could use as global variable?
-
-
-function blockToText() {
-    pythonTextarea.value = ""; // Clear text area
-    let blockChildElements = blockContainer.children; // Assigns all children/blocks from box-container
-    
-    for (let i = 0; i < blockChildElements.length; i++) { // Loop through children/blocks to print to text area
-        for (let j = 0; j <  blockChildElements[i].blockDepth; j++ ){
-        pythonTextarea.value += "    ";
-        }
-
-        pythonTextarea.value += blockChildElements[i].id;
-        pythonTextarea.value += "\n";
-        console.log(blockChildElements[i]); 
-      }
-
 }
 
 
