@@ -27,29 +27,16 @@
             <div class="block-code"></div>
             <div class="python-code"></div>
             <!-- Block Area -->
-            <button onclick="toggleView()">toggle block/python view</button>
+            
 
             <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
-            <p><button id="createBoxButton" name="if" onclick="newBlock(name)">If block</blockquote></blockquote></button></p>
-            <p><button id="createBoxButton" name="for" onclick="newBlock(name)">For block</button></p>
-            <p><button id="createBoxButton" name="while" onclick="newBlock(name)">While block</button></p>
+            <p><button id="createBoxButton" name="if" onclick="newBlock(name, '5', '<', '6')">If block</blockquote></blockquote></button></p>
+            <p><button id="createBoxButton" name="for" onclick="newBlock(name, '1', '..', '6')">For block</button></p>
+            <p><button id="createBoxButton" name="while" onclick="newBlock(name, '5', '<', '6')">While block</button></p>
             <p><button id="createBoxButton" name="btt" onclick="blockToText()">btt</button></p>
             <p><button id="createBoxButton" name="ttb" onclick="textToBlock()">ttb</button></p>
+            <button onclick="toggleView()">toggle block/python view</button>
             
-            Block buttons
-            <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
-            <p><button id="createBoxButton" name="greater_than" onclick="newBlock(name)">Create greater_than</button></p>
-            <p><button id="createBoxButton" name="less_than" onclick="newBlock(name)">Create less than</button></p>
-            <p><button id="createBoxButton" name="equal" onclick="newBlock(name)">Create equal</button></p>
-            <p><button id="createBoxButton" name="not_equal" onclick="newBlock(name)">Create not equal</button></p>
-        
-        </br></br>
-
-        <div><p>Test Buttons</p>
-            <p><button onclick="toggleView()">Toggle block/python view</button></p>
-            <p><button onclick="blockToText()">Block to text</button></p>
-        </div>
-
         </div>
 
         <div class="result-container">
@@ -65,13 +52,8 @@
             <!-- Code Area -->
 
             <!-- Container added to test, used as reference for where to place block objects -->
-<<<<<<< Updated upstream
-            <div id="box-container" data-depth=0>
-                
-=======
             <div id="box-container" data-blockDepth=0>
                 <!-- <div id="svg-container"></div> -->
->>>>>>> Stashed changes
             </div>
             
             

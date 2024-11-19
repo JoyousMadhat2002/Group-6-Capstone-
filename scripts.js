@@ -13,11 +13,16 @@ let highlightedBlock = null;
 
 
 
-function newBlock(s) {
+function newBlock(s, x, o, y) {
     const container = document.getElementById("box-container");
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
     newBlock.id = "box_" + ++blockCounter;
+
+    newBlock.dataset.blockType = s; // Set block type
+    newBlock.dataset.blockXValue = x; // Set block left operand
+    newBlock.dataset.blockOperator = o; // Set block operator
+    newBlock.dataset.blockYValue = y; // Set block right operand
 
     // Set block "depth". Future-proofed for when container is dynamic, will need an update function when block is moved
     newBlock.dataset.blockDepth = Number(container.getAttribute("data-blockDepth")) + 1;
@@ -203,22 +208,35 @@ function blockToText() {
         pythontext.value += blockChildElements[i].dataset.blockYValue;
         pythontext.value += "\n";
         console.log(blockChildElements[i]); 
+
       }
 
 }
 
+// Function to convert text programming to block programming
 function textToBlock(){
     let text = pythontext.value;
 
-    let lines = text.split("\n");
+    let lines = text.split("\n"); // Separate lines for parsing
+    // console.log(lines);
 
-    let depthBuilder = ["box-container"];
+    document.getElementById("box-container").innerHTML = ''; // Clear block container
+
+    let depthBuilder = ["box-container"]; //
     let currDepth = 0;
 
-    for (line of lines){
-        if(line != ""){
+    for (let i = 0; i < lines.length; i++){
+        if(lines[i] != ""){
+            lines[i] = lines[i].trim();
+            // line = line.split(" ");
+
+            let tokens = lines[i].split(" ");
             
-            newBlock(line);
+            let a = tokens[0];
+            let b = tokens[1];
+            let c = tokens[2];
+            let d = tokens[3];
+            let builtBlock = newBlock(a, b, c, d);
         }
     }
 }
