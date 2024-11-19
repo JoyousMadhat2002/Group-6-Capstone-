@@ -19,6 +19,9 @@ function newBlock(s) {
     newBlock.classList.add("box");
     newBlock.id = "box_" + ++blockCounter;
 
+    // Set block "depth". Future-proofed for when container is dynamic, will need an update function when block is moved
+    newBlock.dataset.blockDepth = Number(container.getAttribute("data-blockDepth")) + 1;
+
     const svgImage = document.createElement("img");
     svgImage.width = 24;
     svgImage.height = 24; 
@@ -32,6 +35,17 @@ function newBlock(s) {
         svgImage.src = "svg_files/Operator/equal_block.svg";
     } else if (s === "not_equal") {
         svgImage.src = "svg_files/Operator/not_equal_block.svg";
+<<<<<<< Updated upstream
+=======
+    } 
+    // for control blocks, displays block data
+    else {
+        newBlock.textContent = "Type: " + newBlock.dataset.blockType;
+        newBlock.textContent += "\n" + newBlock.dataset.blockXValue + newBlock.dataset.blockOperator + newBlock.dataset.blockYValue;
+        newBlock.textContent += " Depth: " + newBlock.dataset.blockDepth;
+        newBlock.style.backgroundColor = 'purple';
+
+>>>>>>> Stashed changes
     }
 
     // Append the new block to the container
@@ -169,15 +183,59 @@ function PullBlob(){
     // t.value = ptext; // less useful way to store information
 }
 
+
+
+const blockContainer = document.getElementById("box-container"); // Gets box container, could use as global variable?
+
+
+function blockToText() {
+    pythontext.value = ""; // Clear text area
+    let blockChildElements = blockContainer.children; // Assigns all children/blocks from box-container
+    
+    for (let i = 0; i < blockChildElements.length; i++) { // Loop through children/blocks to print to text area
+        for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++ ){
+            pythontext.value += "    ";
+        }
+
+        pythontext.value += blockChildElements[i].dataset.blockType;
+        pythontext.value += " ";
+        pythontext.value += blockChildElements[i].dataset.blockXValue;
+        pythontext.value += " ";
+        pythontext.value += blockChildElements[i].dataset.blockOperator;
+        pythontext.value += " ";
+        pythontext.value += blockChildElements[i].dataset.blockYValue;
+        pythontext.value += "\n";
+        console.log(blockChildElements[i]); 
+      }
+
+}
+
+function textToBlock(){
+    let text = pythontext.value;
+
+    let lines = text.split("\n");
+
+    let depthBuilder = ["box-container"];
+    let currDepth = 0;
+
+    for (line of lines){
+        if(line != ""){
+            
+            newBlock(line);
+        }
+    }
+}
+
 function toggleView() {
     var x = document.getElementById("python-code-result");
     var y = document.getElementById("box-container");
-    if (x.style.display === "none") {
-        x.style.display = "block";
-        y.style.display = "none"
-    } else {
+    if (x.style.display === "block") {
         x.style.display = "none";
         y.style.display = "block"
+        
+    } else {
+        x.style.display = "block";
+        y.style.display = "none"
     }
 }
 
