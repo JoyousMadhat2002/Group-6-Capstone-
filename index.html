@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Pencil-PythonCode</title>
+    <link rel="stylesheet" href="https://unpkg.com/blockly/blockly.min.css">
+
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
 </head>
 
 <body>
@@ -21,46 +24,20 @@
             <button id="guideButton">Guide</button>
         </div>
     </div>
+    <input type="checkbox" class="toggle" id="Code-View" onclick="toggleView(this)">
+    <label for="Code-View" data-checked="Code View" data-unchecked="Block View"></label>
 
     <div class="body-container">
-        <div class="code-container">
-            <div class="block-code"></div>
-            <div class="python-code"></div>
-            <!-- Block Area -->
-            
-
-            <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
-
-            <p><button id="createBoxButton" name="if" onclick="newBlock(name, '5', '<', '6')">If block</blockquote></blockquote></button></p>
-            <p><button id="createBoxButton" name="for" onclick="newBlock(name, '1', '..', '6')">For block</button></p>
-            <p><button id="createBoxButton" name="while" onclick="newBlock(name, '5', '<', '6')">While block</button></p>
-            <p><button id="createBoxButton" name="btt" onclick="blockToText()">btt</button></p>
-            <p><button id="createBoxButton" name="ttb" onclick="textToBlock()">ttb</button></p>
-            <button onclick="toggleView()">toggle block/python view</button>
-            
-
-               <p><button id="createBoxButton" name="operator" onclick="insertSVG()">Create operator</button></p>
-
-        </div>
-
+        <div class="code-container" id="blocklyDiv"></div>
         <div class="result-container">
-            <div class="block-code-result">
-                
-            </div>
+
             <div class="python-code-result" id="python-code-result">
                 <!-- Python text input area -->
-                <button type = "button" onclick = "StoreBlob();">Store text</button>
-                <button type = "button" onclick = "PullBlob();">Pull text</button>
+                <button type="button" onclick="StoreBlob();">Store text</button>
+                <button type="button" onclick="PullBlob();">Pull text</button>
                 <textarea id="pythontext" class="textarea"></textarea>
             </div>
-            <!-- Code Area -->
 
-            <!-- Container added to test, used as reference for where to place block objects -->
-            <div id="box-container" data-blockDepth=0>
-                <div id="svg-container"></div>
-            </div>
-            
-            
         </div>
 
         <div class="output-graph">
@@ -70,14 +47,11 @@
             <button id="run-code-btn" class="run-code-btn" data-tooltip="Run Program (Ctrl+Enter)">
                 <i class="icon-play"></i> <!-- Icon for play -->
             </button>
-            <!-- Console log --> 
+            <!-- Console log -->
             <div id="console-output" class="console-output"></div>
         </div>
     </div>
-    </div>
-    </div>
 
-    <!-- link to script file for functions -->
     <script src="/scripts.js"></script>
 </body>
 

@@ -8,165 +8,6 @@ let blockCounter = 0;
 let dragged = null;
 let highlightedBlock = null;
 
-
-
-
-
-
-function newBlock(s, x, o, y) {
-    const container = document.getElementById("box-container");
-    const newBlock = document.createElement("div");
-    newBlock.classList.add("box");
-    newBlock.id = "box_" + ++blockCounter;  
-
-    newBlock.dataset.blockType = s;        // Set block type
-    newBlock.dataset.blockXValue = "4";     // Set block left value
-    newBlock.dataset.blockYValue = "5";    // Set block right value
-    newBlock.dataset.blockOperator = "<";  // Set block operator/comparator
-
-    newBlock.dataset.blockType = s; // Set block type
-    newBlock.dataset.blockXValue = x; // Set block left operand
-    newBlock.dataset.blockOperator = o; // Set block operator
-    newBlock.dataset.blockYValue = y; // Set block right operand
-
-    // Set block "depth". Future-proofed for when container is dynamic, will need an update function when block is moved
-    newBlock.dataset.blockDepth = Number(container.getAttribute("data-blockDepth")) + 1;
-
-    const svgImage = document.createElement("img");
-    svgImage.width = 24;
-    svgImage.height = 24;
-
-
-    if (s === "greater_than") {
-        svgImage.src = "svg_files/Operator/inequality_greater_than_block.svg";
-    } else if (s === "less_than") {
-        svgImage.src = "svg_files/Operator/inequality_less_than_block.svg";
-    } else if (s === "equal") {
-        svgImage.src = "svg_files/Operator/equal_block.svg";
-    } else if (s === "not_equal") {
-        svgImage.src = "svg_files/Operator/not_equal_block.svg";
-    } 
-    // for control blocks, displays block data
-    else {
-        newBlock.textContent = "Type: " + newBlock.dataset.blockType;
-        newBlock.textContent += "\n" + newBlock.dataset.blockXValue + newBlock.dataset.blockOperator + newBlock.dataset.blockYValue;
-        newBlock.textContent += " Depth: " + newBlock.dataset.blockDepth;
-
-        newBlock.style.backgroundColor = 'purple';
-
-    }
-   
-
-
-
-    // Append the new block to the container
-    if (svgImage.src != ""){
-    newBlock.appendChild(svgImage);
-    }    
-    container.appendChild(newBlock);
-
-    // Add event listeners
-    newBlock.draggable = true;
-    newBlock.addEventListener("dragstart", dragStart);
-    newBlock.addEventListener("dragover", dragOver);
-    newBlock.addEventListener("drop", drop);
-    newBlock.addEventListener("click", selectBlock);
-
-     // Get depth from container, increase by 1. Change to parent container in future!
-     newBlock.blockDepth  = Number(container.dataset.depth) + 1;
-
-}
-
-function dragStart(event) {
-    // Ensure the dragged element is the box container itself, not just the SVG img
-    dragged = event.target.closest(".box");
-
-    if (dragged) {
-        event.dataTransfer.effectAllowed = 'move';
-    }
-}
-
-function dragOver(event) {
-    event.preventDefault();
-    const targetBlock = event.target.closest(".box");
-    if (targetBlock) {
-        targetBlock.classList.add('drop-target');
-    }
-}
-
-function drop(event) {
-    event.preventDefault();
-
-    if (dragged) {
-        const targetBlock = event.target.closest(".box");
-        if (targetBlock) {
-            targetBlock.classList.remove('drop-target');
-            targetBlock.parentNode.insertBefore(dragged, targetBlock);
-        } else if (event.target.id === "box-container") {
-            event.target.appendChild(dragged);
-        }
-
-        dragged = null;
-    }
-}
-
-// Function to delete a block by dragging to code-container (left side)
-const codeContainer = document.querySelector(".code-container");
-
-codeContainer.addEventListener("dragover", function (event) {
-    event.preventDefault(); // Allow dropping
-});
-codeContainer.addEventListener("drop", function (event) {
-    event.preventDefault();
-    if (dragged) {
-        dragged.remove(); // Delete the dragged block
-        dragged = null; // Reset the dragged element
-    }
-});
-document.addEventListener('dragleave', function (event) {
-    const targetBlock = event.target.closest(".box");
-    if (targetBlock) {
-        targetBlock.classList.remove('drop-target');
-    }
-});
-
-// Function to select a block and add highlight
-function selectBlock(event) {
-    // Check if the clicked element is an image inside a block
-    const targetBlock = event.target.closest(".box");
-
-    if (!targetBlock) return; // If no block is found, exit
-
-    // Clear previous selection if a block is already highlighted
-    if (highlightedBlock) {
-        highlightedBlock.classList.remove("selected");
-    }
-
-    // Mark clicked block as highlighted
-    highlightedBlock = targetBlock;
-    highlightedBlock.classList.add("selected");
-
-    // Prevent click event from being repeated multiple times
-    event.stopPropagation();
-}
-
-// Event listener to deselect block when clicking outside
-document.addEventListener("click", function (event) {
-    if (highlightedBlock && !highlightedBlock.contains(event.target)) {
-        // Remove highlight and deselect the block
-        highlightedBlock.classList.remove("selected");
-        highlightedBlock = null;
-    }
-});
-
-// Event listener to delete block when block is highlighted and "Delete" key is pressed
-document.addEventListener("keydown", function (event) {
-    if (event.key === "Delete" && highlightedBlock) {
-        highlightedBlock.remove(); // Delete highlighted block
-        highlightedBlock = null; // Reset highlighted block
-    }
-});
-
 const boxes = document.querySelectorAll(".box");
 boxes.forEach(box => {
     box.addEventListener("dragstart", dragStart);
@@ -178,7 +19,7 @@ const pythonTextarea = document.getElementById("pythontext"); // creating const 
 ptext = pythonTextarea.value; // initializing variable.
 
 // test function for storing textarea input as variable
-function StoreBlob(){
+function StoreBlob() {
     ptext = pythonTextarea.value;
 
     ptext = ptext.toString();
@@ -189,8 +30,8 @@ function PullBlob() {
     const blob = new Blob([ptext], { type: 'text/plain' })
     blob.text().then(text => {
 
-    pythonTextarea.value = text; // sends contents of blob to textarea
-});
+        pythonTextarea.value = text; // sends contents of blob to textarea
+    });
 
 
     // t.value = ptext; // less useful way to store information
@@ -203,9 +44,9 @@ const blockContainer = document.getElementById("box-container"); // Gets box con
 function blockToText() {
     pythontext.value = ""; // Clear text area
     let blockChildElements = blockContainer.children; // Assigns all children/blocks from box-container
-    
+
     for (let i = 0; i < blockChildElements.length; i++) { // Loop through children/blocks to print to text area
-        for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++ ){
+        for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
             pythontext.value += "    ";
         }
 
@@ -217,14 +58,14 @@ function blockToText() {
         pythontext.value += " ";
         pythontext.value += blockChildElements[i].dataset.blockYValue;
         pythontext.value += "\n";
-        console.log(blockChildElements[i]); 
+        console.log(blockChildElements[i]);
 
-      }
+    }
 
 }
 
 // Function to convert text programming to block programming
-function textToBlock(){
+function textToBlock() {
     let text = pythontext.value;
 
     let lines = text.split("\n"); // Separate lines for parsing
@@ -235,13 +76,13 @@ function textToBlock(){
     let depthBuilder = ["box-container"]; //
     let currDepth = 0;
 
-    for (let i = 0; i < lines.length; i++){
-        if(lines[i] != ""){
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i] != "") {
             lines[i] = lines[i].trim();
             // line = line.split(" ");
 
             let tokens = lines[i].split(" ");
-            
+
             let a = tokens[0];
             let b = tokens[1];
             let c = tokens[2];
@@ -257,7 +98,7 @@ function toggleView() {
     if (x.style.display === "block") {
         x.style.display = "none";
         y.style.display = "block"
-        
+
     } else {
         x.style.display = "block";
         y.style.display = "none"
@@ -346,115 +187,105 @@ saveButton.addEventListener("click", function () {
 });
 
 
-// Dropdown menu functionality for the block
-const dropdownMenu = document.createElement('div');
-dropdownMenu.id = 'dropdown-menu';
+// Define the toolbox JSON structure
+const toolbox = {
+    "kind": "categoryToolbox",
+    "contents": [
+        {
+            "kind": "category",
+            "name": "Logic",
+            "colour": "210",
+            "contents": [
+                { "kind": "block", "type": "controls_if" },
+                { "kind": "block", "type": "logic_compare" },
+                { "kind": "block", "type": "logic_operation" },
+                { "kind": "block", "type": "logic_negate" },
+                { "kind": "block", "type": "logic_boolean" },
+                { "kind": "block", "type": "logic_null" },
+                { "kind": "block", "type": "logic_ternary" }
+            ]
+        },
+        {
+            "kind": "category",
+            "name": "Loops",
+            "colour": "120",
+            "contents": [
+                { "kind": "block", "type": "controls_repeat_ext" },
+                { "kind": "block", "type": "controls_whileUntil" },
+                { "kind": "block", "type": "controls_for" },
+                { "kind": "block", "type": "controls_forEach" },
+                { "kind": "block", "type": "controls_flow_statements" }
+            ]
+        },
+        {
+            "kind": "category",
+            "name": "Math",
+            "colour": "230",
+            "contents": [
+                { "kind": "block", "type": "math_number" },
+                { "kind": "block", "type": "math_arithmetic" },
+                { "kind": "block", "type": "math_single" },
+                { "kind": "block", "type": "math_trig" },
+                { "kind": "block", "type": "math_constant" },
+                { "kind": "block", "type": "math_number_property" },
+                { "kind": "block", "type": "math_round" },
+                { "kind": "block", "type": "math_on_list" },
+                { "kind": "block", "type": "math_modulo" },
+                { "kind": "block", "type": "math_constrain" },
+                { "kind": "block", "type": "math_random_int" },
+                { "kind": "block", "type": "math_random_float" }
+            ]
+        },
+        {
+            "kind": "category",
+            "name": "Text",
+            "colour": "160",
+            "contents": [
+                { "kind": "block", "type": "text" },
+                { "kind": "block", "type": "text_join" },
+                { "kind": "block", "type": "text_append" },
+                { "kind": "block", "type": "text_length" },
+                { "kind": "block", "type": "text_isEmpty" },
+                { "kind": "block", "type": "text_indexOf" },
+                { "kind": "block", "type": "text_charAt" },
+                { "kind": "block", "type": "text_getSubstring" },
+                { "kind": "block", "type": "text_changeCase" },
+                { "kind": "block", "type": "text_trim" },
+                { "kind": "block", "type": "text_print" },
+                { "kind": "block", "type": "text_prompt_ext" }
+            ]
+        },
+        {
+            "kind": "category",
+            "name": "Lists",
+            "colour": "260",
+            "contents": [
+                { "kind": "block", "type": "lists_create_empty" },
+                { "kind": "block", "type": "lists_create_with" },
+                { "kind": "block", "type": "lists_repeat" },
+                { "kind": "block", "type": "lists_length" },
+                { "kind": "block", "type": "lists_isEmpty" },
+                { "kind": "block", "type": "lists_indexOf" },
+                { "kind": "block", "type": "lists_getIndex" },
+                { "kind": "block", "type": "lists_setIndex" },
+                { "kind": "block", "type": "lists_getSublist" },
+                { "kind": "block", "type": "lists_split" },
+                { "kind": "block", "type": "lists_sort" }
+            ]
+        },
+        {
+            "kind": "category",
+            "name": "Variables",
+            "colour": "330",
+            "custom": "VARIABLE"
+        },
+        {
+            "kind": "category",
+            "name": "Functions",
+            "colour": "290",
+            "custom": "PROCEDURE"
+        }
+    ]
+};
 
-const operators = ['Select', '+', '-', '/', '*', '%', '**', '//'];
-
-operators.forEach(operator => {
-    const item = document.createElement('div');
-    item.className = 'dropdown-item';
-    item.textContent = operator;
-    item.onclick = () => selectOperator(operator);
-    dropdownMenu.appendChild(item);
-});
-
-document.body.appendChild(dropdownMenu);
-
-// Function to insert SVG into the container
-//The text element causes problems so it is commented out
-
-function insertSVG() {
-    const svgContainer = document.getElementById('svg-container');
-    svgContainer.innerHTML = `
-        <div id="svg-block" class="box" draggable="true" ondragstart="dragStart(event)">
-            <svg version="1.1" viewBox="0 0 7 3" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="linearGradient185" x1="-.039579" x2="1.9294" y1="1.9764" y2="1.9764"
-                    gradientTransform="translate(.0013967 -.010816)" gradientUnits="userSpaceOnUse">
-                    <stop offset="0" />
-                    </linearGradient>
-                    <linearGradient id="linearGradient4" x1=".505" x2="2.025" y1="1.5" y2="1.5" 
-                        gradientUnits="userSpaceOnUse">
-                        <stop offset="0" />
-                    </linearGradient>
-                </defs>
-                <g id="operator">
-                    <g id="arithmetic" transform="matrix(1 0 0 1.0281 2.5029 1)">
-                        <path id="arithmetic-block"
-                            d="m0.26711 0c-0.14 0-0.25 0.11-0.25 0.25v0.5c0 0.14 0.10997 0.22267 0.24997 0.22267h1.46c0.14 0 0.25003-0.08267 0.25003-0.22267v-0.5c0-0.14-0.11-0.25-0.25-0.25z"
-                            fill="#80cbc4" opacity=".83" stroke-width="0" style="paint-order:fill markers stroke" />
-                        <g id="select-bar-container" transform="matrix(1.0001 0 0 .95918 .0511 -1.3853)" stroke-linecap="round"
-                            stroke-linejoin="round" onclick="toggleDropdown(event)">
-                            <rect id="select-bar" x="-.033183" y="1.7156" width="1.9588" height=".5" rx=".24995" ry=".23826"
-                                fill-opacity=".24335" opacity=".83" stroke="url(#linearGradient185)" stroke-width=".01007"
-                                style="paint-order:fill markers stroke" />
-                            <text id="select-txt" x="0.98000002" y="1.9656" alignment-baseline="middle" fill="#000000"
-                                font-family="sans-serif" font-size="2.05%" stroke="url(#linearGradient7)" stroke-width="0"
-                                text-anchor="middle"
-                                style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal;paint-order:fill markers stroke"
-                                itemid="select-text">Select</text>
-                        </g>
-                    </g>
-                    <g id="operator" stroke-width=".094488">
-                        <g id="left-group" stroke-width=".094488">
-                            <path id="left-block"
-                                d="m0.755 0.5c-0.14 0-0.25 0.11-0.25 0.25v1.5c0 0.14 0.11 0.25 0.25 0.25h1.02c0.14 0 0.25-0.11 0.25-0.25v-1.5c0-0.14-0.11-0.25-0.25-0.25z"
-                                fill="none" stroke="url(#linearGradient4)" />
-
-                            <!--<text transform="translate(-.0055243 .13258)" fill="#000000" font-family="sans-serif" font-size="1.5337px" -->
-                            <!--    style="shape-inside:url(#rect6);shape-padding:0;white-space:pre" xml:space="preserve">  -->
-                            <!--    <tspan x="0.75585938" y="1.8992684">E</tspan>  -->
-                            <!--</text> -->
-                        </g>
-
-                        <g id="right-group" stroke-width=".094488">
-                            <path id="right-block"
-                                d="m5.23 0.5c-0.14 0-0.25 0.11-0.25 0.25v1.5c0 0.14 0.11 0.25 0.25 0.25h1.02c0.14 0 0.25-0.11 0.25-0.25v-1.5c0-0.14-0.11-0.25-0.25-0.25z"
-                                fill="none" stroke="url(#linearGradient4)"/>
-                        <!--    <text transform="translate(4.4691 .1823)" fill="#000000" font-family="sans-serif" font-size="1.5337px" -->
-                        <!--        style="shape-inside:url(#rect6);shape-padding:0;white-space:pre" xml:space="preserve">  -->
-                        <!--        <tspan x="0.75585938" y="1.8992684">E</tspan>   -->
-                        <!--    </text> -->
-                        </g>
-
-                        <path id="operator-block"
-                            d="m0.25 0c-0.14 0-0.25 0.11-0.25 0.25v2.49c0 0.14 0.12 0.26 0.26 0.26h6.49c0.14 0 0.25-0.11 0.25-0.25v-2.5c0-0.14-0.11-0.25-0.25-0.25zm0.51 0.5h1.01c0.14 0 0.25 0.11 0.25 0.25v1.5c0 0.14-0.11 0.25-0.25 0.25h-1.01c-0.14 0-0.25-0.11-0.25-0.25v-1.5c0-0.14 0.11-0.25 0.25-0.25zm4.47 0h1.02c0.14 0 0.25 0.11 0.25 0.25v1.5c0 0.14-0.11 0.25-0.25 0.25h-1.02c-0.14 0-0.25-0.11-0.25-0.25v-1.5c0-0.14 0.11-0.25 0.25-0.25zm-2.46 0.5h1.46c0.14 0 0.25 0.11 0.25 0.25v0.5c0 0.14-0.11 0.25-0.25 0.25h-1.46c-0.14 0-0.25-0.11-0.25-0.25v-0.5c0-0.14 0.11-0.25 0.25-0.25z"
-                            fill="#c6e1a6" />
-                    </g>    
-                </g>
-            </svg>
-        </div>
-      `;
-}
-
-function toggleDropdown(event) {
-    const rect = document.getElementById('select-bar').getBoundingClientRect();
-    dropdownMenu.style.left = `${rect.left}px`;
-    dropdownMenu.style.top = `${rect.bottom}px`;
-    dropdownMenu.style.width = `${rect.width}px`;
-    dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-}
-
-function selectOperator(operator) {
-    const selectText = document.getElementById('select-txt');
-    selectText.textContent = operator;
-
-    if (operator === '+') selectText.setAttribute('itemid', "ADD");
-    else if (operator === '-') selectText.setAttribute('itemid', "SUB");
-    else if (operator === '/') selectText.setAttribute('itemid', "DIV");
-    else if (operator === '*') selectText.setAttribute('itemid', "MUL");
-    else if (operator === '%') selectText.setAttribute('itemid', "MOD");
-    else if (operator === '**') selectText.setAttribute('itemid', "EXP");
-    else if (operator === '//') selectText.setAttribute('itemid', "FLRDIV");
-    else selectText.setAttribute('itemid', "select-text");
-
-    dropdownMenu.style.display = 'none';
-}
-
-document.addEventListener('click', (event) => {
-    if (!event.target.closest('#select-bar-container') && !event.target.closest('#dropdown-menu')) {
-        dropdownMenu.style.display = 'none';
-    }
-});
+Blockly.inject('blocklyDiv', { toolbox });
