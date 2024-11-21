@@ -32,8 +32,6 @@ function PullBlob() {
 
         pythonTextarea.value = text; // sends contents of blob to textarea
     });
-
-
     // t.value = ptext; // less useful way to store information
 }
 
@@ -432,3 +430,9 @@ const toolbox = {
 };
 
 Blockly.inject('blocklyDiv', { toolbox });
+
+function showCode() {
+    const workspace = Blockly.getMainWorkspace();
+    const code = Blockly.JavaScript.workspaceToCode(workspace);
+    document.getElementById('pythontext').value = code;
+}

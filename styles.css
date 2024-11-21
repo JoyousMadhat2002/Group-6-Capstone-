@@ -204,3 +204,8 @@ button {
     opacity: 1;
     visibility: visible;
 }
+
+#blocklyDiv {
+    margin-bottom: 5px; 
+    
+}

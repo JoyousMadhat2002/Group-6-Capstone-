@@ -24,19 +24,24 @@
             <button id="guideButton">Guide</button>
         </div>
     </div>
-    <input type="checkbox" class="toggle" id="Code-View" onclick="toggleView(this)">
+    <!--<input type="checkbox" class="toggle" id="Code-View" onclick="toggleView(this)">
     <label for="Code-View" data-checked="Code View" data-unchecked="Block View"></label>
-
+    -->
     <div class="body-container">
         <div class="code-container" id="blocklyDiv"></div>
         <div class="result-container">
-
+            <button onclick="showCode()">Show Code</button>
+            <button type="button" onclick="StoreBlob();">Store text</button>
+            <button type="button" onclick="PullBlob();">Pull text</button>
+            <textarea id="pythontext" class="textarea"></textarea>
+            <!--
             <div class="python-code-result" id="python-code-result">
-                <!-- Python text input area -->
                 <button type="button" onclick="StoreBlob();">Store text</button>
                 <button type="button" onclick="PullBlob();">Pull text</button>
                 <textarea id="pythontext" class="textarea"></textarea>
             </div>
+            -->
+
 
         </div>
 
