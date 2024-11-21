@@ -24,23 +24,44 @@
 
     <div class="body-container">
         <div class="code-container">
-            <div class="block-code"></div>
-            <div class="python-code"></div>
-            <!-- Block Area -->
-            
+            <!-- Block Catagories -->
+            <div class="categories">
+                <div class="category" onclick="toggleCategory('logic')">
+                    <h4>Logic</h4>
+                    <div id="logic" class="category-blocks hidden">
+                        <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
+                        <button id="createBoxButton" name="if" onclick="newBlock(name, '5', '<', '6')">If Block</button>
+                        <button id="createBoxButton" name="else" onclick="newBlock(name, '', '', '')">Else Block</button>
+                        <button id="createBoxButton" name="else_if" onclick="newBlock(name, 'y', '==', 'x')">Else-If Block</button>
+                    </div>
+                </div>
+                <div class="category" onclick="toggleCategory('loops')">
+                    <h4>Loops</h4>
+                    <div id="loops" class="category-blocks hidden">
+                        <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
+                        <button id="createBoxButton" name="while" onclick="newBlock(name, '5', '<', '6')">While Block</button>
+                        <button id="createBoxButton" name="for" onclick="newBlock(name, '1', '..', '10')">For Block</button>
+                    </div>
+                </div>
+                <div class="category" onclick="toggleCategory('statements')">
+                    <h4>Statements</h4>
+                    <div id="statements" class="category-blocks hidden">
+                        <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
+                        <button id="createBoxButton" name="print" onclick="newBlock(name, '', '(', ')')">Print Block</button>
+                    </div>
+                </div>
 
-            <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
-
-            <p><button id="createBoxButton" name="if" onclick="newBlock(name, '5', '<', '6')">If block</blockquote></blockquote></button></p>
-            <p><button id="createBoxButton" name="for" onclick="newBlock(name, '1', '..', '6')">For block</button></p>
-            <p><button id="createBoxButton" name="while" onclick="newBlock(name, '5', '<', '6')">While block</button></p>
-            <p><button id="createBoxButton" name="btt" onclick="blockToText()">btt</button></p>
-            <p><button id="createBoxButton" name="ttb" onclick="textToBlock()">ttb</button></p>
-            <button onclick="toggleView()">toggle block/python view</button>
-            
-
-               <p><button id="createBoxButton" name="operator" onclick="insertSVG()">Create operator</button></p>
-
+                <p><button id="createBoxButton" name="btt" onclick="blockToText()">btt</button></p>
+                <p><button id="createBoxButton" name="ttb" onclick="textToBlock()">ttb</button></p>
+                <button onclick="toggleView()">toggle block/python view</button>
+                
+    
+                <p><button id="createBoxButton" name="operator" onclick="insertSVG()">Create operator</button></p>
+    
+                <div class="block-code"></div>
+                <div class="python-code"></div>
+                <!-- Block Area -->
+            </div>
         </div>
 
         <div class="result-container">

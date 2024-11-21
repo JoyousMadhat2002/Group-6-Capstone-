@@ -198,3 +198,16 @@ button {
       #select-bar-container {
         cursor: pointer;
       }
+
+/* Styling for block categories */
+.category {
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+.category-blocks {
+    margin-left: 20px;
+    margin-top: 10px;
+}
+.hidden {
+    display: none;
+}

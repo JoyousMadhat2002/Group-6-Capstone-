@@ -110,6 +110,27 @@ function drop(event) {
     }
 }
 
+// Function for switching beween block catagories when clicked
+function toggleCategory(categoryId) {
+    // Hide all category blocks
+    const allCategories = document.querySelectorAll('.category-blocks');
+    allCategories.forEach(category => {
+        if (category.id === categoryId) {
+            // Toggle visibility of the clicked category
+            category.classList.toggle('hidden');
+        } else {
+            // Hide all other catagories
+            category.classList.add('hidden');
+        }
+    });
+}
+// Prevent click event from closing catagory (you can comment out to see the effect)
+document.querySelectorAll('.category-blocks button').forEach(button => {
+    button.addEventListener('click', event => {
+        event.stopPropagation();
+    });
+});
+
 // Function to delete a block by dragging to code-container (left side)
 const codeContainer = document.querySelector(".code-container");
 
