@@ -17,7 +17,7 @@ function newBlock(s, x, o, y) {
     const container = document.getElementById("box-container");
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
-    newBlock.id = "box_" + ++blockCounter;  
+    newBlock.id = "box_" + ++blockCounter;
 
     newBlock.dataset.blockType = s;        // Set block type
     newBlock.dataset.blockXValue = "4";     // Set block left value
@@ -45,7 +45,7 @@ function newBlock(s, x, o, y) {
         svgImage.src = "svg_files/Operator/equal_block.svg";
     } else if (s === "not_equal") {
         svgImage.src = "svg_files/Operator/not_equal_block.svg";
-    } 
+    }
     // for control blocks, displays block data
     else {
         newBlock.textContent = "Type: " + newBlock.dataset.blockType;
@@ -55,14 +55,14 @@ function newBlock(s, x, o, y) {
         newBlock.style.backgroundColor = 'purple';
 
     }
-   
+
 
 
 
     // Append the new block to the container
-    if (svgImage.src != ""){
-    newBlock.appendChild(svgImage);
-    }    
+    if (svgImage.src != "") {
+        newBlock.appendChild(svgImage);
+    }
     container.appendChild(newBlock);
 
     // Add event listeners
@@ -72,8 +72,8 @@ function newBlock(s, x, o, y) {
     newBlock.addEventListener("drop", drop);
     newBlock.addEventListener("click", selectBlock);
 
-     // Get depth from container, increase by 1. Change to parent container in future!
-     newBlock.blockDepth  = Number(container.dataset.depth) + 1;
+    // Get depth from container, increase by 1. Change to parent container in future!
+    newBlock.blockDepth = Number(container.dataset.depth) + 1;
 
 }
 
@@ -199,7 +199,7 @@ const pythonTextarea = document.getElementById("pythontext"); // creating const 
 ptext = pythonTextarea.value; // initializing variable.
 
 // test function for storing textarea input as variable
-function StoreBlob(){
+function StoreBlob() {
     ptext = pythonTextarea.value;
 
     ptext = ptext.toString();
@@ -210,8 +210,8 @@ function PullBlob() {
     const blob = new Blob([ptext], { type: 'text/plain' })
     blob.text().then(text => {
 
-    pythonTextarea.value = text; // sends contents of blob to textarea
-});
+        pythonTextarea.value = text; // sends contents of blob to textarea
+    });
 
 
     // t.value = ptext; // less useful way to store information
@@ -224,9 +224,9 @@ const blockContainer = document.getElementById("box-container"); // Gets box con
 function blockToText() {
     pythontext.value = ""; // Clear text area
     let blockChildElements = blockContainer.children; // Assigns all children/blocks from box-container
-    
+
     for (let i = 0; i < blockChildElements.length; i++) { // Loop through children/blocks to print to text area
-        for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++ ){
+        for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
             pythontext.value += "    ";
         }
 
@@ -238,14 +238,14 @@ function blockToText() {
         pythontext.value += " ";
         pythontext.value += blockChildElements[i].dataset.blockYValue;
         pythontext.value += "\n";
-        console.log(blockChildElements[i]); 
+        console.log(blockChildElements[i]);
 
-      }
+    }
 
 }
 
 // Function to convert text programming to block programming
-function textToBlock(){
+function textToBlock() {
     let text = pythontext.value;
 
     let lines = text.split("\n"); // Separate lines for parsing
@@ -256,13 +256,13 @@ function textToBlock(){
     let depthBuilder = ["box-container"]; //
     let currDepth = 0;
 
-    for (let i = 0; i < lines.length; i++){
-        if(lines[i] != ""){
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i] != "") {
             lines[i] = lines[i].trim();
             // line = line.split(" ");
 
             let tokens = lines[i].split(" ");
-            
+
             let a = tokens[0];
             let b = tokens[1];
             let c = tokens[2];
@@ -278,7 +278,7 @@ function toggleView() {
     if (x.style.display === "block") {
         x.style.display = "none";
         y.style.display = "block"
-        
+
     } else {
         x.style.display = "block";
         y.style.display = "none"

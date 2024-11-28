@@ -22,6 +22,8 @@
         </div>
     </div>
 
+
+
     <div class="body-container">
         <div class="code-container">
             <!-- Block Catagories -->
@@ -31,58 +33,70 @@
                     <div id="logic" class="category-blocks hidden">
                         <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
                         <button id="createBoxButton" name="if" onclick="newBlock(name, '5', '<', '6')">If Block</button>
-                        <button id="createBoxButton" name="else" onclick="newBlock(name, '', '', '')">Else Block</button>
-                        <button id="createBoxButton" name="else_if" onclick="newBlock(name, 'y', '==', 'x')">Else-If Block</button>
+                        <button id="createBoxButton" name="else" onclick="newBlock(name, '', '', '')">Else
+                            Block</button>
+                        <button id="createBoxButton" name="else_if" onclick="newBlock(name, 'y', '==', 'x')">Else-If
+                            Block</button>
                     </div>
                 </div>
                 <div class="category" onclick="toggleCategory('loops')">
                     <h4>Loops</h4>
                     <div id="loops" class="category-blocks hidden">
                         <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
-                        <button id="createBoxButton" name="while" onclick="newBlock(name, '5', '<', '6')">While Block</button>
-                        <button id="createBoxButton" name="for" onclick="newBlock(name, '1', '..', '10')">For Block</button>
+                        <button id="createBoxButton" name="while" onclick="newBlock(name, '5', '<', '6')">While
+                            Block</button>
+                        <button id="createBoxButton" name="for" onclick="newBlock(name, '1', '..', '10')">For
+                            Block</button>
                     </div>
                 </div>
                 <div class="category" onclick="toggleCategory('statements')">
                     <h4>Statements</h4>
                     <div id="statements" class="category-blocks hidden">
                         <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
-                        <button id="createBoxButton" name="print" onclick="newBlock(name, '', '(', ')')">Print Block</button>
+                        <button id="createBoxButton" name="print" onclick="newBlock(name, '', '(', ')')">Print Block
+                        </button>
                     </div>
                 </div>
 
-                <p><button id="createBoxButton" name="btt" onclick="blockToText()">btt</button></p>
-                <p><button id="createBoxButton" name="ttb" onclick="textToBlock()">ttb</button></p>
-                <button onclick="toggleView()">toggle block/python view</button>
-                
-    
-                <p><button id="createBoxButton" name="operator" onclick="insertSVG()">Create operator</button></p>
-    
                 <div class="block-code"></div>
                 <div class="python-code"></div>
                 <!-- Block Area -->
             </div>
         </div>
 
-        <div class="result-container">
-            <div class="block-code-result">
-                
-            </div>
-            <div class="python-code-result" id="python-code-result">
-                <!-- Python text input area -->
-                <button type = "button" onclick = "StoreBlob();">Store text</button>
-                <button type = "button" onclick = "PullBlob();">Pull text</button>
-                <textarea id="pythontext" class="textarea"></textarea>
-            </div>
-            <!-- Code Area -->
+        <div class="handle"></div>
 
-            <!-- Container added to test, used as reference for where to place block objects -->
-            <div id="box-container" data-blockDepth=0>
-                <div id="svg-container"></div>
+        <div class="result-container">
+            <div class="code-lines">
+                <div class="code-line">1</div>
+                <div class="code-line">2</div>
+                <div class="code-line">3</div>
+                <div class="code-line">4</div>
+                <div class="code-line">5</div>
+                <div class="code-line">6</div>
+                <div class="code-line">7</div>
+                <div class="code-line">8</div>
             </div>
-            
-            
+            <div class="code-result">
+                <div class="toggle-buttons">
+                    <p><button class="Button" name="btt" onclick="blockToText()">btt</button></p>
+                    <p><button class="Button" name="ttb" onclick="textToBlock()">ttb</button></p>
+                    <p><button class="Button" name="toggleView" onclick="toggleView()">toggle</button></p>
+                </div>
+                <div class="python-code-result" id="python-code-result">
+                    <!-- Python text input area -->
+                    <button class="Button" type="button" onclick="StoreBlob();">Store text</button>
+                    <button class="Button" type="button" onclick="PullBlob();">Pull text</button>
+                    <textarea id="pythontext" class="textarea"></textarea>
+                </div>
+                <!-- Container added to test, used as reference for where to place block objects -->
+                <div class="block-code-result" id="box-container" data-blockDepth=0>
+
+                </div>
+            </div>
         </div>
+
+        <div class="handle"></div>
 
         <div class="output-graph">
             <!-- Output Area -->
@@ -91,11 +105,9 @@
             <button id="run-code-btn" class="run-code-btn" data-tooltip="Run Program (Ctrl+Enter)">
                 <i class="icon-play"></i> <!-- Icon for play -->
             </button>
-            <!-- Console log --> 
+            <!-- Console log -->
             <div id="console-output" class="console-output"></div>
         </div>
-    </div>
-    </div>
     </div>
 
     <!-- link to script file for functions -->
