@@ -479,3 +479,69 @@ document.addEventListener('click', (event) => {
         dropdownMenu.style.display = 'none';
     }
 });
+
+//Code to resize the columns
+document.addEventListener('DOMContentLoaded', () => {
+    let isDragging = false;
+    let currentSpacer = null;
+    let startX = 0;
+    let startWidthCol1 = 0;
+    let startWidthCol2 = 0;
+    let startWidthCol3 = 0;
+
+    const MIN_WIDTH1 = 100;
+    const MIN_WIDTH2 = 200;
+
+    const spacer1 = document.querySelector('.handle1');
+    const spacer2 = document.querySelector('.handle2');
+    const col1 = document.querySelector('.code-container');
+    const col2 = document.querySelector('.result-container');
+    const col3 = document.querySelector('.output-graph');
+
+    function startDrag(event, spacer) {
+        isDragging = true;
+        currentSpacer = spacer;
+        startX = event.clientX;
+        startWidthCol1 = col1.offsetWidth;
+        startWidthCol2 = col2.offsetWidth;
+        startWidthCol3 = col3.offsetWidth;
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', stopDrag);
+    }
+
+    //Does the calculations for the resizing
+    function onDrag(event) {
+        if (!isDragging || !currentSpacer) return;
+
+        const deltaX = event.clientX - startX;
+
+        if (currentSpacer === spacer1) {
+            const newWidthCol1 = startWidthCol1 + deltaX;
+            const newWidthCol2 = startWidthCol2 - deltaX;
+
+            if (newWidthCol1 < MIN_WIDTH1 || newWidthCol2 < MIN_WIDTH2) return;
+
+            col1.style.flexBasis = `${startWidthCol1 + deltaX}px`;
+            col2.style.flexBasis = `${startWidthCol2 - deltaX}px`;
+        } else if (currentSpacer === spacer2) {
+            const newWidthCol2 = startWidthCol2 + deltaX;
+            const newWidthCol3 = startWidthCol3 - deltaX;
+
+            if (newWidthCol2 < MIN_WIDTH2 || newWidthCol3 < MIN_WIDTH1) return;
+
+            col2.style.flexBasis = `${startWidthCol2 + deltaX}px`;
+            col3.style.flexBasis = `${startWidthCol3 - deltaX}px`;
+        }
+    }
+
+    function stopDrag() {
+        isDragging = false;
+        currentSpacer = null;
+        document.removeEventListener('mousemove', onDrag);
+        document.removeEventListener('mouseup', stopDrag);
+    }
+
+    spacer1.addEventListener('mousedown', (e) => startDrag(e, spacer1));
+    spacer2.addEventListener('mousedown', (e) => startDrag(e, spacer2));
+
+});
