@@ -28,36 +28,6 @@
         <div class="code-container">
             <!-- Block Catagories -->
             <div class="categories">
-                <div class="category" onclick="toggleCategory('logic')">
-                    <h4>Logic</h4>
-                    <div id="logic" class="category-blocks hidden">
-                        <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
-                        <button id="createBoxButton" name="if" onclick="newBlock(name, '5', '<', '6')">If Block</button>
-                        <button id="createBoxButton" name="else" onclick="newBlock(name, '', '', '')">Else
-                            Block</button>
-                        <button id="createBoxButton" name="else_if" onclick="newBlock(name, 'y', '==', 'x')">Else-If
-                            Block</button>
-                    </div>
-                </div>
-                <div class="category" onclick="toggleCategory('loops')">
-                    <h4>Loops</h4>
-                    <div id="loops" class="category-blocks hidden">
-                        <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
-                        <button id="createBoxButton" name="while" onclick="newBlock(name, '5', '<', '6')">While
-                            Block</button>
-                        <button id="createBoxButton" name="for" onclick="newBlock(name, '1', '..', '10')">For
-                            Block</button>
-                    </div>
-                </div>
-                <div class="category" onclick="toggleCategory('statements')">
-                    <h4>Statements</h4>
-                    <div id="statements" class="category-blocks hidden">
-                        <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
-                        <button id="createBoxButton" name="print" onclick="newBlock(name, '', '(', ')')">Print Block
-                        </button>
-                    </div>
-                </div>
-
                 <div class="block-code"></div>
                 <div class="python-code"></div>
                 <!-- Block Area -->
@@ -91,7 +61,7 @@
                 </div>
                 <!-- Container added to test, used as reference for where to place block objects -->
                 <div class="block-code-result" id="box-container" data-blockDepth=0>
-
+                    
                 </div>
             </div>
         </div>
@@ -111,7 +81,8 @@
     </div>
 
     <!-- link to script file for functions -->
-    <script src="/scripts.js"></script>
+
 </body>
+<script src="/scripts.js"></script>
 
 </html>

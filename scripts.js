@@ -8,9 +8,345 @@ let blockCounter = 0;
 let dragged = null;
 let highlightedBlock = null;
 
+const blockCategory = {
+    "logic": {
+        elements: [
+            {
+                name: "if",
+                blockID: "if",
+                description: "Conditional statement",
+                type: "control",
+                parentElement: "block",
+                childElement: "block",
+                sisterElement: ["elif", "else"]
+            },
+            {
+                name: "while",
+                blockID: "while",
+                description: "While loop",
+                type: "loop",
+                parentElement: "block",
+                childElement: "block",
+                sisterElement: null
+            },
+            {
+                name: "for",
+                blockID: "for",
+                description: "For loop",
+                type: "loop",
+                parentElement: "block",
+                childElement: "block",
+                sisterElement: null
+            },
+            {
+                name: "break",
+                blockID: "break",
+                description: "Break loop",
+                type: "loop",
+                parentElement: "block",
+                childElement: null,
+                sisterElement: null
+            },
+            {
+                name: "continue",
+                blockID: "continue",
+                description: "Continue loop",
+                type: "loop",
+                parentElement: "block",
+                childElement: null,
+                sisterElement: null
+            }
+        ]
+    },
+    "math": {
+        elements: [
+            {
+                name: "+",
+                blockID: "add",
+                description: "Addition",
+                type: "arithmetic",
+                parentElement: "block",
+                childElement: ["number1", "number2"],
+                sisterElement: null
+            },
+            {
+                name: "-",
+                blockID: "sub",
+                description: "Subtraction",
+                type: "arithmetic",
+                parentElement: "block",
+                childElement: ["number1", "number2"],
+                sisterElement: null
+            },
+            {
+                name: "*",
+                blockID: "mul",
+                description: "Multiplication",
+                type: "arithmetic",
+                parentElement: "block",
+                childElement: ["number1", "number2"],
+                sisterElement: null
+            },
+            {
+                name: "/",
+                blockID: "div",
+                description: "Division",
+                type: "arithmetic",
+                parentElement: "block",
+                childElement: ["number1", "number2"],
+                sisterElement: null
+            },
+            {
+                name: "%",
+                blockID: "mod",
+                description: "Modulo",
+                type: "arithmetic",
+                parentElement: "block",
+                childElement: ["number1", "number2"],
+                sisterElement: null
+            },
+            {
+                name: "**",
+                blockID: "exp",
+                description: "Exponentiation",
+                type: "arithmetic",
+                parentElement: "block",
+                childElement: ["base", "exponent"],
+                sisterElement: null
+            },
+            {
+                name: "//",
+                blockID: "floorDiv",
+                description: "Floor division",
+                type: "arithmetic",
+                parentElement: "block",
+                childElement: ["number1", "number2"],
+                sisterElement: null
+            }
+        ]
+    },
+    "comparison": {
+        elements: [
+            {
+                name: "==",
+                blockID: "eq",
+                description: "Equality comparison",
+                type: "comparison",
+                parentElement: "block",
+                childElement: ["operand1", "operand2"],
+                sisterElement: null
+            },
+            {
+                name: "!=",
+                blockID: "neq",
+                description: "Inequality comparison",
+                type: "comparison",
+                parentElement: "block",
+                childElement: ["operand1", "operand2"],
+                sisterElement: null
+            },
+            {
+                name: ">",
+                blockID: "gt",
+                description: "Greater than comparison",
+                type: "comparison",
+                parentElement: "block",
+                childElement: ["operand1", "operand2"],
+                sisterElement: null
+            },
+            {
+                name: "<",
+                blockID: "lt",
+                description: "Less than comparison",
+                type: "comparison",
+                parentElement: "block",
+                childElement: ["operand1", "operand2"],
+                sisterElement: null
+            },
+            {
+                name: ">=",
+                blockID: "gte",
+                description: "Greater than or equal to comparison",
+                type: "comparison",
+                parentElement: "block",
+                childElement: ["operand1", "operand2"],
+                sisterElement: null
+            },
+            {
+                name: "<=",
+                blockID: "lte",
+                description: "Less than or equal to comparison",
+                type: "comparison",
+                parentElement: "block",
+                childElement: ["operand1", "operand2"],
+                sisterElement: null
+            }
+        ]
+    },
+    "boolean": {
+        elements: [
+            {
+                name: "and",
+                blockID: "and",
+                description: "Logical AND",
+                type: "logical",
+                parentElement: "block",
+                childElement: ["operand1", "operand2"],
+                sisterElement: null
+            },
+            {
+                name: "or",
+                blockID: "or",
+                description: "Logical OR",
+                type: "logical",
+                parentElement: "block",
+                childElement: ["operand1", "operand2"],
+                sisterElement: null
+            },
+            {
+                name: "not",
+                blockID: "not",
+                description: "Logical NOT",
+                type: "logical",
+                parentElement: "block",
+                childElement: ["operand"],
+                sisterElement: null
+            }
+        ]
+    },
+    "functions": {
+        elements: [
+            {
+                name: "def",
+                blockID: "def",
+                description: "Define a function",
+                type: "function",
+                parentElement: "block",
+                childElement: ["function_name", "arguments"],
+                sisterElement: null
+            },
+            {
+                name: "return",
+                blockID: "return",
+                description: "Return from a function",
+                type: "function",
+                parentElement: "block",
+                childElement: ["expression"],
+                sisterElement: null
+            },
+            {
+                name: "print",
+                blockID: "print",
+                description: "Print to the console",
+                type: "function",
+                parentElement: "block",
+                childElement: ["expression"],
+                sisterElement: null
+            }
+        ]
+    },
+    "variables": {
+        elements: [
+            {
+                name: "=",
+                blockID: "assign",
+                description: "Assignment",
+                type: "assignment",
+                parentElement: "block",
+                childElement: ["variable", "value"],
+                sisterElement: null
+            },
+            {
+                name: "+=",
+                blockID: "addAssign",
+                description: "Increment assignment",
+                type: "assignment",
+                parentElement: "block",
+                childElement: ["variable", "value"],
+                sisterElement: null
+            },
+            {
+                name: "-=",
+                blockID: "subAssign",
+                description: "Decrement assignment",
+                type: "assignment",
+                parentElement: "block",
+                childElement: ["variable", "value"],
+                sisterElement: null
+            },
+            {
+                name: "*=",
+                blockID: "mulAssign",
+                description: "Multiplication assignment",
+                type: "assignment",
+                parentElement: "block",
+                childElement: ["variable", "value"],
+                sisterElement: null
+            },
+            {
+                name: "/=",
+                blockID: "divAssign",
+                description: "Division assignment",
+                type: "assignment",
+                parentElement: "block",
+                childElement: ["variable", "value"],
+                sisterElement: null
+            },
+            {
+                name: "%=",
+                blockID: "modAssign",
+                description: "Modulo assignment",
+                type: "assignment",
+                parentElement: "block",
+                childElement: ["variable", "value"],
+                sisterElement: null
+            }
+        ]
+    }
+};
+/*
+<div class="category" onclick="toggleCategory('logic')">
+    <h4>Logic</h4>
+    <div id="logic" class="category-blocks hidden">
+        <button id="createBoxButton" onclick="newBlock(name, '5', '<', '6')" name="if" blockID="if" type="control"  >
+            If Block
+        </button>
+    </div>
+</div>
+*/
+function createCategory() {
+    const catagoryContainer = document.getElementById("categories");
+
+    for (const catagory in blockCategory) {
+        const catagoryElement = document.createElement("div");
+        catagoryElement.classList.add("category");
+        catagoryElement.onclick = () => toggleCategory(catagory);
+
+        const catagoryTitle = document.createElement("h4");
+        catagoryTitle.textContent = catagory.charAt(0).toUpperCase() + catagory.slice(1);
+        catagoryElement.appendChild(catagoryTitle);
+
+        const catagoryBlocks = document.createElement("div");
+        catagoryBlocks.id = catagory;
+        catagoryBlocks.classList.add("category-blocks");
+        catagoryBlocks.classList.add("hidden");
+
+        for (const block of blockCategory[catagory].elements) {
+            const blockButton = document.createElement("button");
+            blockButton.name = block.name;
+            blockButton.textContent = block.name.charAt(0).toUpperCase() + block.name.slice(1);
+            blockButton.onclick = () => newBlock(block.name, '5', '<', '6');
+            catagoryBlocks.appendChild(blockButton);
+        }
+
+        catagoryElement.appendChild(catagoryBlocks);
+        catagoryContainer.appendChild(catagoryElement);
+    }
 
 
+}
 
+createCategory();
 
 
 function newBlock(s, x, o, y) {
@@ -37,32 +373,14 @@ function newBlock(s, x, o, y) {
     svgImage.height = 24;
 
 
-    if (s === "greater_than") {
-        svgImage.src = "svg_files/Operator/inequality_greater_than_block.svg";
-    } else if (s === "less_than") {
-        svgImage.src = "svg_files/Operator/inequality_less_than_block.svg";
-    } else if (s === "equal") {
-        svgImage.src = "svg_files/Operator/equal_block.svg";
-    } else if (s === "not_equal") {
-        svgImage.src = "svg_files/Operator/not_equal_block.svg";
-    }
-    // for control blocks, displays block data
-    else {
-        newBlock.textContent = "Type: " + newBlock.dataset.blockType;
-        newBlock.textContent += "\n" + newBlock.dataset.blockXValue + newBlock.dataset.blockOperator + newBlock.dataset.blockYValue;
-        newBlock.textContent += " Depth: " + newBlock.dataset.blockDepth;
 
-        newBlock.style.backgroundColor = 'purple';
+    newBlock.textContent = "Type: " + newBlock.dataset.blockType;
+    newBlock.textContent += "\n" + newBlock.dataset.blockXValue + newBlock.dataset.blockOperator + newBlock.dataset.blockYValue;
+    newBlock.textContent += " Depth: " + newBlock.dataset.blockDepth;
 
-    }
-
-
-
+    newBlock.style.backgroundColor = 'purple';
 
     // Append the new block to the container
-    if (svgImage.src != "") {
-        newBlock.appendChild(svgImage);
-    }
     container.appendChild(newBlock);
 
     // Add event listeners
@@ -73,7 +391,7 @@ function newBlock(s, x, o, y) {
     newBlock.addEventListener("click", selectBlock);
 
     // Get depth from container, increase by 1. Change to parent container in future!
-    newBlock.blockDepth = Number(container.dataset.depth) + 1;
+    newBlock.blockDepth = 0;
 
 }
 
