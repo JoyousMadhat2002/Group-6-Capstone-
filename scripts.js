@@ -491,15 +491,25 @@ function textToBlock() {
 function toggleView() {
     var x = document.getElementById("python-code-result");
     var y = document.getElementById("box-container");
+    var storeButton = document.getElementById("store-p");
+    var pullButton = document.getElementById("pull-p");
+    var toggleButton = document.getElementById("toggleButton");
+
     if (x.style.display === "block") {
         x.style.display = "none";
-        y.style.display = "block"
-
+        y.style.display = "block";
+        storeButton.style.display = "none";
+        pullButton.style.display = "none";
+        toggleButton.textContent = "Python";  // Change text to Python
     } else {
         x.style.display = "block";
-        y.style.display = "none"
+        y.style.display = "none";
+        storeButton.style.display = "inline";  // Show the store and pull buttons
+        pullButton.style.display = "inline";
+        toggleButton.textContent = "Block";  // Change text to Block
     }
 }
+
 
 // Run Code button logic for swapping between Run/Stop
 function toggleRunButton() {
