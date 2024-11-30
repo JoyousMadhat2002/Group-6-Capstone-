@@ -27,41 +27,70 @@
     <div class="body-container">
         <div class="code-container">
             <!-- Block Catagories -->
-            <div class="categories">
-                <div class="block-code"></div>
-                <div class="python-code"></div>
-                <!-- Block Area -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory('logic')">
+                    <h4>Logic</h4>
+                </div>
+                <div id="logic" class="category-blocks hidden"></div>
+            </div>
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory('math')">
+                    <h4>Math</h4>
+                </div>
+                <div id="math" class="category-blocks hidden"></div>
+            </div>
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory('comparison')">
+                    <h4>Comparison</h4>
+                </div>
+                <div id="comparison" class="category-blocks hidden"></div>
+            </div>
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory('boolean')">
+                    <h4>Boolean</h4>
+                </div>
+                <div id="boolean" class="category-blocks hidden"></div>
+            </div>
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory('functions')">
+                    <h4>Functions</h4>
+                </div>
+                <div id="functions" class="category-blocks hidden"></div>
+            </div>
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory('variables')">
+                    <h4>Variables</h4>
+                </div>
+                <div id="variables" class="category-blocks hidden"></div>
             </div>
         </div>
 
         <div class="handle1"></div>
 
         <div class="result-container">
-            <div class="code-lines">
-                <div class="code-line">1</div>
-                <div class="code-line">2</div>
-                <div class="code-line">3</div>
-                <div class="code-line">4</div>
-                <div class="code-line">5</div>
-                <div class="code-line">6</div>
-                <div class="code-line">7</div>
-                <div class="code-line">8</div>
-            </div>
+
             <div class="code-result">
                 <div class="toggle-buttons">
                     <p><button class="Button" name="btt" onclick="blockToText()">btt</button></p>
                     <p><button class="Button" name="ttb" onclick="textToBlock()">ttb</button></p>
                     <p><button class="Button" name="toggleView" onclick="toggleView()">toggle</button></p>
                 </div>
-                <div class="python-code-result" id="python-code-result">
-                    <!-- Python text input area -->
-                    <button class="Button" type="button" onclick="StoreBlob();">Store text</button>
-                    <button class="Button" type="button" onclick="PullBlob();">Pull text</button>
-                    <textarea id="pythontext" class="textarea"></textarea>
-                </div>
-                <!-- Container added to test, used as reference for where to place block objects -->
-                <div class="block-code-result" id="box-container" data-blockDepth=0>
-                    
+                <div class="codes">
+                    <div class="code-lines">
+
+                    </div>
+                    <div class="results">
+                        <div class="python-code-result" id="python-code-result">
+                            <!-- Python text input area -->
+                            <button class="Button" type="button" onclick="StoreBlob();">Store text</button>
+                            <button class="Button" type="button" onclick="PullBlob();">Pull text</button>
+                            <textarea id="pythontext" class="textarea"></textarea>
+                        </div>
+                        <!-- Container added to test, used as reference for where to place block objects -->
+                        <div class="block-code-result" id="box-container" data-blockDepth=0>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
