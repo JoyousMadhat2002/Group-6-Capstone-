@@ -100,6 +100,22 @@ body {
     gap: 10px;
 }
 
+.toggle-button {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.block-code,
+.python-code,
+.block-code-result,
+.python-code-result {
+    display: none;
+}
+
+button {
+    cursor: pointer;
+}
+
 .toggle-buttons button,
 .category button {
     padding: 10px 15px;
@@ -147,23 +163,7 @@ button:hover {
 }
 
 .code-line {
-    margin-bottom: 20px;
-}
-
-.toggle-button {
-    display: block;
     margin-bottom: 10px;
-}
-
-.block-code,
-.python-code,
-.block-code-result,
-.python-code-result {
-    display: none;
-}
-
-button {
-    cursor: pointer;
 }
 
 .box-container {
@@ -173,12 +173,17 @@ button {
 
 .block-code-result {
     display: block;
-    width: 100%;
+    width: auto;
     height: 100%;
     overflow-y: auto;
     padding: 10px;
     font-family: monospace;
     color: #000000;
+}
+
+select.block-dropdown {
+    width: auto;
+    white-space: nowrap;
 }
 
 .box {

@@ -80,7 +80,7 @@ const blockCategory = {
                 blockID: "arithmeticOps",
                 description: "Arithmetic operators (+, -, *, /, %, **, //)",
                 type: "arithmetic",
-                blockType: ["arithmetic", "+", "-", "*", "/", "%", "**", "//"],
+                blockType: ["---", "+", "-", "*", "/", "%", "**", "//"],
                 parentElement: "block",
                 childElement: ["operator", "operand1", "operand2"],
                 sisterElement: null
@@ -94,7 +94,7 @@ const blockCategory = {
                 blockID: "comparisonOps",
                 description: "Comparison operators (==, !=, >, <, >=, <=)",
                 type: "comparison",
-                blockType: ["comparison", "==", "!=", ">", "<", ">=", "<="],
+                blockType: ["---", "==", "!=", ">", "<", ">=", "<="],
                 parentElement: "block",
                 childElement: ["operator", "operand1", "operand2"],
                 sisterElement: null
@@ -108,7 +108,7 @@ const blockCategory = {
                 blockID: "logicalOps",
                 description: "Logical operators (and, or, not)",
                 type: "logical",
-                blockType: ["logical", "and", "or", "not"],
+                blockType: ["---", "and", "or", "not"],
                 parentElement: "block",
                 childElement: ["operator", "operand1", "operand2"],
                 sisterElement: null
@@ -166,7 +166,7 @@ const blockCategory = {
                 blockID: "varAssignOps",
                 description: "Assignment operators (=, +=, -=, *=, /=, %=)",
                 type: "assignment",
-                blockType: ["assignment", "=", "+=", "-=", "*=", "/=", "%="],
+                blockType: ["---", "=", "+=", "-=", "*=", "/=", "%="],
                 parentElement: "block",
                 childElement: ["variable", "value"],
                 sisterElement: null
@@ -219,34 +219,85 @@ function createCategoryButtons(blockCategory) {
 // Call the function to create the buttons
 createCategoryButtons(blockCategory);
 
-// Function to create and add a new block
 function newBlock(s, x, o, y) {
     const container = document.getElementById("box-container");
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
     newBlock.id = "box_" + ++blockCounter; // Increment block counter and set ID
 
-    newBlock.dataset.blockType = s;
     newBlock.dataset.blockXValue = x;
     newBlock.dataset.blockYValue = y;
     newBlock.dataset.blockOperator = o;
 
     newBlock.dataset.blockDepth = Number(container.getAttribute("data-blockDepth")) + 1; // Set block depth
 
-    // Set block text content with its type and depth
-    newBlock.textContent = "Type: " + newBlock.dataset.blockType;
-    newBlock.textContent += " Depth: " + newBlock.dataset.blockDepth;
-
+    // Set block color and retrieve block types for dropdown
     let blockCategoryColor = "#cccccc"; // Default block color
+    let blockTypes = []; // Array to hold block types for dropdown
+
     for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
         categoryData.elements.forEach(element => {
             if (element.blockID === s) {
-                blockCategoryColor = categoryColors[categoryName] || blockCategoryColor; // Set color based on category
+                blockCategoryColor = categoryColors[categoryName] || blockCategoryColor;
+                blockTypes = element.blockType; // Retrieve the blockType array
             }
         });
     }
 
     newBlock.style.backgroundColor = blockCategoryColor; // Apply the category color
+
+    // Add dropdown menu if blockType has multiple elements
+    if (blockTypes.length > 1) {
+        const dropdown = document.createElement("select");
+        dropdown.classList.add("block-dropdown");
+
+        // Populate dropdown with block types and set the first item as the default
+        blockTypes.forEach(type => {
+            const option = document.createElement("option");
+            option.value = type;
+            option.textContent = type; // Dropdown option text
+            dropdown.appendChild(option);
+        });
+
+        // Set the default value to the first element in blockTypes
+        dropdown.value = blockTypes[0];
+
+        // Function to adjust the width of the dropdown based on selected option
+        function adjustDropdownWidth() {
+            const selectedOption = dropdown.options[dropdown.selectedIndex];
+            const textWidth = getTextWidth(selectedOption.textContent, dropdown);
+            dropdown.style.width = `${textWidth + 40}px`;
+        }
+
+        // Helper function to calculate the width of the option text
+        function getTextWidth(text, dropdownElement) {
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            context.font = window.getComputedStyle(dropdownElement).font;
+            return context.measureText(text).width;
+        }
+
+        // Adjust dropdown width when page loads and when selection changes
+        adjustDropdownWidth();
+        dropdown.addEventListener("change", adjustDropdownWidth);
+
+        // Update blockID when the user selects a different option from the dropdown
+        dropdown.addEventListener("change", function () {
+            newBlock.dataset.blockID = dropdown.value;
+        });
+
+        // Add the dropdown to the block
+        newBlock.appendChild(dropdown);
+    } else {
+        // Display the block type as plain text if no dropdown needed
+        newBlock.textContent = "Type: " + blockTypes[0];
+    }
+
+    // Add depth information
+    const depthInfo = document.createElement("span");
+    depthInfo.classList.add("block-depth-info");
+    depthInfo.textContent = " Depth: " + newBlock.dataset.blockDepth;
+    newBlock.appendChild(depthInfo);
 
     container.appendChild(newBlock); // Add the new block to the container
 
@@ -260,6 +311,7 @@ function newBlock(s, x, o, y) {
     // Update the line numbers whenever a new block is added
     updateLineNumbers();
 }
+
 
 // Function to remove a block by its ID
 function removeBlock(blockId) {
@@ -285,7 +337,7 @@ function updateLineNumbers() {
         lineNumber.classList.add("code-line");
         if (i === totalLines) {
             // This is the extra empty line at the bottom
-            lineNumber.textContent = ""; 
+            lineNumber.textContent = i;
         } else {
             lineNumber.textContent = i; // Line numbers start from 1
         }
