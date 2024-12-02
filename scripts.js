@@ -7,6 +7,7 @@ The new element is added to the "container" in the Result-Container section.
 let blockCounter = 0;
 let dragged = null;
 let highlightedBlock = null;
+let isPythonView = false;
 
 // Define a color scheme for the categories
 const categoryColors = {
@@ -220,31 +221,47 @@ function createCategoryButtons(blockCategory) {
 createCategoryButtons(blockCategory);
 
 function newBlock(s, x, o, y) {
+    if (isPythonView) {
+        console.warn("Cannot create a new block in Python view.");
+        return; // Exit the function early
+    }
+    
     const container = document.getElementById("box-container");
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
     newBlock.id = "box_" + ++blockCounter; // Increment block counter and set ID
+    newBlock.dataset.blockID = s; // Store the blockID in the dataset
 
     newBlock.dataset.blockXValue = x;
     newBlock.dataset.blockYValue = y;
     newBlock.dataset.blockOperator = o;
 
-    newBlock.dataset.blockDepth = Number(container.getAttribute("data-blockDepth")) + 1; // Set block depth
+    // Calculate and set the depth
+    const parentDepth = Number(container.getAttribute("data-blockDepth")) || 0;
+    newBlock.dataset.blockDepth = parentDepth + 1; // Parent depth + 1 for the new block
 
-    // Set block color and retrieve block types for dropdown
+    // Set block color and retrieve block types and child elements
     let blockCategoryColor = "#cccccc"; // Default block color
     let blockTypes = []; // Array to hold block types for dropdown
+    let childElement = null; // Variable to check for childElement support
 
     for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
         categoryData.elements.forEach(element => {
             if (element.blockID === s) {
                 blockCategoryColor = categoryColors[categoryName] || blockCategoryColor;
                 blockTypes = element.blockType; // Retrieve the blockType array
+                childElement = element.childElement; // Retrieve child element configuration
             }
         });
     }
 
     newBlock.style.backgroundColor = blockCategoryColor; // Apply the category color
+
+    // Create a label to display the blockID
+    const blockIDLabel = document.createElement("span");
+    blockIDLabel.classList.add("block-id-label");
+    blockIDLabel.textContent = `ID: ${s}`;
+    newBlock.appendChild(blockIDLabel);
 
     // Add dropdown menu if blockType has multiple elements
     if (blockTypes.length > 1) {
@@ -290,14 +307,30 @@ function newBlock(s, x, o, y) {
         newBlock.appendChild(dropdown);
     } else {
         // Display the block type as plain text if no dropdown needed
-        newBlock.textContent = "Type: " + blockTypes[0];
+        const blockTypeLabel = document.createElement("span");
+        blockTypeLabel.textContent = `Type: ${blockTypes[0]}`;
+        newBlock.appendChild(blockTypeLabel);
     }
 
     // Add depth information
     const depthInfo = document.createElement("span");
     depthInfo.classList.add("block-depth-info");
-    depthInfo.textContent = " Depth: " + newBlock.dataset.blockDepth;
+    depthInfo.textContent = ` Depth: ${newBlock.dataset.blockDepth}`;
     newBlock.appendChild(depthInfo);
+
+    // Add childBox if childElement supports "block"
+    if (childElement === "block") {
+        const childBox = document.createElement("div");
+        childBox.classList.add("child-box-container");
+
+        // Set childBox attributes: parent ID, block ID, and depth
+        childBox.dataset.parentID = newBlock.id;
+        childBox.dataset.parentBlockID = s;
+        childBox.dataset.blockDepth = parseInt(newBlock.dataset.blockDepth) + 1;
+
+        // Add a placeholder text for clarity
+        newBlock.appendChild(childBox);
+    }
 
     container.appendChild(newBlock); // Add the new block to the container
 
@@ -490,27 +523,26 @@ const blockContainer = document.getElementById("box-container"); // Gets box con
 
 
 function blockToText() {
-    pythontext.value = ""; // Clear text area
-    let blockChildElements = blockContainer.children; // Assigns all children/blocks from box-container
+    pythontext.value = ""; // Clear the text area
 
-    for (let i = 0; i < blockChildElements.length; i++) { // Loop through children/blocks to print to text area
+    let blockChildElements = blockContainer.children; // Get all children/blocks from the box-container
+
+    for (let i = 0; i < blockChildElements.length; i++) { // Loop through children/blocks
+        // Add indentation based on the block's depth
         for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
-            pythontext.value += "    ";
+            pythontext.value += "    "; // Add spaces for indentation
         }
 
-        pythontext.value += blockChildElements[i].dataset.blockType;
-        pythontext.value += " ";
-        pythontext.value += blockChildElements[i].dataset.blockXValue;
-        pythontext.value += " ";
-        pythontext.value += blockChildElements[i].dataset.blockOperator;
-        pythontext.value += " ";
-        pythontext.value += blockChildElements[i].dataset.blockYValue;
-        pythontext.value += "\n";
-        console.log(blockChildElements[i]);
+        // Add blockID, blockType, XValue, Operator, and YValue to the text area
+        pythontext.value += `blockID: ${blockChildElements[i].dataset.blockID} `;
+        pythontext.value += `XValue: ${blockChildElements[i].dataset.blockXValue} `;
+        pythontext.value += `Operator: ${blockChildElements[i].dataset.blockOperator} `;
+        pythontext.value += `YValue: ${blockChildElements[i].dataset.blockYValue}\n`;
 
+        console.log(blockChildElements[i]); // Log the block element for debugging
     }
-
 }
+
 
 // Function to convert text programming to block programming
 function textToBlock() {
@@ -553,14 +585,17 @@ function toggleView() {
         storeButton.style.display = "none";
         pullButton.style.display = "none";
         toggleButton.textContent = "Python";  // Change text to Python
+        isPythonView = false; // Switch to Block view
     } else {
         x.style.display = "block";
         y.style.display = "none";
         storeButton.style.display = "inline";  // Show the store and pull buttons
         pullButton.style.display = "inline";
         toggleButton.textContent = "Block";  // Change text to Block
+        isPythonView = true; // Switch to Python view
     }
 }
+
 
 
 // Run Code button logic for swapping between Run/Stop

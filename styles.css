@@ -166,13 +166,9 @@ button:hover {
     margin-bottom: 10px;
 }
 
-.box-container {
-    flex-direction: column;
+.block-code-result, .child-box-container {
     display: flex;
-}
-
-.block-code-result {
-    display: block;
+    flex-direction: column;
     width: auto;
     height: 100%;
     overflow-y: auto;
@@ -188,16 +184,22 @@ select.block-dropdown {
 
 .box {
     width: auto;
-    height: 25px;
+    height: auto;
+    min-height: 25px;
     background-color: transparent;
     border: none;
     cursor: pointer;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     border: 2px solid transparent;
     position: relative;
     border: #000000 1px solid;
+}
+
+.child-box-container {
+    margin-left: 10px;
+    border: #000000 1px solid;
+    background-color: #f1f1f1;
 }
 
 .box img {
