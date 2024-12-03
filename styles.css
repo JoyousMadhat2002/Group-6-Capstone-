@@ -110,8 +110,9 @@ button {
 
 }
 
+/*
 .console-output {
-    position: absolute; /* Align console box with bottom of container */
+    position: absolute; /* Align console box with bottom of container *//*
     bottom: 0;
     left: 0;
     right: 0;
@@ -123,9 +124,10 @@ button {
     font-family: monospace;
     color: #333;
 }
+*/
 
 .run-code-btn {
-    position: absolute;
+    position: sticky;
     top: 10px;
     left: 10px;
     background-color: green;
