@@ -188,7 +188,7 @@ select.block-dropdown {
 }
 
 .box {
-    width: auto;
+    width: fit-content;
     height: auto;
     min-height: 25px;
     background-color: transparent;

@@ -254,9 +254,9 @@ function newBlock(s, x, o, y) {
     newBlock.id = "box_" + ++blockCounter; // Increment block counter and set ID
     newBlock.dataset.blockID = s; // Store the blockID in the dataset
 
-    newBlock.dataset.blockXValue = x;
-    newBlock.dataset.blockYValue = y;
-    newBlock.dataset.blockOperator = o;
+    newBlock.dataset.blockXValue = x || ""; // Default to empty if undefined
+    newBlock.dataset.blockYValue = y || ""; // Default to empty if undefined
+    newBlock.dataset.blockOperator = o || ""; // Default to empty if undefined
 
     // Calculate and set the depth
     const parentDepth = Number(container.getAttribute("data-blockDepth")) || 0;
@@ -285,15 +285,62 @@ function newBlock(s, x, o, y) {
     blockIDLabel.textContent = `ID: ${s}`;
     newBlock.appendChild(blockIDLabel);
 
-    // Handle specific functionality for the math and function text blocks
+    // Add dropdown menu if blockType has multiple elements (for operations)
+    if (blockTypes.length > 1) {
+        const dropdown = document.createElement("select");
+        dropdown.classList.add("block-dropdown");
+
+        // Populate dropdown with block types and set the first item as the default
+        blockTypes.forEach(type => {
+            const option = document.createElement("option");
+            option.value = type;
+            option.textContent = type; // Dropdown option text
+            dropdown.appendChild(option);
+        });
+
+        // Set the default value to the first element in blockTypes
+        dropdown.value = blockTypes[0];
+
+        // Function to adjust the width of the dropdown based on selected option
+        function adjustDropdownWidth() {
+            const selectedOption = dropdown.options[dropdown.selectedIndex];
+            const textWidth = getTextWidth(selectedOption.textContent, dropdown);
+            dropdown.style.width = `${textWidth + 40}px`;
+        }
+
+        // Helper function to calculate the width of the option text
+        function getTextWidth(text, dropdownElement) {
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            context.font = window.getComputedStyle(dropdownElement).font;
+            return context.measureText(text).width;
+        }
+
+        // Adjust dropdown width when page loads and when selection changes
+        adjustDropdownWidth();
+        dropdown.addEventListener("change", adjustDropdownWidth);
+
+        // Update blockID when the user selects a different option from the dropdown
+        dropdown.addEventListener("change", function () {
+            newBlock.dataset.blockOperator = dropdown.value;
+        });
+
+        // Add the dropdown to the block
+        newBlock.appendChild(dropdown);
+    } else {
+        // Display the block type as plain text if no dropdown needed
+        const blockTypeLabel = document.createElement("span");
+        blockTypeLabel.textContent = `Type: ${blockTypes[0]}`;
+        newBlock.appendChild(blockTypeLabel);
+    }
+
+    // Handle text input blocks
     if (s === "mathText") {
-        // Input field for numbers (including decimals and negatives)
         const inputField = document.createElement("input");
-        inputField.type = "text"; // Use text to allow decimal and negative
+        inputField.type = "text"; // Allow decimals and negatives
         inputField.placeholder = "Enter a number";
         inputField.classList.add("math-input");
 
-        // Add validation for numeric input
         inputField.addEventListener("input", function () {
             const value = inputField.value.trim();
             const numericRegex = /^-?\d*\.?\d*$/; // Regex for decimals and negatives
@@ -306,13 +353,11 @@ function newBlock(s, x, o, y) {
 
         newBlock.appendChild(inputField);
     } else if (s === "printText") {
-        // Input field for strings
         const inputField = document.createElement("input");
         inputField.type = "text";
         inputField.placeholder = "Enter text";
         inputField.classList.add("text-input");
 
-        // Update block's property when input changes
         inputField.addEventListener("input", function () {
             newBlock.dataset.blockValue = inputField.value; // Update the block's value property
         });
@@ -352,8 +397,6 @@ function newBlock(s, x, o, y) {
     // Update the line numbers whenever a new block is added
     updateLineNumbers();
 }
-
-
 
 
 // Function to remove a block by its ID
