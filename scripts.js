@@ -285,6 +285,7 @@ function toggleView() {
     }
 }
 
+/* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
 // Run Code button logic for swapping between Run/Stop
 function toggleRunButton() {
     const button = document.getElementById("run-code-btn");
@@ -306,14 +307,14 @@ function toggleRunButton() {
         isRunning = true; // Update running state
     }
 }
+*/
 
-// Event listener for button click
-document.getElementById("run-code-btn").addEventListener("click", toggleRunButton);
+
 // Event listener for CTRL + ENTER
 document.addEventListener("keydown", function (event) {
     if (event
         .ctrlKey && event.key === "Enter") {
-        toggleRunButton();
+        runCode();
     }
 });
 
@@ -323,26 +324,27 @@ let isRunning = false; // tracks if the program is running
 
 function outf(text) { 
     var mypre = document.getElementById("output"); 
-    mypre.innerHTML += text; 
-}
+    mypre.innerHTML = mypre.innerHTML + text; 
+} 
 
 function builtinRead(x) {
     if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
-        throw "File not found: '" + x + "'";
+            throw "File not found: '" + x + "'";
     return Sk.builtinFiles["files"][x];
 }
 
 // placeholder function: start code
 function runCode() {
+    /* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
     if (isRunning == true) {
         // if program currently running, and CTRL+ENTER hit again, stop code
         stopCode();
         return;
     }
+    */
 
-    isRunning = true; // set flag for code running
+    //isRunning = true; // set flag for code running // NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
 
-    // REPLACE BELOW WITH FUTURE IMPLEMENTATION LATER
     console.log("test: code running");
     var prog = document.getElementById("pythontext").value; // Python code input
     var mypre = document.getElementById("output"); // Output area
@@ -350,7 +352,7 @@ function runCode() {
 
     Sk.pre = "output";
     console.log(Sk);
-    Sk.configure({output: outf, read: builtinRead});
+    Sk.configure({output:outf, read:builtinRead}); 
     (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = 'mycanvas';
 
     var myPromise = Sk.misceval.asyncToPromise(function() {
@@ -366,6 +368,7 @@ function runCode() {
     );
 }
 
+/* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
 // placeholder function: stop code
 function stopCode() {
     isRunning = false; // reset flag
@@ -374,6 +377,7 @@ function stopCode() {
     console.log("test: code stopped");
 }
 // Placeholder end
+*/
 
 // login button functionality
 const loginButton = document.getElementById("loginButton");
