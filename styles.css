@@ -149,8 +149,12 @@ button:hover {
 /*Code for the containers*/
 .codes{
     display: grid;
-    grid-template-columns: 1fr 3fr;
-    height: 100vh;
+    grid-template-columns: 20px calc(100% - 20px);
+    align-items: left;
+    padding: none;
+    height: 100%;
+    overflow-y: auto;
+    gap: 30px;
 }
 
 .code-lines {
@@ -158,8 +162,8 @@ button:hover {
     flex-direction: column;
     border: #000000 1px solid;
     padding: 15px;
-    align-items: center;
-    margin-bottom: 10px;
+    align-items: left;
+    width: 20px;
 }
 
 .code-line {
@@ -175,6 +179,7 @@ button:hover {
     padding: 10px;
     font-family: monospace;
     color: #000000;
+    overflow-x: auto;
 }
 
 select.block-dropdown {
