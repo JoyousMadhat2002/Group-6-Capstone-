@@ -135,7 +135,8 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    display: flex;
+    display: block !important;
+    visibility: visible !important;
     align-items: center;
     gap: 5px;
     transition: background-color 0.3s;

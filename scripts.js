@@ -321,6 +321,17 @@ document.addEventListener("keydown", function (event) {
 // Placeholder functions for future implementation of running/stopping code; added for implementation of CTRL+ENTER
 let isRunning = false; // tracks if the program is running
 
+function outf(text) { 
+    var mypre = document.getElementById("output"); 
+    mypre.innerHTML += text; 
+}
+
+function builtinRead(x) {
+    if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+        throw "File not found: '" + x + "'";
+    return Sk.builtinFiles["files"][x];
+}
+
 // placeholder function: start code
 function runCode() {
     if (isRunning == true) {
@@ -333,6 +344,26 @@ function runCode() {
 
     // REPLACE BELOW WITH FUTURE IMPLEMENTATION LATER
     console.log("test: code running");
+    var prog = document.getElementById("pythontext").value; // Python code input
+    var mypre = document.getElementById("output"); // Output area
+    mypre.innerHTML = ''; // Clear previous output
+
+    Sk.pre = "output";
+    console.log(Sk);
+    Sk.configure({output: outf, read: builtinRead});
+    (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = 'mycanvas';
+
+    var myPromise = Sk.misceval.asyncToPromise(function() {
+        return Sk.importMainWithBody("<stdin>", false, prog, true);
+    });
+    myPromise.then(
+        function(mod) {
+            console.log('success');
+        },
+        function(err) {
+            console.log(err.toString());
+        }
+    );
 }
 
 // placeholder function: stop code
@@ -365,7 +396,6 @@ saveButton.addEventListener("click", function () {
     localStorage.setItem("savedCode", pythonCode);
     alert("Code saved locally!");
 });
-
 
 // Dropdown menu functionality for the block
 const dropdownMenu = document.createElement('div');
