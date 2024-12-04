@@ -223,6 +223,11 @@ select.block-dropdown {
   border: 2px solid red;
 }
 
+.box.joined{
+    display: flex;
+    flex-direction: row;
+}
+
 .textarea {
   resize: none;
   /*  No resizing */
