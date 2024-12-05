@@ -304,13 +304,12 @@ function newBlock(s, x, o, y) {
   // Create a label to display the blockID
   const blockIDLabel = document.createElement("span");
   blockIDLabel.classList.add("block-id-label");
-  blockIDLabel.textContent = `ID: ${s}`;
   newBlock.appendChild(blockIDLabel);
 
   if (s === "mathBlock" || s === "comparisonBlock") {
-    // Create a horizontal container for child elements
-    const horizontalContainer = document.createElement("div");
-    horizontalContainer.classList.add("childBox-Container-Horizontal");
+    // Create the first horizontal container
+    const horizontalContainer1 = document.createElement("div");
+    horizontalContainer1.classList.add("childBox-Container-Horizontal");
 
     // Create the first text input
     const input1 = document.createElement("input");
@@ -328,6 +327,10 @@ function newBlock(s, x, o, y) {
         input1.value = newBlock.dataset.blockXValue || "";
       }
     });
+
+    // Create the second horizontal container for the operator dropdown
+    const horizontalContainer2 = document.createElement("div");
+    horizontalContainer2.classList.add("childBox-Container-Horizontal");
 
     // Create the operator dropdown (conditional)
     const operatorDropdown = document.createElement("select");
@@ -351,6 +354,10 @@ function newBlock(s, x, o, y) {
       newBlock.dataset.blockOperator = operatorDropdown.value;
     });
 
+    // Create the third horizontal container for the second text input
+    const horizontalContainer3 = document.createElement("div");
+    horizontalContainer3.classList.add("childBox-Container-Horizontal");
+
     // Create the second text input
     const input2 = document.createElement("input");
     input2.type = "text";
@@ -367,10 +374,15 @@ function newBlock(s, x, o, y) {
       }
     });
 
-    horizontalContainer.appendChild(input1);
-    horizontalContainer.appendChild(operatorDropdown);
-    horizontalContainer.appendChild(input2);
-    newBlock.appendChild(horizontalContainer);
+    // Append the elements to their respective containers
+    horizontalContainer1.appendChild(input1);
+    horizontalContainer2.appendChild(operatorDropdown);
+    horizontalContainer3.appendChild(input2);
+
+    // Append all three containers to the newBlock
+    newBlock.appendChild(horizontalContainer1);
+    newBlock.appendChild(horizontalContainer2);
+    newBlock.appendChild(horizontalContainer3);
   } else if (s === "if" || s === "while" || s === "for") {
     // Add the top child container for condition/loop parameters
     const topChildBox = document.createElement("div");
@@ -381,10 +393,24 @@ function newBlock(s, x, o, y) {
 
     const topLabel = document.createElement("span");
     topLabel.classList.add("block-top-label");
-    topLabel.textContent =
-      s === "forBlock" ? "Initialization/Condition/Update:" : "Condition:";
+    topLabel.textContent = s.charAt(0).toUpperCase() + s.slice(1) + ":";
     newBlock.appendChild(topLabel);
     newBlock.appendChild(topChildBox);
+
+    // Add an additional child box for 'for' loop
+    if (s === "for") {
+      const extraTopChildBox = document.createElement("div");
+      extraTopChildBox.classList.add("child-box-container-horizontal");
+      extraTopChildBox.dataset.parentID = newBlock.id;
+      extraTopChildBox.dataset.parentBlockID = s;
+      extraTopChildBox.dataset.blockDepth = parseInt(newBlock.dataset.blockDepth) + 1;
+
+      const extraTopLabel = document.createElement("span");
+      extraTopLabel.classList.add("block-top-label");
+      extraTopLabel.textContent = "Range:"; // Label for the second child box for "for"
+      newBlock.appendChild(extraTopLabel);
+      newBlock.appendChild(extraTopChildBox);
+    }
 
     // Add the main child container for the block body
     const bodyChildBox = document.createElement("div");
@@ -392,7 +418,6 @@ function newBlock(s, x, o, y) {
     bodyChildBox.dataset.parentID = newBlock.id;
     bodyChildBox.dataset.parentBlockID = s;
     bodyChildBox.dataset.blockDepth = parseInt(newBlock.dataset.blockDepth) + 1;
-
   } else if (s === "mathText") {
     // Handle mathText block
     const inputField = document.createElement("input");
