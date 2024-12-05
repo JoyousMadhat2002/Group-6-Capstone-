@@ -73,16 +73,15 @@ button {
 }
 
 .box {
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 200px;
     background-color: transparent;
     margin-bottom: 10px;
-    border: none;
+    border: 5px solid black;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 2px solid transparent;
     position: relative;
 }
 

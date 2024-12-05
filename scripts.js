@@ -12,57 +12,32 @@ let highlightedBlock = null;
 
 
 
-
-function newBlock(s, x, o, y) {
-    const container = document.getElementById("box-container");
+// creates new Block element. i = parent ID, s = type of block, x = left operand, o = operator, y = right operand
+function newBlock(p, s, x, o, y) {
+    const container = document.getElementById(p); 
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
     newBlock.id = "box_" + ++blockCounter;  
 
-    newBlock.dataset.blockType = s;        // Set block type
-    newBlock.dataset.blockXValue = "4";     // Set block left value
-    newBlock.dataset.blockYValue = "5";    // Set block right value
-    newBlock.dataset.blockOperator = "<";  // Set block operator/comparator
-
+    newBlock.dataset.blockParent = p; // Set block type
     newBlock.dataset.blockType = s; // Set block type
     newBlock.dataset.blockXValue = x; // Set block left operand
     newBlock.dataset.blockOperator = o; // Set block operator
     newBlock.dataset.blockYValue = y; // Set block right operand
 
     // Set block "depth". Future-proofed for when container is dynamic, will need an update function when block is moved
-    newBlock.dataset.blockDepth = Number(container.getAttribute("data-blockDepth")) + 1;
+    newBlock.dataset.blockDepth = (Number(container.getAttribute("data-block-Depth")) + 1);
 
-    const svgImage = document.createElement("img");
-    svgImage.width = 24;
-    svgImage.height = 24;
+    // test text for blocks
+    newBlock.textContent += newBlock.dataset.blockType;
+    //newBlock.textContent += " Parent: " + newBlock.dataset.blockParent + "____ " ;
+    newBlock.textContent += newBlock.dataset.blockXValue + newBlock.dataset.blockOperator + newBlock.dataset.blockYValue;
+    //newBlock.textContent += " Depth: " + newBlock.dataset.blockDepth;
 
+    newBlock.style.backgroundColor = 'purple';
 
-    if (s === "greater_than") {
-        svgImage.src = "svg_files/Operator/inequality_greater_than_block.svg";
-    } else if (s === "less_than") {
-        svgImage.src = "svg_files/Operator/inequality_less_than_block.svg";
-    } else if (s === "equal") {
-        svgImage.src = "svg_files/Operator/equal_block.svg";
-    } else if (s === "not_equal") {
-        svgImage.src = "svg_files/Operator/not_equal_block.svg";
-    } 
-    // for control blocks, displays block data
-    else {
-        newBlock.textContent = "Type: " + newBlock.dataset.blockType;
-        newBlock.textContent += "\n" + newBlock.dataset.blockXValue + newBlock.dataset.blockOperator + newBlock.dataset.blockYValue;
-        newBlock.textContent += " Depth: " + newBlock.dataset.blockDepth;
-
-        newBlock.style.backgroundColor = 'purple';
-
-    }
-   
-
-
-
+    
     // Append the new block to the container
-    if (svgImage.src != ""){
-    newBlock.appendChild(svgImage);
-    }    
     container.appendChild(newBlock);
 
     // Add event listeners
@@ -72,8 +47,7 @@ function newBlock(s, x, o, y) {
     newBlock.addEventListener("drop", drop);
     newBlock.addEventListener("click", selectBlock);
 
-     // Get depth from container, increase by 1. Change to parent container in future!
-     newBlock.blockDepth  = Number(container.dataset.depth) + 1;
+    return newBlock.id;
 
 }
 
@@ -221,27 +195,26 @@ function PullBlob() {
 const blockContainer = document.getElementById("box-container"); // Gets box container, could use as global variable?
 
 
-function blockToText() {
+function blockToText(c) {
     pythontext.value = ""; // Clear text area
-    let blockChildElements = blockContainer.children; // Assigns all children/blocks from box-container
     
-    for (let i = 0; i < blockChildElements.length; i++) { // Loop through children/blocks to print to text area
-        for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++ ){
+    let parentClass = document.getElementById(c);
+    let childArray = parentClass.getElementsByClassName("box");
+    for(let i = 0; i < childArray.length; i++){
+        console.log(childArray[i].id);
+        for (let j = 0; j < Number(childArray[i].getAttribute("data-block-Depth")) - 1; j++ ){
             pythontext.value += "    ";
         }
-
-        pythontext.value += blockChildElements[i].dataset.blockType;
+        
+        pythontext.value += childArray[i].dataset.blockType;
         pythontext.value += " ";
-        pythontext.value += blockChildElements[i].dataset.blockXValue;
+        pythontext.value += childArray[i].dataset.blockXValue;
         pythontext.value += " ";
-        pythontext.value += blockChildElements[i].dataset.blockOperator;
+        pythontext.value += childArray[i].dataset.blockOperator;
         pythontext.value += " ";
-        pythontext.value += blockChildElements[i].dataset.blockYValue;
+        pythontext.value += childArray[i].dataset.blockYValue;
         pythontext.value += "\n";
-        console.log(blockChildElements[i]); 
-
-      }
-
+    }
 }
 
 // Function to convert text programming to block programming
@@ -249,14 +222,30 @@ function textToBlock(){
     let text = pythontext.value;
 
     let lines = text.split("\n"); // Separate lines for parsing
-    // console.log(lines);
 
     document.getElementById("box-container").innerHTML = ''; // Clear block container
 
-    let depthBuilder = ["box-container"]; //
+    let depthBuilder = ["box-container"];
     let currDepth = 0;
 
     for (let i = 0; i < lines.length; i++){
+        let count = 0;
+        for(let j = 0; j < lines[i].length; j++){
+            if (lines[i][j] == " "){
+                count++;
+            }
+            else{
+                console.log(count);
+                break;
+            }
+        }
+
+        if((count > 0) && (count % 4 == 0)){
+            currDepth = (count / 4) + 1;
+        }
+        else if (count == 0){
+            currDepth = 1;
+        }
         if(lines[i] != ""){
             lines[i] = lines[i].trim();
             // line = line.split(" ");
@@ -267,10 +256,37 @@ function textToBlock(){
             let b = tokens[1];
             let c = tokens[2];
             let d = tokens[3];
-            let builtBlock = newBlock(a, b, c, d);
+            const builtBlock = newBlock(depthBuilder[(currDepth-1)],a, b, c, d);
+            depthBuilder[currDepth] = builtBlock;
+            console.log("Current Depth: " + currDepth);
+            console.log(depthBuilder[(currDepth-1)]);
+            console.log(builtBlock);
+
         }
     }
 }
+
+// Updates block height, c is container id
+function updateSize(c) {
+    if(document.getElementById(c).hasChildNodes()){
+        let blockChildElements = document.getElementById(c).children;
+        let count = 1;
+        
+        for (let i = 0; i < blockChildElements.length; i++) {
+            console.log(blockChildElements[i].id);
+            count = count + updateSize(blockChildElements[i].id);
+        }
+        console.log(count);
+
+        
+
+        document.getElementById(c).style.height = ((count) * 100) + "px";
+        document.getElementById(c).style.width = ((count) * 100) + "px";
+    
+    return count;
+    }
+}
+
 
 function toggleView() {
     var x = document.getElementById("python-code-result");
@@ -284,6 +300,11 @@ function toggleView() {
         y.style.display = "none"
     }
 }
+
+
+// function newChild(){
+//     const nchild = newBlock('child', 'x', '<', 'y');
+// }
 
 // Run Code button logic for swapping between Run/Stop
 function toggleRunButton() {

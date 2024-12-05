@@ -30,9 +30,9 @@
                     <h4>Logic</h4>
                     <div id="logic" class="category-blocks hidden">
                         <!-- Each button calls the newBlock function from scripts.js, passing the name of the logic -->
-                        <button id="createBoxButton" name="if" onclick="newBlock(name, '5', '<', '6')">If Block</button>
-                        <button id="createBoxButton" name="else" onclick="newBlock(name, '', '', '')">Else Block</button>
-                        <button id="createBoxButton" name="else_if" onclick="newBlock(name, 'y', '==', 'x')">Else-If Block</button>
+                        <button id="createBoxButton" name="if" onclick="newBlock('box-container', name, '5', '<', '6')">If Block</button>
+                        <button id="createBoxButton" name="else" onclick="newBlock('box-container', name, '', '', '')">Else Block</button>
+                        <button id="createBoxButton" name="else_if" onclick="newBlock('box-container', name, 'y', '==', 'x')">Else-If Block</button>
                     </div>
                 </div>
                 <div class="category" onclick="toggleCategory('loops')">
@@ -51,8 +51,9 @@
                     </div>
                 </div>
 
-                <p><button id="createBoxButton" name="btt" onclick="blockToText()">btt</button></p>
+                <p><button id="createBoxButton" name="btt" onclick="blockToText('box-container')">btt</button></p>
                 <p><button id="createBoxButton" name="ttb" onclick="textToBlock()">ttb</button></p>
+                <p><button id="createBoxButton" name="updateSize" onclick="updateSize('box-container')">Fix Size</button></p>
                 <button onclick="toggleView()">toggle block/python view</button>
                 
     
@@ -70,15 +71,12 @@
             </div>
             <div class="python-code-result" id="python-code-result">
                 <!-- Python text input area -->
-                <button type = "button" onclick = "StoreBlob();">Store text</button>
-                <button type = "button" onclick = "PullBlob();">Pull text</button>
                 <textarea id="pythontext" class="textarea"></textarea>
             </div>
             <!-- Code Area -->
 
             <!-- Container added to test, used as reference for where to place block objects -->
-            <div id="box-container" data-blockDepth=0>
-                <div id="svg-container"></div>
+            <div id="box-container" data-blockDepth=-1>
             </div>
             
             
