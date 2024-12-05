@@ -389,8 +389,6 @@ function newBlock(s, x, o, y) {
     topChildBox.classList.add("child-box-container-horizontal");
     topChildBox.dataset.parentID = newBlock.id;
     topChildBox.dataset.parentBlockID = s;
-    topChildBox.dataset.blockDepth = parseInt(newBlock.dataset.blockDepth) + 1;
-
     const topLabel = document.createElement("span");
     topLabel.classList.add("block-top-label");
     topLabel.textContent = s.charAt(0).toUpperCase() + s.slice(1) + ":";
@@ -403,8 +401,6 @@ function newBlock(s, x, o, y) {
       extraTopChildBox.classList.add("child-box-container-horizontal");
       extraTopChildBox.dataset.parentID = newBlock.id;
       extraTopChildBox.dataset.parentBlockID = s;
-      extraTopChildBox.dataset.blockDepth = parseInt(newBlock.dataset.blockDepth) + 1;
-
       const extraTopLabel = document.createElement("span");
       extraTopLabel.classList.add("block-top-label");
       extraTopLabel.textContent = "Range:"; // Label for the second child box for "for"
