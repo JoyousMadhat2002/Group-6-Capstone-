@@ -547,36 +547,99 @@ function updateLineNumbers() {
 
 // Event handler for starting a drag event on a block
 function dragStart(event) {
-  dragged = event.target.closest(".box"); // Store the dragged block
-
+  dragged = event.target.closest(".box");
+  console.log("dragStart: ", dragged);
   if (dragged) {
-    event.dataTransfer.effectAllowed = "move"; // Set the drag effect
+      event.dataTransfer.effectAllowed = "move"; // Allow movement
   }
 }
 
 // Event handler to allow the block to be dropped
 function dragOver(event) {
-  event.preventDefault(); // Allow dropping by preventing default behavior
+  event.preventDefault();
+
   const targetBlock = event.target.closest(".box");
-  if (targetBlock) {
-    targetBlock.classList.add("drop-target"); // Highlight the drop target
+  if (!targetBlock || targetBlock === dragged) return;
+
+  // Get dimensions of the target block and cursor position
+  const rect = targetBlock.getBoundingClientRect();
+  const offsetY = event.clientY - rect.top;
+  const margin = rect.height * 0.25; // Increase margin size for top and bottom zones (25% of block height)
+
+  // Remove existing highlights
+  clearDropHighlights();
+
+  if (offsetY < margin) {
+      // Highlight drop above
+      targetBlock.classList.add("drop-above");
+  } else if (offsetY > rect.height - margin) {
+      // Highlight drop below
+      targetBlock.classList.add("drop-below");
+  } else {
+      // Highlight drop inside (if child container exists)
+      const childContainer = targetBlock.querySelector(".child-box-container");
+      if (childContainer) {
+          targetBlock.classList.add("drop-inside");
+      }
   }
 }
 
 // Event handler for handling the drop action
 function drop(event) {
   event.preventDefault();
+  const targetBlock = event.target.closest(".box");
+  if (!dragged || !targetBlock || targetBlock === dragged) return; // Skip invalid drops
 
-  if (dragged) {
-    const targetBlock = event.target.closest(".box");
-    if (targetBlock) {
-      targetBlock.classList.remove("drop-target"); // Remove drop target highlight
-      targetBlock.parentNode.insertBefore(dragged, targetBlock); // Move the dragged block before the target block
-    } else if (event.target.id === "box-container") {
-      event.target.appendChild(dragged); // Append the dragged block to the container if no target block
-    }
+  // Determine drop zone and perform appropriate action
+  if (targetBlock.classList.contains("drop-above")) {
+      // Drop above
+      targetBlock.parentNode.insertBefore(dragged, targetBlock);
+      updateDepth(dragged, targetBlock, -1); // Adjust depth relative to target block
+  } else if (targetBlock.classList.contains("drop-below")) {
+      // Drop below
+      targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
+      updateDepth(dragged, targetBlock, -1); // Adjust depth relative to target block
+  } else if (targetBlock.classList.contains("drop-inside")) {
+      const childContainer = targetBlock.querySelector(".child-box-container");
+      if (childContainer) {
+          // Drop inside child container
+          childContainer.appendChild(dragged);
+          updateDepth(dragged, targetBlock, 1); // Increase depth
+      }
+  }
 
-    dragged = null; // Reset the dragged block
+  clearDropHighlights(); // Clean up
+  dragged = null; // Reset the dragged block
+}
+
+function dragEnd() {
+  clearDropHighlights(); // Clear all highlights
+  dragged = null; // Reset dragged block
+}
+
+document.querySelectorAll(".box").forEach(box => {
+  box.draggable = true; // Make the box draggable
+  box.addEventListener("dragstart", dragStart);
+  box.addEventListener("dragover", dragOver);
+  box.addEventListener("drop", drop);
+  box.addEventListener("dragend", dragEnd);
+});
+
+function clearDropHighlights() {
+  document.querySelectorAll(".drop-above, .drop-below, .drop-inside").forEach(block => {
+      block.classList.remove("drop-above", "drop-below", "drop-inside");
+  });
+}
+
+function updateDepth(block, targetBlock, depthChange) {
+  const currentDepth = parseInt(block.dataset.blockDepth) || 0;
+  const newDepth = currentDepth + depthChange;
+  block.dataset.blockDepth = newDepth; // Update depth attribute
+
+  // Update depth display in the block's label
+  const depthInfo = block.querySelector(".block-depth-info");
+  if (depthInfo) {
+      depthInfo.textContent = ` Depth: ${newDepth}`;
   }
 }
 
@@ -654,13 +717,6 @@ document.addEventListener("keydown", function (event) {
     highlightedBlock = null; // Reset the highlighted block
     updateLineNumbers(); // Update line numbers after deletion
   }
-});
-
-const boxes = document.querySelectorAll(".box");
-boxes.forEach((box) => {
-  box.addEventListener("dragstart", dragStart);
-  box.addEventListener("dragover", dragOver);
-  box.addEventListener("drop", drop);
 });
 
 const pythonTextarea = document.getElementById("pythontext"); // creating const for element to pull from
