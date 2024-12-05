@@ -371,10 +371,10 @@ function newBlock(s, x, o, y) {
     horizontalContainer.appendChild(operatorDropdown);
     horizontalContainer.appendChild(input2);
     newBlock.appendChild(horizontalContainer);
-  } else if (s === "ifBlock" || s === "whileBlock" || s === "forBlock") {
+  } else if (s === "if" || s === "while" || s === "for") {
     // Add the top child container for condition/loop parameters
     const topChildBox = document.createElement("div");
-    topChildBox.classList.add("child-box-container");
+    topChildBox.classList.add("child-box-container-horizontal");
     topChildBox.dataset.parentID = newBlock.id;
     topChildBox.dataset.parentBlockID = s;
     topChildBox.dataset.blockDepth = parseInt(newBlock.dataset.blockDepth) + 1;
@@ -393,11 +393,6 @@ function newBlock(s, x, o, y) {
     bodyChildBox.dataset.parentBlockID = s;
     bodyChildBox.dataset.blockDepth = parseInt(newBlock.dataset.blockDepth) + 1;
 
-    const bodyLabel = document.createElement("span");
-    bodyLabel.classList.add("block-body-label");
-    bodyLabel.textContent = "Body:";
-    newBlock.appendChild(bodyLabel);
-    newBlock.appendChild(bodyChildBox);
   } else if (s === "mathText") {
     // Handle mathText block
     const inputField = document.createElement("input");

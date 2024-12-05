@@ -206,9 +206,11 @@ select.block-dropdown {
   background-color: #f1f1f1;
 }
 
-.box-childblock-horizontal {
-  display: flex;
-  flex-direction: row;
+.child-box-container-horizontal {
+  border: #000000 1px solid;
+  min-width: auto;
+  min-height: 25px;
+  background-color: #f1f1f1;
 }
 
 .block-x, .block-y, .block-op {
