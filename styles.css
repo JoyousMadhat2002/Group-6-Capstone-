@@ -206,6 +206,17 @@ select.block-dropdown {
   background-color: #f1f1f1;
 }
 
+.box-childblock-horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+.block-x, .block-y, .block-op {
+  min-width: 50px;
+  min-height: 25px;
+  border: #000000 1px dotted;
+}
+
 .box img {
   width: 100%;
   height: 100%;
