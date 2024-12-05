@@ -793,9 +793,11 @@ document.addEventListener("keydown", function (event) {
 // Placeholder functions for future implementation of running/stopping code; added for implementation of CTRL+ENTER
 let isRunning = false; // tracks if the program is running
 
+document.getElementById("output").style.whiteSpace = "pre-wrap";
+
 function outf(text) {
   var mypre = document.getElementById("output");
-  mypre.innerHTML = mypre.innerHTML + text;
+  mypre.innerHTML += text.replace(/</g, "&lt;").replace(/>/g, "&gt;") + '\n';
 }
 
 function builtinRead(x) {
@@ -829,8 +831,21 @@ function runCode() {
   Sk.configure({ output: outf, read: builtinRead });
   (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = "mycanvas";
 
+  var turtleSetupCode = `
+import turtle
+t = turtle.Turtle()
+t.shape("turtle")
+t.color("green")
+t.setheading(90)
+`;
+
+  var cleanedProg = prog.trimStart();
+  console.log("user code:", prog);
+  var fullProg = turtleSetupCode + "\n" + cleanedProg;
+  console.log("Combined code:", fullProg);
+
   var myPromise = Sk.misceval.asyncToPromise(function () {
-    return Sk.importMainWithBody("<stdin>", false, prog, true);
+    return Sk.importMainWithBody("<stdin>", false, fullProg, true);
   });
   myPromise.then(
     function (mod) {
