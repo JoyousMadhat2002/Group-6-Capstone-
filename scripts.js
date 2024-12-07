@@ -10,6 +10,7 @@ let isPythonView = false;
 
 // Define a color scheme for the categories
 const categoryColors = {
+  movement: "#BFEFFF", // Baby ble
   logic: "#5a80a5", // Steel Blue
   math: "#5ba55a", // Medium Sea Green
   comparison: "#ffcc99", // Peach
@@ -19,6 +20,50 @@ const categoryColors = {
 };
 
 const blockCategory = {
+  movement: {
+    elements: [
+      {
+        name: "forward(100)",
+        blockID: "t.forward(100)",
+        description: "Move the turtle forward",
+        type: "movement",
+        blockType: ["forward"],
+        parentElement: "block",
+        childElement: ["value"], // accepts a numeric value
+        sisterElement: null,
+      },
+      {
+        name: "right(90)",
+        blockID: "t.right(90)",
+        description: "Turn the turtle right",
+        type: "movement",
+        blockType: ["right"],
+        parentElement: "block",
+        childElement: ["value"], // accepts an angle
+        sisterElement: null,
+      },
+      {
+        name: "back(100)",
+        blockID: "t.back(100)",
+        description: "Move the turtle backward",
+        type: "movement",
+        blockType: ["back"],
+        parentElement: "block",
+        childElement: ["value"], // accepts a numeric value
+        sisterElement: null,
+      },
+      {
+        name: "left(90)",
+        blockID: "t.left(90)",
+        description: "Turn the turtle left",
+        type: "movement",
+        blockType: ["left"],
+        parentElement: "block",
+        childElement: ["value"], // accepts an angle
+        sisterElement: null,
+      },
+    ],
+  },
   logic: {
     elements: [
       {
@@ -688,22 +733,49 @@ const blockContainer = document.getElementById("box-container"); // Gets box con
 function blockToText() {
   pythontext.value = ""; // Clear the text area
 
-  let blockChildElements = blockContainer.children; // Get all children/blocks from the box-container
+    const blocks = blockContainer.children; // Get all children/blocks from the box-container
 
-  for (let i = 0; i < blockChildElements.length; i++) {
+  for (let i = 0; i < blocks.length; i++) {
+    const block = blocks[i];
+    const blockID = block.dataset.blockID;
+    const xValue = block.dataset.blockXValue;
+    const yValue = block.dataset.blockYValue;
+    const operator = block.dataset.blockOperator;
+    const blockDepth = Number(block.dataset.blockDepth); // Get the block's depth
+    let indentation = ""; // Variable to hold the indentation
     // Loop through children/blocks
     // Add indentation based on the block's depth
-    for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
+    for (let j = 2; j < blockDepth; j++) {
       pythontext.value += "    "; // Add spaces for indentation
     }
 
     // Add blockID, blockType, XValue, Operator, and YValue to the text area
-    pythontext.value += `blockID: ${blockChildElements[i].dataset.blockID} `;
-    pythontext.value += `XValue: ${blockChildElements[i].dataset.blockXValue} `;
-    pythontext.value += `Operator: ${blockChildElements[i].dataset.blockOperator} `;
-    pythontext.value += `YValue: ${blockChildElements[i].dataset.blockYValue}\n`;
+    //pythontext.value += `${indentation}${blockID}\n`;
 
-    console.log(blockChildElements[i]); // Log the block element for debugging
+    // Handle specific blocks based on blockID
+  if (blockID === "t.forward" && xValue) {
+    pythontext.value += `${indentation}t.forward(${xValue})\n`;
+  } else if (blockID === "rightBlock" && xValue) {
+    pythontext.value += `${indentation}t.right(${xValue})\n`;
+  } else if (blockID === "setPositionBlock" && xValue && yValue) {
+    pythontext.value += `${indentation}t.setposition(${xValue}, ${yValue})\n`;
+  } else if (blockID === "mathBlock" && xValue && operator && yValue) {
+    // Example for math block (adjust according to your needs)
+    pythontext.value += `${indentation}${xValue} ${operator} ${yValue}\n`;
+  } else if (blockID === "if" && xValue) {
+    // Example for conditional blocks (adjust according to your needs)
+    pythontext.value += `${indentation}if ${xValue}:\n`;
+  } else if (blockID === "while" && xValue) {
+    // Example for while loop blocks (adjust according to your needs)
+    pythontext.value += `${indentation}while ${xValue}:\n`;
+  } else if (blockID === "for" && xValue) {
+    // Example for for loop blocks (adjust according to your needs)
+    pythontext.value += `${indentation}for ${xValue} in range(10):\n`; // Assuming range(10) for now
+  } else {
+    // Add a default case for any unknown blockID
+    pythontext.value += `${indentation}${blockID}\n`;
+  }
+   
   }
 }
 
@@ -856,6 +928,11 @@ t.setheading(90)
     }
   );
 }
+
+// Run the runCode() function once when loading the DOM to show the turtle on the graph
+document.addEventListener("DOMContentLoaded", function() {
+  runCode();
+});
 
 /* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
 // placeholder function: stop code
