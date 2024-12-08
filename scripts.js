@@ -10,6 +10,7 @@ let isPythonView = false;
 
 // Define a color scheme for the categories
 const categoryColors = {
+  movement: "#BFEFFF", // Baby Blue
   logic: "#5a80a5", // Steel Blue
   math: "#5ba55a", // Medium Sea Green
   comparison: "#ffcc99", // Peach
@@ -19,6 +20,50 @@ const categoryColors = {
 };
 
 const blockCategory = {
+  movement: {
+    elements: [
+      {
+        name: "forward",
+        blockID: "t.forward(100)",
+        description: "Move the turtle forward",
+        type: "movement",
+        blockType: ["forward"],
+        parentElement: "block",
+        childElement: ["value"], // accepts a numeric value
+        sisterElement: null,
+      },
+      {
+        name: "right",
+        blockID: "t.right(90)",
+        description: "Turn the turtle right",
+        type: "movement",
+        blockType: ["right"],
+        parentElement: "block",
+        childElement: ["value"], // accepts an angle
+        sisterElement: null,
+      },
+      {
+        name: "back",
+        blockID: "t.back(100)",
+        description: "Move the turtle backward",
+        type: "movement",
+        blockType: ["back"],
+        parentElement: "block",
+        childElement: ["value"], // accepts a numeric value
+        sisterElement: null,
+      },
+      {
+        name: "left",
+        blockID: "t.left(90)",
+        description: "Turn the turtle left",
+        type: "movement",
+        blockType: ["left"],
+        parentElement: "block",
+        childElement: ["value"], // accepts an angle
+        sisterElement: null,
+      },
+    ],
+  },
   logic: {
     elements: [
       {
