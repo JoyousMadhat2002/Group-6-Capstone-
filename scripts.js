@@ -913,6 +913,10 @@ t.setheading(90)
   );
 }
 
+document.addEventListener("DOMContentLoaded", function() {
+  runCode();
+});
+
 /* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
 // placeholder function: stop code
 function stopCode() {
