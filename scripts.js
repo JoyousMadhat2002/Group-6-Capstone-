@@ -314,7 +314,7 @@ function createCategoryButtons(blockCategory) {
 // Call the function to create the buttons
 createCategoryButtons(blockCategory);
 
-function newBlock(s, x, o, y) {
+function newBlock(s) {
   if (isPythonView) {
     console.warn("Cannot create a new block in Python view.");
     return; // Exit the function early
@@ -326,241 +326,197 @@ function newBlock(s, x, o, y) {
   newBlock.id = "box_" + ++blockCounter; // Increment block counter and set ID
   newBlock.dataset.blockID = s; // Store the blockID in the dataset
 
-  newBlock.dataset.blockXValue = x || ""; // Default to empty if undefined
-  newBlock.dataset.blockYValue = y || ""; // Default to empty if undefined
-  newBlock.dataset.blockOperator = o || ""; // Default to empty if undefined
-
   // Calculate and set the depth
   const parentDepth = Number(container.getAttribute("data-blockDepth")) || 0;
   newBlock.dataset.blockDepth = parentDepth + 1; // Parent depth + 1 for the new block
 
-  // Set block color and retrieve block types and child elements
+  // Set block properties
+  const { blockCategoryColor, blockTypes, childElement } = getBlockProperties(s);
+  newBlock.style.backgroundColor = blockCategoryColor; // Apply the category color
+
+  createBlockLabel(newBlock, s);
+
+  if (s === "mathBlock" || s === "comparisonBlock") {
+    handleMathOrComparisonBlock(newBlock, s);
+  } else if (["if", "while", "for"].includes(s)) {
+    handleControlBlock(newBlock, s);
+  } else if (s === "mathText") {
+    createInputBlock(newBlock, "Enter a number", "math-input", "blockValue");
+  } else if (s === "printText") {
+    createInputBlock(newBlock, "Enter text", "text-input", "blockValue");
+  } else {
+    handleDefaultBlock(newBlock, blockTypes);
+  }
+
+  addDepthInfo(newBlock);
+  appendChildElement(newBlock, childElement);
+  container.appendChild(newBlock);
+
+  addBlockInteractivity(newBlock);
+  updateLineNumbers();
+}
+
+function getBlockProperties(blockID) {
   let blockCategoryColor = "#cccccc"; // Default block color
-  let blockTypes = []; // Array to hold block types for dropdown
-  let childElement = null; // Variable to check for childElement support
+  let blockTypes = [];
+  let childElement = null;
 
   for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
     categoryData.elements.forEach((element) => {
-      if (element.blockID === s) {
+      if (element.blockID === blockID) {
         blockCategoryColor = categoryColors[categoryName] || blockCategoryColor;
-        blockTypes = element.blockType; // Retrieve the blockType array
-        childElement = element.childElement; // Retrieve child element configuration
+        blockTypes = element.blockType;
+        childElement = element.childElement;
       }
     });
   }
 
-  newBlock.style.backgroundColor = blockCategoryColor; // Apply the category color
+  return { blockCategoryColor, blockTypes, childElement };
+}
 
-  // Create a label to display the blockID
+function createBlockLabel(block, blockID) {
   const blockIDLabel = document.createElement("span");
   blockIDLabel.classList.add("block-id-label");
-  newBlock.appendChild(blockIDLabel);
+  block.appendChild(blockIDLabel);
+}
 
-  if (s === "mathBlock" || s === "comparisonBlock") {
-    // Create the first horizontal container
-    const horizontalContainer1 = document.createElement("div");
-    horizontalContainer1.classList.add("childBox-Container-Horizontal");
+function handleMathOrComparisonBlock(block, blockID) {
+  const horizontalContainers = [1, 2, 3].map(() => {
+    const container = document.createElement("div");
+    container.classList.add("childBox-Container-Horizontal");
+    return container;
+  });
 
-    // Create the first text input
-    const input1 = document.createElement("input");
-    input1.type = "text";
-    input1.placeholder = "Enter value";
-    input1.classList.add("math-comparison-input");
+  const input1 = createInputField("Enter value", "math-comparison-input", "blockXValue");
+  horizontalContainers[0].appendChild(input1);
 
-    // Set functionality for the first input
-    input1.addEventListener("input", function () {
-      const value = input1.value.trim();
-      if (/^-?\d*\.?\d*$/.test(value)) {
-        // Numeric check
-        newBlock.dataset.blockXValue = value;
-      } else {
-        input1.value = newBlock.dataset.blockXValue || "";
-      }
-    });
+  const operatorDropdown = createOperatorDropdown(blockID);
+  horizontalContainers[1].appendChild(operatorDropdown);
 
-    // Create the second horizontal container for the operator dropdown
-    const horizontalContainer2 = document.createElement("div");
-    horizontalContainer2.classList.add("childBox-Container-Horizontal");
+  const input2 = createInputField("Enter value", "math-comparison-input", "blockYValue");
+  horizontalContainers[2].appendChild(input2);
 
-    // Create the operator dropdown (conditional)
-    const operatorDropdown = document.createElement("select");
-    operatorDropdown.classList.add("block-dropdown");
+  horizontalContainers.forEach((container) => block.appendChild(container));
+}
 
-    let operatorOptions = [];
-    if (s === "mathBlock") {
-      operatorOptions = ["+", "-", "*", "/", "%", "**", "//"];
-    } else if (s === "comparisonBlock") {
-      operatorOptions = ["==", "!=", ">", "<", ">=", "<="];
-    }
+function createInputField(placeholder, className, dataKey) {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = placeholder;
+  input.classList.add(className);
 
-    operatorOptions.forEach((op) => {
-      const option = document.createElement("option");
-      option.value = op;
-      option.textContent = op;
-      operatorDropdown.appendChild(option);
-    });
-
-    operatorDropdown.addEventListener("change", function () {
-      newBlock.dataset.blockOperator = operatorDropdown.value;
-    });
-
-    // Create the third horizontal container for the second text input
-    const horizontalContainer3 = document.createElement("div");
-    horizontalContainer3.classList.add("childBox-Container-Horizontal");
-
-    // Create the second text input
-    const input2 = document.createElement("input");
-    input2.type = "text";
-    input2.placeholder = "Enter value";
-    input2.classList.add("math-comparison-input");
-
-    input2.addEventListener("input", function () {
-      const value = input2.value.trim();
-      if (/^-?\d*\.?\d*$/.test(value)) {
-        // Numeric check
-        newBlock.dataset.blockYValue = value;
-      } else {
-        input2.value = newBlock.dataset.blockYValue || "";
-      }
-    });
-
-    // Append the elements to their respective containers
-    horizontalContainer1.appendChild(input1);
-    horizontalContainer2.appendChild(operatorDropdown);
-    horizontalContainer3.appendChild(input2);
-
-    // Append all three containers to the newBlock
-    newBlock.appendChild(horizontalContainer1);
-    newBlock.appendChild(horizontalContainer2);
-    newBlock.appendChild(horizontalContainer3);
-  } else if (s === "if" || s === "while" || s === "for") {
-    // Add the top child container for condition/loop parameters
-    const topChildBox = document.createElement("div");
-    topChildBox.classList.add("child-box-container-horizontal");
-    topChildBox.dataset.parentID = newBlock.id;
-    topChildBox.dataset.parentBlockID = s;
-    const topLabel = document.createElement("span");
-    topLabel.classList.add("block-top-label");
-    topLabel.textContent = s.charAt(0).toUpperCase() + s.slice(1) + ":";
-    newBlock.appendChild(topLabel);
-    newBlock.appendChild(topChildBox);
-
-    // Add an additional child box for 'for' loop
-    if (s === "for") {
-      const extraTopChildBox = document.createElement("div");
-      extraTopChildBox.classList.add("child-box-container-horizontal");
-      extraTopChildBox.dataset.parentID = newBlock.id;
-      extraTopChildBox.dataset.parentBlockID = s;
-      const extraTopLabel = document.createElement("span");
-      extraTopLabel.classList.add("block-top-label");
-      extraTopLabel.textContent = "Range:"; // Label for the second child box for "for"
-      newBlock.appendChild(extraTopLabel);
-      newBlock.appendChild(extraTopChildBox);
-    }
-
-    // Add the main child container for the block body
-    const bodyChildBox = document.createElement("div");
-    bodyChildBox.classList.add("child-box-container");
-    bodyChildBox.dataset.parentID = newBlock.id;
-    bodyChildBox.dataset.parentBlockID = s;
-    bodyChildBox.dataset.blockDepth = parseInt(newBlock.dataset.blockDepth) + 1;
-  } else if (s === "mathText") {
-    // Handle mathText block
-    const inputField = document.createElement("input");
-    inputField.type = "text";
-    inputField.placeholder = "Enter a number";
-    inputField.classList.add("math-input");
-
-    inputField.addEventListener("input", function () {
-      const value = inputField.value.trim();
-      const numericRegex = /^-?\d*\.?\d*$/;
-      if (numericRegex.test(value)) {
-        newBlock.dataset.blockValue = value;
-      } else {
-        inputField.value = newBlock.dataset.blockValue || "";
-      }
-    });
-
-    newBlock.appendChild(inputField);
-  } else if (s === "printText") {
-    // Handle printText block
-    const inputField = document.createElement("input");
-    inputField.type = "text";
-    inputField.placeholder = "Enter text";
-    inputField.classList.add("text-input");
-
-    inputField.addEventListener("input", function () {
-      newBlock.dataset.blockValue = inputField.value;
-    });
-
-    newBlock.appendChild(inputField);
-  } else {
-    if (blockTypes.length > 1) {
-      const dropdown = document.createElement("select");
-      dropdown.classList.add("block-dropdown");
-
-      blockTypes.forEach((type) => {
-        const option = document.createElement("option");
-        option.value = type;
-        option.textContent = type;
-        dropdown.appendChild(option);
-      });
-
-      dropdown.value = blockTypes[0];
-
-      function adjustDropdownWidth() {
-        const selectedOption = dropdown.options[dropdown.selectedIndex];
-        const textWidth = getTextWidth(selectedOption.textContent, dropdown);
-        dropdown.style.width = `${textWidth + 40}px`;
-      }
-
-      function getTextWidth(text, dropdownElement) {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        context.font = window.getComputedStyle(dropdownElement).font;
-        return context.measureText(text).width;
-      }
-
-      adjustDropdownWidth();
-      dropdown.addEventListener("change", adjustDropdownWidth);
-
-      dropdown.addEventListener("change", function () {
-        newBlock.dataset.blockOperator = dropdown.value;
-      });
-
-      newBlock.appendChild(dropdown);
+  input.addEventListener("input", function () {
+    const value = input.value.trim();
+    if (/^-?\d*\.?\d*$/.test(value)) {
+      input.closest(".box").dataset[dataKey] = value;
     } else {
-      const blockTypeLabel = document.createElement("span");
-      blockTypeLabel.textContent = `Type: ${blockTypes[0]}`;
-      newBlock.appendChild(blockTypeLabel);
+      input.value = input.closest(".box").dataset[dataKey] || "";
     }
-  }
+  });
 
-  // Add depth information
+  return input;
+}
+
+function createOperatorDropdown(blockID) {
+  const dropdown = document.createElement("select");
+  dropdown.classList.add("block-dropdown");
+
+  const operatorOptions = blockID === "mathBlock" ? ["+", "-", "*", "/", "%", "**", "//"] : ["==", "!=", ">", "<", ">=", "<="];
+  operatorOptions.forEach((op) => {
+    const option = document.createElement("option");
+    option.value = op;
+    option.textContent = op;
+    dropdown.appendChild(option);
+  });
+
+  dropdown.addEventListener("change", function () {
+    dropdown.closest(".box").dataset.blockOperator = dropdown.value;
+  });
+
+  return dropdown;
+}
+
+function handleControlBlock(block, blockID) {
+  const topChildBox = createChildBox(block.id, blockID);
+  const topLabel = document.createElement("span");
+  topLabel.classList.add("block-top-label");
+  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)}:`;
+  block.appendChild(topLabel);
+  block.appendChild(topChildBox);
+
+  if (blockID === "for") {
+    const extraTopChildBox = createChildBox(block.id, blockID);
+    const extraTopLabel = document.createElement("span");
+    extraTopLabel.classList.add("block-top-label");
+    extraTopLabel.textContent = "Range:";
+    block.appendChild(extraTopLabel);
+    block.appendChild(extraTopChildBox);
+  }
+}
+
+function createChildBox(parentID, parentBlockID) {
+  const childBox = document.createElement("div");
+  childBox.classList.add("child-box-container-horizontal");
+  childBox.dataset.parentID = parentID;
+  childBox.dataset.parentBlockID = parentBlockID;
+  return childBox;
+}
+
+function createInputBlock(block, placeholder, className, dataKey) {
+  const inputField = createInputField(placeholder, className, dataKey);
+  block.appendChild(inputField);
+}
+
+function handleDefaultBlock(block, blockTypes) {
+  if (blockTypes.length > 1) {
+    const dropdown = createBlockTypeDropdown(blockTypes);
+    block.appendChild(dropdown);
+  } else {
+    const blockTypeLabel = document.createElement("span");
+    blockTypeLabel.textContent = `Type: ${blockTypes[0]}`;
+    block.appendChild(blockTypeLabel);
+  }
+}
+
+function createBlockTypeDropdown(blockTypes) {
+  const dropdown = document.createElement("select");
+  dropdown.classList.add("block-dropdown");
+
+  blockTypes.forEach((type) => {
+    const option = document.createElement("option");
+    option.value = type;
+    option.textContent = type;
+    dropdown.appendChild(option);
+  });
+
+  dropdown.value = blockTypes[0];
+  return dropdown;
+}
+
+function addDepthInfo(block) {
   const depthInfo = document.createElement("span");
   depthInfo.classList.add("block-depth-info");
-  depthInfo.textContent = ` Depth: ${newBlock.dataset.blockDepth}`;
-  newBlock.appendChild(depthInfo);
+  depthInfo.textContent = ` Depth: ${block.dataset.blockDepth}`;
+  block.appendChild(depthInfo);
+}
 
+function appendChildElement(block, childElement) {
   if (childElement === "block") {
     const childBox = document.createElement("div");
     childBox.classList.add("child-box-container");
-    childBox.dataset.parentID = newBlock.id;
-    childBox.dataset.parentBlockID = s;
-    childBox.dataset.blockDepth = parseInt(newBlock.dataset.blockDepth) + 1;
-
-    newBlock.appendChild(childBox);
+    childBox.dataset.parentID = block.id;
+    childBox.dataset.parentBlockID = block.dataset.blockID;
+    childBox.dataset.blockDepth = parseInt(block.dataset.blockDepth) + 1;
+    block.appendChild(childBox);
   }
+}
 
-  container.appendChild(newBlock);
-
-  newBlock.draggable = true;
-  newBlock.addEventListener("dragstart", dragStart);
-  newBlock.addEventListener("dragover", dragOver);
-  newBlock.addEventListener("drop", drop);
-  newBlock.addEventListener("click", selectBlock);
-
-  updateLineNumbers();
+function addBlockInteractivity(block) {
+  block.draggable = true;
+  block.addEventListener("dragstart", dragStart);
+  block.addEventListener("dragover", dragOver);
+  block.addEventListener("drop", drop);
+  block.addEventListener("click", selectBlock);
 }
 
 // Function to remove a block by its ID
