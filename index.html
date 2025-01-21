@@ -31,44 +31,44 @@
         <div class="code-container">
             <!-- Block Catagories -->
             <div class="category">
-                <div class="category-header" onclick="toggleCategory('movement')">
-                  <h4>Movement</h4>
+                <div class="category-header">
+                    <h4>Movement</h4>
                 </div>
                 <div id="movement" class="category-blocks hidden">
                 </div>
             </div>
             <div class="category">
-                <div class="category-header" onclick="toggleCategory('logic')">
+                <div class="category-header">
                     <h4>Logic</h4>
                 </div>
                 <div id="logic" class="category-blocks hidden"></div>
             </div>
             <div class="category">
-                <div class="category-header" onclick="toggleCategory('math')">
+                <div class="category-header">
                     <h4>Math</h4>
                 </div>
                 <div id="math" class="category-blocks hidden"></div>
             </div>
             <div class="category">
-                <div class="category-header" onclick="toggleCategory('comparison')">
+                <div class="category-header">
                     <h4>Comparison</h4>
                 </div>
                 <div id="comparison" class="category-blocks hidden"></div>
             </div>
             <div class="category">
-                <div class="category-header" onclick="toggleCategory('boolean')">
+                <div class="category-header">
                     <h4>Boolean</h4>
                 </div>
                 <div id="boolean" class="category-blocks hidden"></div>
             </div>
             <div class="category">
-                <div class="category-header" onclick="toggleCategory('functions')">
+                <div class="category-header">
                     <h4>Functions</h4>
                 </div>
                 <div id="functions" class="category-blocks hidden"></div>
             </div>
             <div class="category">
-                <div class="category-header" onclick="toggleCategory('variables')">
+                <div class="category-header">
                     <h4>Variables</h4>
                 </div>
                 <div id="variables" class="category-blocks hidden"></div>
@@ -81,14 +81,15 @@
 
             <div class="code-result">
                 <div class="toggle-buttons">
-                    <p><button class="Button" name="btt" onclick="blockToText()">btt</button></p>
-                    <p><button class="Button" name="ttb" onclick="textToBlock()">ttb</button></p>
-                    <p><button id="toggleButton" class="Button" name="toggleView" onclick="toggleView()">Python</button>
+                    <p><button class="Button" name="btt">btt</button></p>
+                    <p><button class="Button" name="ttb">ttb</button></p>
+                    <p><button id="toggleButton" class="Button" name="toggleView">Python</button></p>
+                    <p id="store-p" class="toggleable" style="display:none;">
+                        <button class="Button" type="button">Store</button>
                     </p>
-                    <p id="store-p" class="toggleable" style="display:none;"><button class="Button" type="button"
-                            onclick="StoreBlob();">Store</button></p>
-                    <p id="pull-p" class="toggleable" style="display:none;"><button class="Button" type="button"
-                            onclick="PullBlob();">Pull</button></p>
+                    <p id="pull-p" class="toggleable" style="display:none;">
+                        <button class="Button" type="button">Pull</button>
+                    </p>
                 </div>
                 <div class="codes">
                     <div class="code-lines">
@@ -101,7 +102,7 @@
                         </div>
                         <!-- Container added to test, used as reference for where to place block objects -->
                         <div class="block-code-result" id="box-container" data-blockDepth=0>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -125,9 +126,11 @@
             </div>
         </div>
 
-        <!-- link to script file for functions -->
+        
 </body>
 
+<!-- link to script file for functions -->
+ 
 <script src="/scripts.js"></script>
 <script src="skulpt-dist-master/skulpt.min.js" type="text/javascript"></script>
 <script src="skulpt-dist-master/skulpt-stdlib.js" type="text/javascript"></script>
