@@ -1,5 +1,5 @@
 // Define a color scheme for the categories
-export const categoryColors = {
+const categoryColors = {
     movement: "#BFEFFF", // Baby Blue
     logic: "#5a80a5", // Steel Blue
     math: "#5ba55a", // Medium Sea Green
@@ -9,7 +9,7 @@ export const categoryColors = {
     variables: "#a55b80", // Rosewood
 };
 
-export const blockCategory = {
+const blockCategory = {
     movement: {
         elements: [
             {
@@ -253,3 +253,5 @@ export const blockCategory = {
         ],
     },
 };
+
+export { categoryColors, blockCategory };

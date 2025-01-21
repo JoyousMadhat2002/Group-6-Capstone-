@@ -1,8 +1,3 @@
-/* 
-newBlock(s, id) takes the name string from the button and creates a new element.
-The new element is added to the "container" in the Result-Container section.
-*/
-
 // import {categoryColors, blockCategory} from "./blockConfiguration.js";
 
 let blockCounter = 0;
