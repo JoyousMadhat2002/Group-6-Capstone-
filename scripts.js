@@ -1,9 +1,9 @@
 // import {categoryColors, blockCategory} from "./blockConfiguration.js";
-
 let blockCounter = 0;
 let dragged = null;
 let highlightedBlock = null;
 let isPythonView = false;
+let userVariables = [];
 
 // Define a color scheme for the categories
 const categoryColors = {
@@ -14,6 +14,7 @@ const categoryColors = {
   boolean: "#80cbc4", // Aqua Marine
   functions: "#995ba6", // Amethyst Purple
   variables: "#a55b80", // Rosewood
+  default: "#cccccc", // Light Gray
 };
 
 const blockCategory = {
@@ -247,16 +248,29 @@ const blockCategory = {
         childElement: ["variable", "value"],
         sisterElement: null,
       },
+
       {
-        name: "Variable Assignment",
-        blockID: "varAssignOps",
-        description: "Assignment operators (=, +=, -=, *=, /=, %=)",
-        type: "assignment",
-        blockType: ["---", "=", "+=", "-=", "*=", "/=", "%="],
+        name: "Variable Operations",
+        blockID: "varOps",
+        description: "Variable",
+        type: "variable",
+        blockType: ["variable"],
         parentElement: "block",
-        childElement: ["variable", "value"],
+        childElement: ["variable", "operator", "value"],
         sisterElement: null,
       },
+
+      {
+        name: "Variable Block",
+        blockID: "variableBlock",
+        description: "A variable block for variable input",
+        type: "variable",
+        blockType: ["variable"],
+        parentElement: "block",
+        childElement: null,
+        sisterElement: null,
+      },
+
     ],
   },
 };
@@ -276,7 +290,13 @@ function createCategoryButtons(blockCategory) {
     const categoryHeader =
       categoryContainer.parentElement.querySelector(".category-header");
     const color = categoryColors[categoryName] || "#cccccc";
-    categoryHeader.style.backgroundColor = color;
+
+    // Set default color for Variable Declaration block
+    if (categoryName === "Variable Declaration") {
+      categoryHeader.style.backgroundColor = "#cccccc";
+    } else {
+      categoryHeader.style.backgroundColor = color;
+    }
 
     // Add the onclick event listener to the category header
     categoryHeader.addEventListener("click", function () {
@@ -291,7 +311,12 @@ function createCategoryButtons(blockCategory) {
       button.innerText = `${element.name}`;
 
       // Apply category color to the button
-      button.style.backgroundColor = color;
+      // Set default color for Variable Declaration block buttons
+      if (element.blockID === "varDeclOps") {
+        button.style.backgroundColor = "#cccccc";
+      } else {
+        button.style.backgroundColor = color;
+      }
 
       // Add the description to the button's title attribute
       button.title = element.description; // Tooltip text showing description
@@ -341,16 +366,24 @@ function newBlock(s) {
     createInputBlock(newBlock, "Enter a number", "math-input", "blockValue");
   } else if (s === "printText") {
     createInputBlock(newBlock, "Enter text", "text-input", "blockValue");
+  } else if (s === "varDeclOps") {
+    handleVariableDeclarationBlock(newBlock); // Handle variable declaration block
+  } else if (s === "varOps") {
+    handleVariableOperationBlock(newBlock); // Handle variable operation block
+  } else if (s === "variableBlock") {
+    handleVariableBlock(newBlock); // Handle variable block
   } else {
     handleDefaultBlock(newBlock, blockTypes);
   }
 
-  addDepthInfo(newBlock);
-  appendChildElement(newBlock, childElement);
-  container.appendChild(newBlock);
+  if (s !== "varDeclOps") {
+    addDepthInfo(newBlock);
+    appendChildElement(newBlock, childElement);
+    container.appendChild(newBlock);
 
-  addBlockInteractivity(newBlock);
-  updateLineNumbers();
+    addBlockInteractivity(newBlock);
+    updateLineNumbers();
+  }
 }
 
 function getBlockProperties(blockID) {
@@ -388,12 +421,18 @@ function handleMathOrComparisonBlock(block, blockID) {
   horizontalContainers[0].appendChild(input1);
 
   const operatorDropdown = createOperatorDropdown(blockID);
+  operatorDropdown.dataset.dropdownType = "operator-a"; // Add identifier
   horizontalContainers[1].appendChild(operatorDropdown);
 
   const input2 = createInputField("Enter value", "math-comparison-input", "blockYValue");
   horizontalContainers[2].appendChild(input2);
 
   horizontalContainers.forEach((container) => block.appendChild(container));
+
+  // Update data-selected for multiple dropdowns
+  operatorDropdown.addEventListener("change", function () {
+    block.dataset.selectedA = operatorDropdown.value; // Add data-selected-a
+  });
 }
 
 function createInputField(placeholder, className, dataKey) {
@@ -403,11 +442,13 @@ function createInputField(placeholder, className, dataKey) {
   input.classList.add(className);
 
   input.addEventListener("input", function () {
+    const block = input.closest(".box");
     const value = input.value.trim();
     if (/^-?\d*\.?\d*$/.test(value)) {
-      input.closest(".box").dataset[dataKey] = value;
+      block.dataset[dataKey] = value;
+      block.dataset.typed = value; // Add data-typed attribute
     } else {
-      input.value = input.closest(".box").dataset[dataKey] || "";
+      input.value = block.dataset[dataKey] || "";
     }
   });
 
@@ -427,7 +468,9 @@ function createOperatorDropdown(blockID) {
   });
 
   dropdown.addEventListener("change", function () {
-    dropdown.closest(".box").dataset.blockOperator = dropdown.value;
+    const block = dropdown.closest(".box");
+    block.dataset.selected = dropdown.value; // Add data-selected attribute
+    block.dataset.blockOperator = dropdown.value;
   });
 
   return dropdown;
@@ -487,7 +530,138 @@ function createBlockTypeDropdown(blockTypes) {
   });
 
   dropdown.value = blockTypes[0];
+  dropdown.addEventListener("change", function () {
+    const block = dropdown.closest(".box");
+    block.dataset.selected = dropdown.value; // Add data-selected attribute
+  });
+
   return dropdown;
+}
+
+function handleVariableDeclarationBlock(block) {
+  const variableName = prompt("Enter a new variable name:");
+  if (!variableName) return;
+
+  if (!userVariables.includes(variableName)) {
+    userVariables.push(variableName);
+    updateUserVariableDropdowns(); // Update dropdowns
+  }
+}
+
+function handleVariableOperationBlock(block) {
+  const container = document.createElement("div");
+  container.classList.add("childBox-Container-Horizontal");
+
+  const variableDropdown = document.createElement("select");
+  variableDropdown.classList.add("block-dropdown");
+  variableDropdown.dataset.type = "variable";
+  userVariables.forEach((varName) => {
+    const option = document.createElement("option");
+    option.value = varName;
+    option.textContent = varName;
+    variableDropdown.appendChild(option);
+  });
+
+  variableDropdown.addEventListener('change', function () {
+    block.dataset.selectedVariable = variableDropdown.value;
+    block.dataset.selectedA = variableDropdown.value; // Add data-selected-a
+  });
+
+  container.appendChild(variableDropdown);
+
+  const operatorDropdown = document.createElement("select");
+  operatorDropdown.classList.add("block-dropdown");
+  operatorDropdown.dataset.type = "operator";
+  ["=", "+=", "-="].forEach((op) => {
+    const option = document.createElement("option");
+    option.value = op;
+    option.textContent = op;
+    operatorDropdown.appendChild(option);
+  });
+  container.appendChild(operatorDropdown);
+
+  operatorDropdown.addEventListener('change', function () {
+    block.dataset.selectedOperator = operatorDropdown.value;
+    block.dataset.selectedB = operatorDropdown.value; // Add data-selected-b
+  });
+
+  const valueInput = createInputField("Enter value", "math-comparison-input", "blockValue");
+  valueInput.dataset.inputType = "value-a"; // Add identifier
+  container.appendChild(valueInput);
+
+  block.appendChild(container);
+
+  valueInput.addEventListener("input", function () {
+    const enteredValue = valueInput.value.trim();
+    if (/^-?\d*\.?\d*$/.test(enteredValue)) {
+      block.dataset.blockValue = enteredValue;
+      block.dataset.typedA = enteredValue; // Add data-typed-a
+    }
+  });
+}
+function updateOperatorAttributes(block, selectedOperator) {
+  const operatorLabel = document.createElement("span");
+  operatorLabel.classList.add("operator-attribute");
+  operatorLabel.textContent = `Operator: ${selectedOperator}`;
+  
+  const existingOperatorLabel = block.querySelector(".operator-attribute");
+  if (existingOperatorLabel) {
+    existingOperatorLabel.remove();
+  }
+  
+  block.appendChild(operatorLabel);
+}
+
+function updateVariableValueInBlock(block, selectedVariable) {
+  const existingValueAttribute = block.querySelector(".variable-value-attribute");
+  if (existingValueAttribute) {
+    existingValueAttribute.remove();
+  }
+
+}
+
+function updateVariableAttributes(block, selectedVariable) {
+  const existingAttributes = block.querySelectorAll(".variable-attribute");
+  existingAttributes.forEach((attr) => attr.remove());
+
+  updateVariableValueInBlock(block, selectedVariable);
+}
+
+function handleVariableBlock(block) {
+  const container = document.createElement("div");
+  container.classList.add("childBox-Container-Horizontal");
+
+  const variableDropdown = document.createElement("select");
+  variableDropdown.classList.add("block-dropdown");
+  variableDropdown.dataset.type = "variable"; // Mark for updates
+  userVariables.forEach((varName) => {
+    const option = document.createElement("option");
+    option.value = varName;
+    option.textContent = varName;
+    variableDropdown.appendChild(option); // Correctly append the option
+  });
+
+  // Event listener to update selected variable
+  variableDropdown.addEventListener('change', function () {
+    const selectedVariable = variableDropdown.value;
+    updateVariableAttributes(block, selectedVariable); // Update block with the selected variable's attributes
+  });
+
+  container.appendChild(variableDropdown);
+  block.appendChild(container);
+}
+
+function updateUserVariableDropdowns() {
+  const dropdowns = document.querySelectorAll(".block-dropdown[data-type='variable']");
+  dropdowns.forEach((dropdown) => {
+    dropdown.innerHTML = ""; // Clear existing options
+    userVariables.forEach((varName) => {
+      const option = document.createElement("option");
+      option.value = varName;
+      option.textContent = varName;
+      dropdown.appendChild(option);
+    });
+  });
 }
 
 function addDepthInfo(block) {
@@ -1029,3 +1203,5 @@ document.addEventListener("DOMContentLoaded", () => {
   spacer1.addEventListener("mousedown", (e) => startDrag(e, spacer1));
   spacer2.addEventListener("mousedown", (e) => startDrag(e, spacer2));
 });
+
+
