@@ -1,250 +1,10 @@
-// import {categoryColors, blockCategory} from "./blockConfiguration.js";
+import {categoryColors, blockCategory} from "./blockConfiguration.js";
+
 let blockCounter = 0;
 let dragged = null;
 let highlightedBlock = null;
 let isPythonView = false;
 let userVariables = [];
-
-// Define a color scheme for the categories
-const categoryColors = {
-  movement: "#BFEFFF", // Baby Blue
-  logic: "#5a80a5", // Steel Blue
-  math: "#5ba55a", // Medium Sea Green
-  comparison: "#ffcc99", // Peach
-  boolean: "#80cbc4", // Aqua Marine
-  functions: "#995ba6", // Amethyst Purple
-  variables: "#a55b80", // Rosewood
-  default: "#cccccc", // Light Gray
-};
-
-const blockCategory = {
-  movement: {
-    elements: [
-      {
-        name: "forward",
-        blockID: "t.forward(100)",
-        description: "Move the turtle forward",
-        type: "movement",
-        parentElement: "block",
-        childElement: ["value"], // accepts a numeric value
-        sisterElement: null,
-      },
-      {
-        name: "right",
-        blockID: "t.right(90)",
-        description: "Turn the turtle right",
-        type: "movement",
-        parentElement: "block",
-        childElement: ["value"], // accepts an angle
-        sisterElement: null,
-      },
-      {
-        name: "back",
-        blockID: "t.back(100)",
-        description: "Move the turtle backward",
-        type: "movement",
-        parentElement: "block",
-        childElement: ["value"], // accepts a numeric value
-        sisterElement: null,
-      },
-      {
-        name: "left",
-        blockID: "t.left(90)",
-        description: "Turn the turtle left",
-        type: "movement",
-        parentElement: "block",
-        childElement: ["value"], // accepts an angle
-        sisterElement: null,
-      },
-    ],
-  },
-  logic: {
-    elements: [
-      {
-        name: "if",
-        blockID: "if",
-        description: "Conditional statement",
-        type: "control",
-        parentElement: "block",
-        childElement: "block",
-        sisterElement: ["elif", "else"],
-      },
-      {
-        name: "while",
-        blockID: "while",
-        description: "While loop",
-        type: "loop",
-        parentElement: "block",
-        childElement: "block",
-        sisterElement: null,
-      },
-      {
-        name: "for",
-        blockID: "for",
-        description: "For loop",
-        type: "loop",
-        parentElement: "block",
-        childElement: "block",
-        sisterElement: null,
-      },
-      {
-        name: "break",
-        blockID: "break",
-        description: "Break loop",
-        type: "loop",
-        parentElement: "block",
-        childElement: null,
-        sisterElement: null,
-      },
-      {
-        name: "continue",
-        blockID: "continue",
-        description: "Continue loop",
-        type: "loop",
-        parentElement: "block",
-        childElement: null,
-        sisterElement: null,
-      },
-    ],
-  },
-  math: {
-    elements: [
-      {
-        name: "Arithmetic Operations",
-        blockID: "arithmeticOps",
-        description: "Arithmetic operators (+, -, *, /, %, **, //)",
-        type: "arithmetic",
-        parentElement: "block",
-        childElement: ["operator", "operand1", "operand2"],
-        sisterElement: null,
-      },
-      {
-        name: "Math Text Block",
-        blockID: "mathText",
-        description: "A text block that accepts only numeric input",
-        type: "text",
-        parentElement: "block",
-        childElement: ["text"],
-        sisterElement: null,
-      },
-      {
-        name: "Math Block",
-        blockID: "mathBlock",
-        description: "A math block for numeric input",
-        type: "arithmetic",
-        parentElement: "block",
-        childElement: ["block", "operator", "operand1", "operand2"],
-        sisterElement: null,
-      },
-    ],
-  },
-  comparison: {
-    elements: [
-      {
-        name: "Comparison Operators",
-        blockID: "comparisonOps",
-        description: "Comparison operators (==, !=, >, <, >=, <=)",
-        type: "comparison",
-        parentElement: "block",
-        childElement: ["operator", "operand1", "operand2"],
-        sisterElement: null,
-      },
-      {
-        name: "Comparison Block",
-        blockID: "comparisonBlock",
-        description: "A comparison block for numeric input",
-        type: "comparison",
-        parentElement: "block",
-        childElement: ["block", "operator", "operand1", "operand2"],
-        sisterElement: null,
-      },
-    ],
-  },
-  boolean: {
-    elements: [
-      {
-        name: "Logical Operations",
-        blockID: "logicalOps",
-        description: "Logical operators (and, or, not)",
-        type: "logical",
-        parentElement: "block",
-        childElement: ["operator", "operand1", "operand2"],
-        sisterElement: null,
-      },
-    ],
-  },
-  functions: {
-    elements: [
-      {
-        name: "def",
-        blockID: "def",
-        description: "Define a function",
-        type: "function",
-        parentElement: "block",
-        childElement: ["function_name", "arguments"],
-        sisterElement: null,
-      },
-      {
-        name: "return",
-        blockID: "return",
-        description: "Return from a function",
-        type: "function",
-        parentElement: "block",
-        childElement: ["expression"],
-        sisterElement: null,
-      },
-      {
-        name: "print",
-        blockID: "print",
-        description: "Print to the console",
-        type: "function",
-        parentElement: "block",
-        childElement: ["expression"],
-        sisterElement: null,
-      },
-      {
-        name: "Text",
-        blockID: "printText",
-        description: "A text block for string input",
-        type: "text",
-        parentElement: "block",
-        childElement: ["text"],
-        sisterElement: null,
-      },
-    ],
-  },
-  variables: {
-    elements: [
-      {
-        name: "Variable Declaration",
-        blockID: "varDeclOps",
-        description: "Declare a variable",
-        type: "variable",
-        parentElement: "block",
-        childElement: ["variable", "value"],
-        sisterElement: null,
-      },
-      {
-        name: "Variable Operations",
-        blockID: "varOps",
-        description: "Variable",
-        type: "variable",
-        parentElement: "block",
-        childElement: ["variable", "operator", "value"],
-        sisterElement: null,
-      },
-      {
-        name: "Variable Block",
-        blockID: "variableBlock",
-        description: "A variable block for variable input",
-        type: "variable",
-        parentElement: "block",
-        childElement: null,
-        sisterElement: null,
-      },
-    ],
-  },
-};
 
 // ==========================
 // 1. Block Management Functions
@@ -1106,56 +866,63 @@ function updateUserVariableDropdowns() {
 // 11. Event Listeners
 // ==========================
 
-document.addEventListener("keydown", function (event) {
-  if (event.ctrlKey && event.key === "Enter") {
+function setupKeydownListener() {
+  document.addEventListener("keydown", function (event) {
+    if (event.ctrlKey && event.key === "Enter") {
+      runCode();
+    }
+  });
+}
+
+function setupDOMContentLoadedListener() {
+  document.addEventListener("DOMContentLoaded", function () {
     runCode();
-  }
-});
+  });
+}
 
-// Run code when page loads
-document.addEventListener("DOMContentLoaded", function () {
-  runCode();
-});
+function setupLoginButtonListener() {
+  const loginButton = document.getElementById("loginButton");
+  loginButton.addEventListener("click", function () {
+    const username = prompt("Enter Username:");
+    const password = prompt("Enter Password:");
 
-// Event listener for login button
-const loginButton = document.getElementById("loginButton");
-loginButton.addEventListener("click", function () {
-  const username = prompt("Enter Username:");
-  const password = prompt("Enter Password:");
+    if (username === "user" && password === "password") {
+      localStorage.setItem("loggedIn", "true");
+      alert("Login successful!");
+    } else {
+      alert("Invalid credentials");
+    }
+  });
+}
 
-  if (username === "user" && password === "password") {
-    localStorage.setItem("loggedIn", "true");
-    alert("Login successful!");
-  } else {
-    alert("Invalid credentials");
-  }
-});
+function setupSaveButtonListener() {
+  const saveButton = document.getElementById("saveButton");
+  saveButton.addEventListener("click", function () {
+    const pythonCode = document.getElementById("pythontext").value;
+    localStorage.setItem("savedCode", pythonCode);
+    alert("Code saved locally!");
+  });
+}
 
-// Event listener for save button
-const saveButton = document.getElementById("saveButton");
-saveButton.addEventListener("click", function () {
-  const pythonCode = document.getElementById("pythontext").value;
-  localStorage.setItem("savedCode", pythonCode);
-  alert("Code saved locally!");
-});
-
-// Event listeners for button functionalities
-document.querySelector('[name="btt"]').addEventListener("click", blockToText);
-document.querySelector('[name="ttb"]').addEventListener("click", textToBlock);
-document.getElementById("toggleButton").addEventListener("click", toggleView);
-document
-  .getElementById("store-p")
-  .querySelector("button")
-  .addEventListener("click", StoreBlob);
-document
-  .getElementById("pull-p")
-  .querySelector("button")
-  .addEventListener("click", PullBlob);
+function setupButtonFunctionalityListeners() {
+  document.querySelector('[name="btt"]').addEventListener("click", blockToText);
+  document.querySelector('[name="ttb"]').addEventListener("click", textToBlock);
+  document.getElementById("toggleButton").addEventListener("click", toggleView);
+  document
+    .getElementById("store-p")
+    .querySelector("button")
+    .addEventListener("click", StoreBlob);
+  document
+    .getElementById("pull-p")
+    .querySelector("button")
+    .addEventListener("click", PullBlob);
+}
 
 // ==========================
 // 12. Additional Features (Resizing Columns, Dragging, etc.)
 // ==========================
-document.addEventListener("DOMContentLoaded", () => {
+
+function setupColumnResizing() {
   let isDragging = false;
   let currentSpacer = null;
   let startX = 0;
@@ -1216,74 +983,97 @@ document.addEventListener("DOMContentLoaded", () => {
 
   spacer1.addEventListener("mousedown", (e) => startDrag(e, spacer1));
   spacer2.addEventListener("mousedown", (e) => startDrag(e, spacer2));
-});
+}
 
-document.querySelectorAll(".box").forEach((box) => {
-  box.draggable = true;
-  box.addEventListener("dragstart", dragStart);
-  box.addEventListener("dragover", dragOver);
-  box.addEventListener("drop", drop);
-  box.addEventListener("dragend", dragEnd);
-});
-
-// Prevent category buttons from closing the menu
-document.querySelectorAll(".category-blocks button").forEach((button) => {
-  button.addEventListener("click", (event) => {
-    event.stopPropagation();
+function setupDraggableBlocks() {
+  document.querySelectorAll(".box").forEach((box) => {
+    box.draggable = true;
+    box.addEventListener("dragstart", dragStart);
+    box.addEventListener("dragover", dragOver);
+    box.addEventListener("drop", drop);
+    box.addEventListener("dragend", dragEnd);
   });
-});
 
-// Handle block deletion when dragging over the left-side container
-const codeContainer = document.querySelector(".code-container");
-codeContainer.addEventListener("dragover", function (event) {
-  event.preventDefault();
-});
+  // Prevent category buttons from closing the menu
+  document.querySelectorAll(".category-blocks button").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+  });
 
-codeContainer.addEventListener("drop", function (event) {
-  event.preventDefault();
-  if (dragged) {
-    dragged.remove();
-    dragged = null;
-    updateLineNumbers();
-  }
-});
+  // Handle block deletion when dragging over the left-side container
+  const codeContainer = document.querySelector(".code-container");
+  codeContainer.addEventListener("dragover", function (event) {
+    event.preventDefault();
+  });
 
-// Remove drop target highlight when dragging leaves a block
-document.addEventListener("dragleave", function (event) {
-  const targetBlock = event.target.closest(".box");
-  if (targetBlock) {
-    targetBlock.classList.remove("drop-target");
-  }
-});
+  codeContainer.addEventListener("drop", function (event) {
+    event.preventDefault();
+    if (dragged) {
+      dragged.remove();
+      dragged = null;
+      updateLineNumbers();
+    }
+  });
 
-// Deselect block when clicking outside
-document.addEventListener("click", function (event) {
-  if (highlightedBlock && !highlightedBlock.contains(event.target)) {
-    highlightedBlock.classList.remove("selected");
-    highlightedBlock = null;
-  }
-});
+  // Remove drop target highlight when dragging leaves a block
+  document.addEventListener("dragleave", function (event) {
+    const targetBlock = event.target.closest(".box");
+    if (targetBlock) {
+      targetBlock.classList.remove("drop-target");
+    }
+  });
 
-// Delete highlighted block with "Delete" key
-document.addEventListener("keydown", function (event) {
-  if (event.key === "Delete" && highlightedBlock) {
-    highlightedBlock.remove();
-    highlightedBlock = null;
-    updateLineNumbers();
-  }
-});
+  // Deselect block when clicking outside
+  document.addEventListener("click", function (event) {
+    if (highlightedBlock && !highlightedBlock.contains(event.target)) {
+      highlightedBlock.classList.remove("selected");
+      highlightedBlock = null;
+    }
+  });
+
+  // Delete highlighted block with "Delete" key
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Delete" && highlightedBlock) {
+      highlightedBlock.remove();
+      highlightedBlock = null;
+      updateLineNumbers();
+    }
+  });
+}
 
 // ==========================
 // 13. Miscellaneous Code
 // ==========================
-const pythonTextarea = document.getElementById("pythontext");
-ptext = pythonTextarea.value;
 
-const blockContainer = document.getElementById("box-container");
+function initializeMiscellaneous() {
+  const pythonTextarea = document.getElementById("pythontext");
+  ptext = pythonTextarea.value;
 
-let isRunning = false;
+  const blockContainer = document.getElementById("box-container");
 
-document.getElementById("output").style.whiteSpace = "pre-wrap";
+  let isRunning = false;
+
+  document.getElementById("output").style.whiteSpace = "pre-wrap";
+}
+
+// ==========================
+// Main Initialization Function
+// ==========================
+
+function initializeApp() {
+  setupKeydownListener();
+  setupDOMContentLoadedListener();
+  setupLoginButtonListener();
+  setupSaveButtonListener();
+  setupButtonFunctionalityListeners();
+  setupColumnResizing();
+  setupDraggableBlocks();
+  initializeMiscellaneous();
+}
+
+// Call the main initialization function
+initializeApp();
 
 /* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
 // Run Code button logic for swapping between Run/Stop
