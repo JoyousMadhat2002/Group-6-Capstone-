@@ -276,6 +276,14 @@ function createCategoryButtons(blockCategory) {
 
     // Iterate through each element in the category
     categoryData.elements.forEach((element) => {
+      // Skip creating Variable Operations and Variable Blocks if no variables exist
+      if (
+        (element.blockID === "varOps" || element.blockID === "variableBlock") &&
+        userVariables.length === 0
+      ) {
+        return; // Skip this element
+      }
+
       const button = document.createElement("button");
       button.id = `${element.blockID}Button`;
       button.name = element.name;
@@ -305,6 +313,19 @@ function createCategoryButtons(blockCategory) {
 }
 // Call the function to create the buttons
 createCategoryButtons(blockCategory);
+
+function refreshCategoryButtons() {
+  // Clear all category containers
+  for (const categoryName of Object.keys(blockCategory)) {
+    const categoryContainer = document.getElementById(categoryName);
+    if (categoryContainer) {
+      categoryContainer.innerHTML = ""; // Clear the container
+    }
+  }
+
+  // Recreate the buttons
+  createCategoryButtons(blockCategory);
+}
 
 function newBlock(blockID) {
   if (isPythonView) {
@@ -557,6 +578,7 @@ function handleVariableDeclarationBlock(block) {
   if (!userVariables.includes(variableName)) {
     userVariables.push(variableName);
     updateUserVariableDropdowns(); // Update dropdowns
+    refreshCategoryButtons(); // Refresh the category buttons
   }
 }
 
