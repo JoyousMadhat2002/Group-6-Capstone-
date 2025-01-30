@@ -25,7 +25,6 @@ const blockCategory = {
         blockID: "t.forward(100)",
         description: "Move the turtle forward",
         type: "movement",
-        blockType: ["forward"],
         parentElement: "block",
         childElement: ["value"], // accepts a numeric value
         sisterElement: null,
@@ -35,7 +34,6 @@ const blockCategory = {
         blockID: "t.right(90)",
         description: "Turn the turtle right",
         type: "movement",
-        blockType: ["right"],
         parentElement: "block",
         childElement: ["value"], // accepts an angle
         sisterElement: null,
@@ -45,7 +43,6 @@ const blockCategory = {
         blockID: "t.back(100)",
         description: "Move the turtle backward",
         type: "movement",
-        blockType: ["back"],
         parentElement: "block",
         childElement: ["value"], // accepts a numeric value
         sisterElement: null,
@@ -55,7 +52,6 @@ const blockCategory = {
         blockID: "t.left(90)",
         description: "Turn the turtle left",
         type: "movement",
-        blockType: ["left"],
         parentElement: "block",
         childElement: ["value"], // accepts an angle
         sisterElement: null,
@@ -69,7 +65,6 @@ const blockCategory = {
         blockID: "if",
         description: "Conditional statement",
         type: "control",
-        blockType: ["control"],
         parentElement: "block",
         childElement: "block",
         sisterElement: ["elif", "else"],
@@ -79,7 +74,6 @@ const blockCategory = {
         blockID: "while",
         description: "While loop",
         type: "loop",
-        blockType: ["loop"],
         parentElement: "block",
         childElement: "block",
         sisterElement: null,
@@ -89,7 +83,6 @@ const blockCategory = {
         blockID: "for",
         description: "For loop",
         type: "loop",
-        blockType: ["loop"],
         parentElement: "block",
         childElement: "block",
         sisterElement: null,
@@ -99,7 +92,6 @@ const blockCategory = {
         blockID: "break",
         description: "Break loop",
         type: "loop",
-        blockType: ["loop"],
         parentElement: "block",
         childElement: null,
         sisterElement: null,
@@ -109,7 +101,6 @@ const blockCategory = {
         blockID: "continue",
         description: "Continue loop",
         type: "loop",
-        blockType: ["loop"],
         parentElement: "block",
         childElement: null,
         sisterElement: null,
@@ -123,29 +114,24 @@ const blockCategory = {
         blockID: "arithmeticOps",
         description: "Arithmetic operators (+, -, *, /, %, **, //)",
         type: "arithmetic",
-        blockType: ["---", "+", "-", "*", "/", "%", "**", "//"],
         parentElement: "block",
         childElement: ["operator", "operand1", "operand2"],
         sisterElement: null,
       },
-
       {
         name: "Math Text Block",
         blockID: "mathText",
         description: "A text block that accepts only numeric input",
         type: "text",
-        blockType: ["number"],
         parentElement: "block",
         childElement: ["text"],
         sisterElement: null,
       },
-
       {
         name: "Math Block",
         blockID: "mathBlock",
         description: "A math block for numeric input",
         type: "arithmetic",
-        blockType: ["math"],
         parentElement: "block",
         childElement: ["block", "operator", "operand1", "operand2"],
         sisterElement: null,
@@ -159,18 +145,15 @@ const blockCategory = {
         blockID: "comparisonOps",
         description: "Comparison operators (==, !=, >, <, >=, <=)",
         type: "comparison",
-        blockType: ["---", "==", "!=", ">", "<", ">=", "<="],
         parentElement: "block",
         childElement: ["operator", "operand1", "operand2"],
         sisterElement: null,
       },
-
       {
         name: "Comparison Block",
         blockID: "comparisonBlock",
         description: "A comparison block for numeric input",
         type: "comparison",
-        blockType: ["comparison"],
         parentElement: "block",
         childElement: ["block", "operator", "operand1", "operand2"],
         sisterElement: null,
@@ -184,7 +167,6 @@ const blockCategory = {
         blockID: "logicalOps",
         description: "Logical operators (and, or, not)",
         type: "logical",
-        blockType: ["---", "and", "or", "not"],
         parentElement: "block",
         childElement: ["operator", "operand1", "operand2"],
         sisterElement: null,
@@ -198,7 +180,6 @@ const blockCategory = {
         blockID: "def",
         description: "Define a function",
         type: "function",
-        blockType: ["function"],
         parentElement: "block",
         childElement: ["function_name", "arguments"],
         sisterElement: null,
@@ -208,7 +189,6 @@ const blockCategory = {
         blockID: "return",
         description: "Return from a function",
         type: "function",
-        blockType: ["function"],
         parentElement: "block",
         childElement: ["expression"],
         sisterElement: null,
@@ -218,18 +198,15 @@ const blockCategory = {
         blockID: "print",
         description: "Print to the console",
         type: "function",
-        blockType: ["function"],
         parentElement: "block",
         childElement: ["expression"],
         sisterElement: null,
       },
-
       {
         name: "Text",
         blockID: "printText",
         description: "A text block for string input",
         type: "text",
-        blockType: ["text"],
         parentElement: "block",
         childElement: ["text"],
         sisterElement: null,
@@ -243,34 +220,28 @@ const blockCategory = {
         blockID: "varDeclOps",
         description: "Declare a variable",
         type: "variable",
-        blockType: ["variable"],
         parentElement: "block",
         childElement: ["variable", "value"],
         sisterElement: null,
       },
-
       {
         name: "Variable Operations",
         blockID: "varOps",
         description: "Variable",
         type: "variable",
-        blockType: ["variable"],
         parentElement: "block",
         childElement: ["variable", "operator", "value"],
         sisterElement: null,
       },
-
       {
         name: "Variable Block",
         blockID: "variableBlock",
         description: "A variable block for variable input",
         type: "variable",
-        blockType: ["variable"],
         parentElement: "block",
         childElement: null,
         sisterElement: null,
       },
-
     ],
   },
 };
@@ -332,11 +303,10 @@ function createCategoryButtons(blockCategory) {
     });
   }
 }
-
 // Call the function to create the buttons
 createCategoryButtons(blockCategory);
 
-function newBlock(s) {
+function newBlock(blockID) {
   if (isPythonView) {
     console.warn("Cannot create a new block in Python view.");
     return; // Exit the function early
@@ -346,37 +316,39 @@ function newBlock(s) {
   const newBlock = document.createElement("div");
   newBlock.classList.add("box");
   newBlock.id = "box_" + ++blockCounter; // Increment block counter and set ID
-  newBlock.dataset.blockID = s; // Store the blockID in the dataset
+  newBlock.dataset.blockID = blockID; // Store the blockID in the dataset
 
   // Calculate and set the depth
   const parentDepth = Number(container.getAttribute("data-blockDepth")) || 0;
   newBlock.dataset.blockDepth = parentDepth + 1; // Parent depth + 1 for the new block
 
   // Set block properties
-  const { blockCategoryColor, blockTypes, childElement } = getBlockProperties(s);
+  const { blockCategoryColor, childElement } = getBlockProperties(blockID);
   newBlock.style.backgroundColor = blockCategoryColor; // Apply the category color
 
-  createBlockLabel(newBlock, s);
+  createBlockLabel(newBlock, blockID);
 
-  if (s === "mathBlock" || s === "comparisonBlock") {
-    handleMathOrComparisonBlock(newBlock, s);
-  } else if (["if", "while", "for"].includes(s)) {
-    handleControlBlock(newBlock, s);
-  } else if (s === "mathText") {
-    createInputBlock(newBlock, "Enter a number", "math-input", "blockValue");
-  } else if (s === "printText") {
-    createInputBlock(newBlock, "Enter text", "text-input", "blockValue");
-  } else if (s === "varDeclOps") {
+  if (blockID === "mathBlock" || blockID === "comparisonBlock") {
+    handleMathOrComparisonBlock(newBlock, blockID);
+  } else if (["if", "while", "for"].includes(blockID)) {
+    handleControlBlock(newBlock, blockID);
+  } else if (blockID === "mathText") {
+    createInputBlock(newBlock, "0", "math-input", "blockValue", blockID);
+  } else if (blockID === "printText") {
+    createInputBlock(newBlock, "Enter Text", "text-input", "blockValue", blockID);
+  } else if (blockID === "varDeclOps") {
     handleVariableDeclarationBlock(newBlock); // Handle variable declaration block
-  } else if (s === "varOps") {
+  } else if (blockID === "varOps") {
     handleVariableOperationBlock(newBlock); // Handle variable operation block
-  } else if (s === "variableBlock") {
+  } else if (blockID === "variableBlock") {
     handleVariableBlock(newBlock); // Handle variable block
+  } else if (blockID === "arithmeticOps" || blockID === "comparisonOps" || blockID === "logicalOps") {
+    handleOperatorBlock(newBlock, blockID); // Handle operator blocks
   } else {
-    handleDefaultBlock(newBlock, blockTypes);
+    handleDefaultBlock(newBlock, blockID); // Handle default block
   }
 
-  if (s !== "varDeclOps") {
+  if (blockID !== "varDeclOps") {
     addDepthInfo(newBlock);
     appendChildElement(newBlock, childElement);
     container.appendChild(newBlock);
@@ -386,22 +358,35 @@ function newBlock(s) {
   }
 }
 
+function getBlockTypes(blockID) {
+  switch (blockID) {
+    case "arithmeticOps":
+      return ["---", "+", "-", "*", "/", "%", "**", "//"];
+    case "comparisonOps":
+      return ["---", "==", "!=", ">", "<", ">=", "<="];
+    case "logicalOps":
+      return ["---", "and", "or", "not"];
+    case "varOps":
+      return ["---", "=", "+=", "-=", "*=", "/="];
+    default:
+      return ["---"]; // Default case for blocks without specific types
+  }
+}
+
 function getBlockProperties(blockID) {
   let blockCategoryColor = "#cccccc"; // Default block color
-  let blockTypes = [];
   let childElement = null;
 
   for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
     categoryData.elements.forEach((element) => {
       if (element.blockID === blockID) {
         blockCategoryColor = categoryColors[categoryName] || blockCategoryColor;
-        blockTypes = element.blockType;
         childElement = element.childElement;
       }
     });
   }
 
-  return { blockCategoryColor, blockTypes, childElement };
+  return { blockCategoryColor, childElement };
 }
 
 function createBlockLabel(block, blockID) {
@@ -410,32 +395,26 @@ function createBlockLabel(block, blockID) {
   block.appendChild(blockIDLabel);
 }
 
-function handleMathOrComparisonBlock(block, blockID) {
-  const horizontalContainers = [1, 2, 3].map(() => {
-    const container = document.createElement("div");
-    container.classList.add("childBox-Container-Horizontal");
-    return container;
-  });
-
-  const input1 = createInputField("Enter value", "math-comparison-input", "blockXValue");
-  horizontalContainers[0].appendChild(input1);
-
-  const operatorDropdown = createOperatorDropdown(blockID);
-  operatorDropdown.dataset.dropdownType = "operator-a"; // Add identifier
-  horizontalContainers[1].appendChild(operatorDropdown);
-
-  const input2 = createInputField("Enter value", "math-comparison-input", "blockYValue");
-  horizontalContainers[2].appendChild(input2);
-
-  horizontalContainers.forEach((container) => block.appendChild(container));
-
-  // Update data-selected for multiple dropdowns
-  operatorDropdown.addEventListener("change", function () {
-    block.dataset.selectedA = operatorDropdown.value; // Add data-selected-a
-  });
+function getCategoryByBlockID(blockID) {
+  for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
+    if (categoryData.elements.some((element) => element.blockID === blockID)) {
+      return categoryName;
+    }
+  }
+  return null;
 }
 
-function createInputField(placeholder, className, dataKey) {
+function handleDefaultBlock(block, blockID) {
+  const blockName = blockCategory[getCategoryByBlockID(blockID)].elements.find(
+    (element) => element.blockID === blockID
+  ).name;
+
+  const blockLabel = document.createElement("span");
+  blockLabel.textContent = `${blockName}`;
+  block.appendChild(blockLabel);
+}
+
+function createInputField(placeholder, className, dataKey, blockID) {
   const input = document.createElement("input");
   input.type = "text";
   input.placeholder = placeholder;
@@ -444,11 +423,18 @@ function createInputField(placeholder, className, dataKey) {
   input.addEventListener("input", function () {
     const block = input.closest(".box");
     const value = input.value.trim();
-    if (/^-?\d*\.?\d*$/.test(value)) {
-      block.dataset[dataKey] = value;
-      block.dataset.typed = value; // Add data-typed attribute
+
+    // Validate input based on block type
+    if (blockID === "mathText" || blockID === "mathBlock") {
+      // Only allow numbers for Math blocks
+      if (/^-?\d*\.?\d*$/.test(value)) {
+        block.dataset[dataKey] = value;
+      } else {
+        input.value = block.dataset[dataKey] || "";
+      }
     } else {
-      input.value = block.dataset[dataKey] || "";
+      // Allow any input for non-Math blocks
+      block.dataset[dataKey] = value;
     }
   });
 
@@ -459,7 +445,7 @@ function createOperatorDropdown(blockID) {
   const dropdown = document.createElement("select");
   dropdown.classList.add("block-dropdown");
 
-  const operatorOptions = blockID === "mathBlock" ? ["+", "-", "*", "/", "%", "**", "//"] : ["==", "!=", ">", "<", ">=", "<="];
+  const operatorOptions = getBlockTypes(blockID); // Use helper function
   operatorOptions.forEach((op) => {
     const option = document.createElement("option");
     option.value = op;
@@ -467,55 +453,13 @@ function createOperatorDropdown(blockID) {
     dropdown.appendChild(option);
   });
 
+  dropdown.value = "---"; // Default value
   dropdown.addEventListener("change", function () {
     const block = dropdown.closest(".box");
-    block.dataset.selected = dropdown.value; // Add data-selected attribute
     block.dataset.blockOperator = dropdown.value;
   });
 
   return dropdown;
-}
-
-function handleControlBlock(block, blockID) {
-  const topChildBox = createChildBox(block.id, blockID);
-  const topLabel = document.createElement("span");
-  topLabel.classList.add("block-top-label");
-  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)}:`;
-  block.appendChild(topLabel);
-  block.appendChild(topChildBox);
-
-  if (blockID === "for") {
-    const extraTopChildBox = createChildBox(block.id, blockID);
-    const extraTopLabel = document.createElement("span");
-    extraTopLabel.classList.add("block-top-label");
-    extraTopLabel.textContent = "Range:";
-    block.appendChild(extraTopLabel);
-    block.appendChild(extraTopChildBox);
-  }
-}
-
-function createChildBox(parentID, parentBlockID) {
-  const childBox = document.createElement("div");
-  childBox.classList.add("child-box-container-horizontal");
-  childBox.dataset.parentID = parentID;
-  childBox.dataset.parentBlockID = parentBlockID;
-  return childBox;
-}
-
-function createInputBlock(block, placeholder, className, dataKey) {
-  const inputField = createInputField(placeholder, className, dataKey);
-  block.appendChild(inputField);
-}
-
-function handleDefaultBlock(block, blockTypes) {
-  if (blockTypes.length > 1) {
-    const dropdown = createBlockTypeDropdown(blockTypes);
-    block.appendChild(dropdown);
-  } else {
-    const blockTypeLabel = document.createElement("span");
-    blockTypeLabel.textContent = `Type: ${blockTypes[0]}`;
-    block.appendChild(blockTypeLabel);
-  }
 }
 
 function createBlockTypeDropdown(blockTypes) {
@@ -538,6 +482,68 @@ function createBlockTypeDropdown(blockTypes) {
   return dropdown;
 }
 
+function handleOperatorBlock(block, blockID) {
+  const blockName = blockCategory[getCategoryByBlockID(blockID)].elements.find(
+    (element) => element.blockID === blockID
+  ).name;
+
+  const blockLabel = document.createElement("span");
+  blockLabel.textContent = `${blockName}`;
+  block.appendChild(blockLabel);
+
+  // Create and append the dropdown list
+  const dropdown = createOperatorDropdown(blockID);
+  block.appendChild(dropdown);
+}
+
+function handleMathOrComparisonBlock(block, blockID) {
+  const horizontalContainers = [1, 2, 3].map(() => {
+    const container = document.createElement("div");
+    container.classList.add("childBox-Container-Horizontal");
+    return container;
+  });
+
+  // Input 1
+  const input1 = createInputField("0", "math-comparison-input", "block-1-value", blockID);
+  horizontalContainers[0].appendChild(input1);
+
+  // Operator Dropdown
+  const operatorDropdown = createOperatorDropdown(blockID);
+  operatorDropdown.dataset.dropdownType = "operator";
+  horizontalContainers[1].appendChild(operatorDropdown);
+
+  // Input 2
+  const input2 = createInputField("0", "math-comparison-input", "block-2-value", blockID);
+  horizontalContainers[2].appendChild(input2);
+
+  // Append containers to the block
+  horizontalContainers.forEach((container) => block.appendChild(container));
+
+  // Update data attributes
+  operatorDropdown.addEventListener("change", function () {
+    block.dataset.blockOperator = operatorDropdown.value;
+  });
+}
+
+function handleControlBlock(block, blockID) {
+  const topChildBox = createChildBox(block.id, blockID);
+  const topLabel = document.createElement("span");
+  topLabel.classList.add("block-top-label");
+  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)
+    }:`;
+  block.appendChild(topLabel);
+  block.appendChild(topChildBox);
+
+  if (blockID === "for") {
+    const extraTopChildBox = createChildBox(block.id, blockID);
+    const extraTopLabel = document.createElement("span");
+    extraTopLabel.classList.add("block-top-label");
+    extraTopLabel.textContent = "Range:";
+    block.appendChild(extraTopLabel);
+    block.appendChild(extraTopChildBox);
+  }
+}
+
 function handleVariableDeclarationBlock(block) {
   const variableName = prompt("Enter a new variable name:");
   if (!variableName) return;
@@ -552,9 +558,10 @@ function handleVariableOperationBlock(block) {
   const container = document.createElement("div");
   container.classList.add("childBox-Container-Horizontal");
 
+  // Variable Dropdown
   const variableDropdown = document.createElement("select");
   variableDropdown.classList.add("block-dropdown");
-  variableDropdown.dataset.type = "variable";
+  variableDropdown.setAttribute("data-type", "variable"); // Add this line
   userVariables.forEach((varName) => {
     const option = document.createElement("option");
     option.value = varName;
@@ -562,89 +569,51 @@ function handleVariableOperationBlock(block) {
     variableDropdown.appendChild(option);
   });
 
-  variableDropdown.addEventListener('change', function () {
-    block.dataset.selectedVariable = variableDropdown.value;
-    block.dataset.selectedA = variableDropdown.value; // Add data-selected-a
+  variableDropdown.addEventListener("change", function () {
+    block.dataset.block1Value = variableDropdown.value;
   });
 
   container.appendChild(variableDropdown);
 
-  const operatorDropdown = document.createElement("select");
-  operatorDropdown.classList.add("block-dropdown");
-  operatorDropdown.dataset.type = "operator";
-  ["=", "+=", "-="].forEach((op) => {
-    const option = document.createElement("option");
-    option.value = op;
-    option.textContent = op;
-    operatorDropdown.appendChild(option);
-  });
+  // Operator Dropdown
+  const operatorDropdown = createOperatorDropdown("varOps");
+  operatorDropdown.dataset.dropdownType = "operator";
   container.appendChild(operatorDropdown);
 
-  operatorDropdown.addEventListener('change', function () {
-    block.dataset.selectedOperator = operatorDropdown.value;
-    block.dataset.selectedB = operatorDropdown.value; // Add data-selected-b
-  });
-
-  const valueInput = createInputField("Enter value", "math-comparison-input", "blockValue");
-  valueInput.dataset.inputType = "value-a"; // Add identifier
+  // Value Input
+  const valueInput = createInputField("0", "math-comparison-input", "block2Value", "varOps");
   container.appendChild(valueInput);
 
   block.appendChild(container);
 
-  valueInput.addEventListener("input", function () {
-    const enteredValue = valueInput.value.trim();
-    if (/^-?\d*\.?\d*$/.test(enteredValue)) {
-      block.dataset.blockValue = enteredValue;
-      block.dataset.typedA = enteredValue; // Add data-typed-a
-    }
+  // Update data attributes
+  operatorDropdown.addEventListener("change", function () {
+    block.dataset.blockOperator = operatorDropdown.value;
   });
-}
-function updateOperatorAttributes(block, selectedOperator) {
-  const operatorLabel = document.createElement("span");
-  operatorLabel.classList.add("operator-attribute");
-  operatorLabel.textContent = `Operator: ${selectedOperator}`;
-  
-  const existingOperatorLabel = block.querySelector(".operator-attribute");
-  if (existingOperatorLabel) {
-    existingOperatorLabel.remove();
-  }
-  
-  block.appendChild(operatorLabel);
-}
 
-function updateVariableValueInBlock(block, selectedVariable) {
-  const existingValueAttribute = block.querySelector(".variable-value-attribute");
-  if (existingValueAttribute) {
-    existingValueAttribute.remove();
-  }
-
-}
-
-function updateVariableAttributes(block, selectedVariable) {
-  const existingAttributes = block.querySelectorAll(".variable-attribute");
-  existingAttributes.forEach((attr) => attr.remove());
-
-  updateVariableValueInBlock(block, selectedVariable);
+  valueInput.addEventListener("input", function () {
+    block.dataset.block2Value = valueInput.value.trim();
+  });
 }
 
 function handleVariableBlock(block) {
   const container = document.createElement("div");
   container.classList.add("childBox-Container-Horizontal");
 
+  // Variable Dropdown
   const variableDropdown = document.createElement("select");
   variableDropdown.classList.add("block-dropdown");
-  variableDropdown.dataset.type = "variable"; // Mark for updates
+  variableDropdown.setAttribute("data-type", "variable"); // Add this line
   userVariables.forEach((varName) => {
     const option = document.createElement("option");
     option.value = varName;
     option.textContent = varName;
-    variableDropdown.appendChild(option); // Correctly append the option
+    variableDropdown.appendChild(option);
   });
 
-  // Event listener to update selected variable
-  variableDropdown.addEventListener('change', function () {
-    const selectedVariable = variableDropdown.value;
-    updateVariableAttributes(block, selectedVariable); // Update block with the selected variable's attributes
+  variableDropdown.value = "---"; // Default value
+  variableDropdown.addEventListener("change", function () {
+    block.dataset.blockValue = variableDropdown.value;
   });
 
   container.appendChild(variableDropdown);
@@ -652,7 +621,9 @@ function handleVariableBlock(block) {
 }
 
 function updateUserVariableDropdowns() {
-  const dropdowns = document.querySelectorAll(".block-dropdown[data-type='variable']");
+  const dropdowns = document.querySelectorAll(
+    ".block-dropdown[data-type='variable']"
+  );
   dropdowns.forEach((dropdown) => {
     dropdown.innerHTML = ""; // Clear existing options
     userVariables.forEach((varName) => {
@@ -662,6 +633,48 @@ function updateUserVariableDropdowns() {
       dropdown.appendChild(option);
     });
   });
+}
+
+function updateVariableValueInBlock(block, selectedVariable) {
+  const existingValueAttribute = block.querySelector(
+    ".variable-value-attribute"
+  );
+  if (existingValueAttribute) {
+    existingValueAttribute.remove();
+  }
+}
+
+function updateVariableAttributes(block, selectedVariable) {
+  const existingAttributes = block.querySelectorAll(".variable-attribute");
+  existingAttributes.forEach((attr) => attr.remove());
+
+  updateVariableValueInBlock(block, selectedVariable);
+}
+
+function createChildBox(parentID, parentBlockID) {
+  const childBox = document.createElement("div");
+  childBox.classList.add("child-box-container-horizontal");
+  childBox.dataset.parentID = parentID;
+  childBox.dataset.parentBlockID = parentBlockID;
+  return childBox;
+}
+
+function createInputBlock(block, placeholder, className, dataKey, blockID) {
+  const inputField = createInputField(placeholder, className, dataKey, blockID);
+  block.appendChild(inputField);
+}
+
+function updateOperatorAttributes(block, selectedOperator) {
+  const operatorLabel = document.createElement("span");
+  operatorLabel.classList.add("operator-attribute");
+  operatorLabel.textContent = `Operator: ${selectedOperator}`;
+
+  const existingOperatorLabel = block.querySelector(".operator-attribute");
+  if (existingOperatorLabel) {
+    existingOperatorLabel.remove();
+  }
+
+  block.appendChild(operatorLabel);
 }
 
 function addDepthInfo(block) {
@@ -1203,5 +1216,3 @@ document.addEventListener("DOMContentLoaded", () => {
   spacer1.addEventListener("mousedown", (e) => startDrag(e, spacer1));
   spacer2.addEventListener("mousedown", (e) => startDrag(e, spacer2));
 });
-
-
