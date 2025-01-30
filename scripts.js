@@ -329,7 +329,7 @@ function newBlock(blockID) {
   createBlockLabel(newBlock, blockID);
 
   if (blockID === "mathBlock" || blockID === "comparisonBlock") {
-    handleMathOrComparisonBlock(newBlock, blockID);
+    handleMathOrComparisonBlock(newBlock, blockID); // Pass blockID here
   } else if (["if", "while", "for"].includes(blockID)) {
     handleControlBlock(newBlock, blockID);
   } else if (blockID === "mathText") {
@@ -358,7 +358,13 @@ function newBlock(blockID) {
   }
 }
 
-function getBlockTypes(blockID) {
+function getBlockDropdownList(blockID) {
+  if (blockID === "mathBlock") {
+    blockID = "arithmeticOps";
+  } else if (blockID === "comparisonBlock") {
+    blockID = "comparisonOps"; 
+  }
+
   switch (blockID) {
     case "arithmeticOps":
       return ["---", "+", "-", "*", "/", "%", "**", "//"];
@@ -445,7 +451,7 @@ function createOperatorDropdown(blockID) {
   const dropdown = document.createElement("select");
   dropdown.classList.add("block-dropdown");
 
-  const operatorOptions = getBlockTypes(blockID); // Use helper function
+  const operatorOptions = getBlockDropdownList(blockID); // Fetch operators based on blockID
   operatorOptions.forEach((op) => {
     const option = document.createElement("option");
     option.value = op;
@@ -508,7 +514,7 @@ function handleMathOrComparisonBlock(block, blockID) {
   horizontalContainers[0].appendChild(input1);
 
   // Operator Dropdown
-  const operatorDropdown = createOperatorDropdown(blockID);
+  const operatorDropdown = createOperatorDropdown(blockID); // Pass blockID here
   operatorDropdown.dataset.dropdownType = "operator";
   horizontalContainers[1].appendChild(operatorDropdown);
 
