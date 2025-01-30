@@ -651,7 +651,7 @@ function handleVariableBlock(block) {
 }
 
 // ==========================
-// 3.1. Create Functions
+// 4. Create Functions
 // ==========================
 
 function createInputField(placeholder, className, dataKey, blockID) {
@@ -736,7 +736,7 @@ function createInputBlock(block, placeholder, className, dataKey, blockID) {
 }
 
 // ==========================
-// 3.2. Update Functions
+// 5. Update Functions
 // ==========================
 
 function updateVariableAttributes(block, selectedVariable) {
@@ -760,7 +760,7 @@ function updateOperatorAttributes(block, selectedOperator) {
 }
 
 // ==========================
-// 4. UI and Interactivity
+// 6. UI and Interactivity
 // ==========================
 
 // Function to toggle between showing and hiding block categories
@@ -802,7 +802,7 @@ function addBlockInteractivity(block) {
 }
 
 // ==========================
-// 5. Drag-and-Drop Functionality
+// 7. Drag-and-Drop Functionality
 // ==========================
 
 // Event handler for starting a drag event on a block
@@ -898,7 +898,7 @@ function updateDepth(block, targetBlock, depthChange) {
 }
 
 // ==========================
-// 6. Python Code Conversion
+// 8. Python Code Conversion
 // ==========================
 
 function blockToText() {
@@ -976,7 +976,7 @@ function toggleView() {
 }
 
 // ==========================
-// 7. Code Execution
+// 9. Code Execution
 // ==========================
 
 // placeholder function: start code
@@ -1051,7 +1051,7 @@ function updateVariableValueInBlock(block, selectedVariable) {
 }
 
 // ==========================
-// 8. User Interaction
+// 10. User Interaction
 // ==========================
 
 // test function for storing textarea input as variable
@@ -1103,8 +1103,9 @@ function updateUserVariableDropdowns() {
 }
 
 // ==========================
-// 9. Event Listeners
+// 11. Event Listeners
 // ==========================
+
 document.addEventListener("keydown", function (event) {
   if (event.ctrlKey && event.key === "Enter") {
     runCode();
@@ -1152,7 +1153,7 @@ document
   .addEventListener("click", PullBlob);
 
 // ==========================
-// 10. Additional Features (Resizing Columns, Dragging, etc.)
+// 12. Additional Features (Resizing Columns, Dragging, etc.)
 // ==========================
 document.addEventListener("DOMContentLoaded", () => {
   let isDragging = false;
@@ -1273,7 +1274,7 @@ document.addEventListener("keydown", function (event) {
 });
 
 // ==========================
-// 11. Miscellaneous Code
+// 13. Miscellaneous Code
 // ==========================
 const pythonTextarea = document.getElementById("pythontext");
 ptext = pythonTextarea.value;
