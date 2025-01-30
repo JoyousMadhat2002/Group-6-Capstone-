@@ -245,6 +245,7 @@ const blockCategory = {
     ],
   },
 };
+
 // ==========================
 // 1. Block Management Functions
 // ==========================
@@ -359,14 +360,24 @@ function newBlock(blockID) {
   } else if (blockID === "mathText") {
     createInputBlock(newBlock, "0", "math-input", "blockValue", blockID);
   } else if (blockID === "printText") {
-    createInputBlock(newBlock, "Enter Text", "text-input", "blockValue", blockID);
+    createInputBlock(
+      newBlock,
+      "Enter Text",
+      "text-input",
+      "blockValue",
+      blockID
+    );
   } else if (blockID === "varDeclOps") {
     handleVariableDeclarationBlock(newBlock); // Handle variable declaration block
   } else if (blockID === "varOps") {
     handleVariableOperationBlock(newBlock); // Handle variable operation block
   } else if (blockID === "variableBlock") {
     handleVariableBlock(newBlock); // Handle variable block
-  } else if (blockID === "arithmeticOps" || blockID === "comparisonOps" || blockID === "logicalOps") {
+  } else if (
+    blockID === "arithmeticOps" ||
+    blockID === "comparisonOps" ||
+    blockID === "logicalOps"
+  ) {
     handleOperatorBlock(newBlock, blockID); // Handle operator blocks
   } else {
     handleDefaultBlock(newBlock, blockID); // Handle default block
@@ -422,7 +433,7 @@ function getBlockDropdownList(blockID) {
   if (blockID === "mathBlock") {
     blockID = "arithmeticOps";
   } else if (blockID === "comparisonBlock") {
-    blockID = "comparisonOps"; 
+    blockID = "comparisonOps";
   }
 
   switch (blockID) {
@@ -506,7 +517,12 @@ function handleMathOrComparisonBlock(block, blockID) {
   });
 
   // Input 1
-  const input1 = createInputField("0", "math-comparison-input", "block-1-value", blockID);
+  const input1 = createInputField(
+    "0",
+    "math-comparison-input",
+    "block-1-value",
+    blockID
+  );
   horizontalContainers[0].appendChild(input1);
 
   // Operator Dropdown
@@ -515,7 +531,12 @@ function handleMathOrComparisonBlock(block, blockID) {
   horizontalContainers[1].appendChild(operatorDropdown);
 
   // Input 2
-  const input2 = createInputField("0", "math-comparison-input", "block-2-value", blockID);
+  const input2 = createInputField(
+    "0",
+    "math-comparison-input",
+    "block-2-value",
+    blockID
+  );
   horizontalContainers[2].appendChild(input2);
 
   // Append containers to the block
@@ -531,8 +552,9 @@ function handleControlBlock(block, blockID) {
   const topChildBox = createChildBox(block.id, blockID);
   const topLabel = document.createElement("span");
   topLabel.classList.add("block-top-label");
-  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)
-    }:`;
+  topLabel.textContent = `${
+    blockID.charAt(0).toUpperCase() + blockID.slice(1)
+  }:`;
   block.appendChild(topLabel);
   block.appendChild(topChildBox);
 
@@ -584,7 +606,12 @@ function handleVariableOperationBlock(block) {
   container.appendChild(operatorDropdown);
 
   // Value Input
-  const valueInput = createInputField("0", "math-comparison-input", "block2Value", "varOps");
+  const valueInput = createInputField(
+    "0",
+    "math-comparison-input",
+    "block2Value",
+    "varOps"
+  );
   container.appendChild(valueInput);
 
   block.appendChild(container);
@@ -1076,21 +1103,20 @@ function updateUserVariableDropdowns() {
 }
 
 // ==========================
-// 9. Additional Features (Resizing Columns, Dragging, etc.)
+// 9. Event Listeners
 // ==========================
-
-// Event listener for CTRL + ENTER
 document.addEventListener("keydown", function (event) {
   if (event.ctrlKey && event.key === "Enter") {
     runCode();
   }
 });
 
+// Run code when page loads
 document.addEventListener("DOMContentLoaded", function () {
   runCode();
 });
 
-// login button functionality
+// Event listener for login button
 const loginButton = document.getElementById("loginButton");
 loginButton.addEventListener("click", function () {
   const username = prompt("Enter Username:");
@@ -1104,7 +1130,7 @@ loginButton.addEventListener("click", function () {
   }
 });
 
-// save button functionality
+// Event listener for save button
 const saveButton = document.getElementById("saveButton");
 saveButton.addEventListener("click", function () {
   const pythonCode = document.getElementById("pythontext").value;
@@ -1112,6 +1138,7 @@ saveButton.addEventListener("click", function () {
   alert("Code saved locally!");
 });
 
+// Event listeners for button functionalities
 document.querySelector('[name="btt"]').addEventListener("click", blockToText);
 document.querySelector('[name="ttb"]').addEventListener("click", textToBlock);
 document.getElementById("toggleButton").addEventListener("click", toggleView);
@@ -1124,7 +1151,9 @@ document
   .querySelector("button")
   .addEventListener("click", PullBlob);
 
-//Code to resize the columns
+// ==========================
+// 10. Additional Features (Resizing Columns, Dragging, etc.)
+// ==========================
 document.addEventListener("DOMContentLoaded", () => {
   let isDragging = false;
   let currentSpacer = null;
@@ -1153,7 +1182,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("mouseup", stopDrag);
   }
 
-  //Does the calculations for the resizing
   function onDrag(event) {
     if (!isDragging || !currentSpacer) return;
 
@@ -1165,16 +1193,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (newWidthCol1 < MIN_WIDTH1 || newWidthCol2 < MIN_WIDTH2) return;
 
-      col1.style.flexBasis = `${startWidthCol1 + deltaX}px`;
-      col2.style.flexBasis = `${startWidthCol2 - deltaX}px`;
+      col1.style.flexBasis = `${newWidthCol1}px`;
+      col2.style.flexBasis = `${newWidthCol2}px`;
     } else if (currentSpacer === spacer2) {
       const newWidthCol2 = startWidthCol2 + deltaX;
       const newWidthCol3 = startWidthCol3 - deltaX;
 
       if (newWidthCol2 < MIN_WIDTH2 || newWidthCol3 < MIN_WIDTH1) return;
 
-      col2.style.flexBasis = `${startWidthCol2 + deltaX}px`;
-      col3.style.flexBasis = `${startWidthCol3 - deltaX}px`;
+      col2.style.flexBasis = `${newWidthCol2}px`;
+      col3.style.flexBasis = `${newWidthCol3}px`;
     }
   }
 
@@ -1190,70 +1218,71 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.querySelectorAll(".box").forEach((box) => {
-  box.draggable = true; // Make the box draggable
+  box.draggable = true;
   box.addEventListener("dragstart", dragStart);
   box.addEventListener("dragover", dragOver);
   box.addEventListener("drop", drop);
   box.addEventListener("dragend", dragEnd);
 });
 
-// Prevent click event from closing the category block (optional behavior)
+// Prevent category buttons from closing the menu
 document.querySelectorAll(".category-blocks button").forEach((button) => {
   button.addEventListener("click", (event) => {
-    event.stopPropagation(); // Stop click propagation to prevent closing the category
+    event.stopPropagation();
   });
 });
 
-// Event listener to handle dragging over the left-side container for deleting blocks
+// Handle block deletion when dragging over the left-side container
 const codeContainer = document.querySelector(".code-container");
 codeContainer.addEventListener("dragover", function (event) {
-  event.preventDefault(); // Allow dropping by preventing default behavior
+  event.preventDefault();
 });
 
 codeContainer.addEventListener("drop", function (event) {
   event.preventDefault();
   if (dragged) {
-    dragged.remove(); // Remove the dragged block
-    dragged = null; // Reset the dragged element
-    updateLineNumbers(); // Update line numbers after block removal
+    dragged.remove();
+    dragged = null;
+    updateLineNumbers();
   }
 });
 
-// Event listener to remove the drop target highlight when dragging leaves a block
+// Remove drop target highlight when dragging leaves a block
 document.addEventListener("dragleave", function (event) {
   const targetBlock = event.target.closest(".box");
   if (targetBlock) {
-    targetBlock.classList.remove("drop-target"); // Remove drop target highlight
+    targetBlock.classList.remove("drop-target");
   }
 });
 
-// Event listener to deselect block when clicking outside the highlighted block
+// Deselect block when clicking outside
 document.addEventListener("click", function (event) {
   if (highlightedBlock && !highlightedBlock.contains(event.target)) {
-    highlightedBlock.classList.remove("selected"); // Remove highlight
-    highlightedBlock = null; // Reset highlighted block
+    highlightedBlock.classList.remove("selected");
+    highlightedBlock = null;
   }
 });
 
-// Event listener to delete the highlighted block when the "Delete" key is pressed
+// Delete highlighted block with "Delete" key
 document.addEventListener("keydown", function (event) {
   if (event.key === "Delete" && highlightedBlock) {
-    highlightedBlock.remove(); // Remove the highlighted block
-    highlightedBlock = null; // Reset the highlighted block
-    updateLineNumbers(); // Update line numbers after deletion
+    highlightedBlock.remove();
+    highlightedBlock = null;
+    updateLineNumbers();
   }
 });
 
-const pythonTextarea = document.getElementById("pythontext"); // creating const for element to pull from
-ptext = pythonTextarea.value; // initializing variable.
+// ==========================
+// 11. Miscellaneous Code
+// ==========================
+const pythonTextarea = document.getElementById("pythontext");
+ptext = pythonTextarea.value;
 
-const blockContainer = document.getElementById("box-container"); // Gets box container, could use as global variable?
+const blockContainer = document.getElementById("box-container");
 
-// Placeholder functions for future implementation of running/stopping code; added for implementation of CTRL+ENTER
-let isRunning = false; // tracks if the program is running
+let isRunning = false;
 
 document.getElementById("output").style.whiteSpace = "pre-wrap";
-
 
 /* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
 // Run Code button logic for swapping between Run/Stop
