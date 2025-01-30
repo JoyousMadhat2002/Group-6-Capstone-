@@ -245,6 +245,9 @@ const blockCategory = {
     ],
   },
 };
+// ==========================
+// 1. Block Management Functions
+// ==========================
 
 // Function to dynamically create buttons and assign background colors to categories
 function createCategoryButtons(blockCategory) {
@@ -379,6 +382,42 @@ function newBlock(blockID) {
   }
 }
 
+// Function to remove a block by its ID
+function removeBlock(blockId) {
+  const block = document.getElementById(blockId);
+  if (block) {
+    block.remove(); // Remove the block from the DOM
+    updateLineNumbers(); // Update line numbers after removal
+  }
+}
+
+// Function to update the line numbers based on the number of blocks
+function updateLineNumbers() {
+  const codeLinesContainer = document.querySelector(".code-lines");
+  const blocks = document.querySelectorAll("#box-container .box");
+
+  // Clear existing line numbers
+  codeLinesContainer.innerHTML = "";
+
+  // Create new line numbers based on the number of blocks
+  const totalLines = blocks.length + 1; // +1 for the extra empty line at the bottom
+  for (let i = 1; i <= totalLines; i++) {
+    const lineNumber = document.createElement("div");
+    lineNumber.classList.add("code-line");
+    if (i === totalLines) {
+      // This is the extra empty line at the bottom
+      lineNumber.textContent = i;
+    } else {
+      lineNumber.textContent = i; // Line numbers start from 1
+    }
+    codeLinesContainer.appendChild(lineNumber);
+  }
+}
+
+// ==========================
+// 2. Block Properties & Configuration
+// ==========================
+
 function getBlockDropdownList(blockID) {
   if (blockID === "mathBlock") {
     blockID = "arithmeticOps";
@@ -416,12 +455,6 @@ function getBlockProperties(blockID) {
   return { blockCategoryColor, childElement };
 }
 
-function createBlockLabel(block, blockID) {
-  const blockIDLabel = document.createElement("span");
-  blockIDLabel.classList.add("block-id-label");
-  block.appendChild(blockIDLabel);
-}
-
 function getCategoryByBlockID(blockID) {
   for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
     if (categoryData.elements.some((element) => element.blockID === blockID)) {
@@ -431,6 +464,16 @@ function getCategoryByBlockID(blockID) {
   return null;
 }
 
+function createBlockLabel(block, blockID) {
+  const blockIDLabel = document.createElement("span");
+  blockIDLabel.classList.add("block-id-label");
+  block.appendChild(blockIDLabel);
+}
+
+// ==========================
+// 3. Handling Different Block Types
+// ==========================
+
 function handleDefaultBlock(block, blockID) {
   const blockName = blockCategory[getCategoryByBlockID(blockID)].elements.find(
     (element) => element.blockID === blockID
@@ -439,74 +482,6 @@ function handleDefaultBlock(block, blockID) {
   const blockLabel = document.createElement("span");
   blockLabel.textContent = `${blockName}`;
   block.appendChild(blockLabel);
-}
-
-function createInputField(placeholder, className, dataKey, blockID) {
-  const input = document.createElement("input");
-  input.type = "text";
-  input.placeholder = placeholder;
-  input.classList.add(className);
-
-  input.addEventListener("input", function () {
-    const block = input.closest(".box");
-    const value = input.value.trim();
-
-    // Validate input based on block type
-    if (blockID === "mathText" || blockID === "mathBlock") {
-      // Only allow numbers for Math blocks
-      if (/^-?\d*\.?\d*$/.test(value)) {
-        block.dataset[dataKey] = value;
-      } else {
-        input.value = block.dataset[dataKey] || "";
-      }
-    } else {
-      // Allow any input for non-Math blocks
-      block.dataset[dataKey] = value;
-    }
-  });
-
-  return input;
-}
-
-function createOperatorDropdown(blockID) {
-  const dropdown = document.createElement("select");
-  dropdown.classList.add("block-dropdown");
-
-  const operatorOptions = getBlockDropdownList(blockID); // Fetch operators based on blockID
-  operatorOptions.forEach((op) => {
-    const option = document.createElement("option");
-    option.value = op;
-    option.textContent = op;
-    dropdown.appendChild(option);
-  });
-
-  dropdown.value = "---"; // Default value
-  dropdown.addEventListener("change", function () {
-    const block = dropdown.closest(".box");
-    block.dataset.blockOperator = dropdown.value;
-  });
-
-  return dropdown;
-}
-
-function createBlockTypeDropdown(blockTypes) {
-  const dropdown = document.createElement("select");
-  dropdown.classList.add("block-dropdown");
-
-  blockTypes.forEach((type) => {
-    const option = document.createElement("option");
-    option.value = type;
-    option.textContent = type;
-    dropdown.appendChild(option);
-  });
-
-  dropdown.value = blockTypes[0];
-  dropdown.addEventListener("change", function () {
-    const block = dropdown.closest(".box");
-    block.dataset.selected = dropdown.value; // Add data-selected attribute
-  });
-
-  return dropdown;
 }
 
 function handleOperatorBlock(block, blockID) {
@@ -648,35 +623,76 @@ function handleVariableBlock(block) {
   block.appendChild(container);
 }
 
-function updateUserVariableDropdowns() {
-  const dropdowns = document.querySelectorAll(
-    ".block-dropdown[data-type='variable']"
-  );
-  dropdowns.forEach((dropdown) => {
-    dropdown.innerHTML = ""; // Clear existing options
-    userVariables.forEach((varName) => {
-      const option = document.createElement("option");
-      option.value = varName;
-      option.textContent = varName;
-      dropdown.appendChild(option);
-    });
+// ==========================
+// 3.1. Create Functions
+// ==========================
+
+function createInputField(placeholder, className, dataKey, blockID) {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = placeholder;
+  input.classList.add(className);
+
+  input.addEventListener("input", function () {
+    const block = input.closest(".box");
+    const value = input.value.trim();
+
+    // Validate input based on block type
+    if (blockID === "mathText" || blockID === "mathBlock") {
+      // Only allow numbers for Math blocks
+      if (/^-?\d*\.?\d*$/.test(value)) {
+        block.dataset[dataKey] = value;
+      } else {
+        input.value = block.dataset[dataKey] || "";
+      }
+    } else {
+      // Allow any input for non-Math blocks
+      block.dataset[dataKey] = value;
+    }
   });
+
+  return input;
 }
 
-function updateVariableValueInBlock(block, selectedVariable) {
-  const existingValueAttribute = block.querySelector(
-    ".variable-value-attribute"
-  );
-  if (existingValueAttribute) {
-    existingValueAttribute.remove();
-  }
+function createOperatorDropdown(blockID) {
+  const dropdown = document.createElement("select");
+  dropdown.classList.add("block-dropdown");
+
+  const operatorOptions = getBlockDropdownList(blockID); // Fetch operators based on blockID
+  operatorOptions.forEach((op) => {
+    const option = document.createElement("option");
+    option.value = op;
+    option.textContent = op;
+    dropdown.appendChild(option);
+  });
+
+  dropdown.value = "---"; // Default value
+  dropdown.addEventListener("change", function () {
+    const block = dropdown.closest(".box");
+    block.dataset.blockOperator = dropdown.value;
+  });
+
+  return dropdown;
 }
 
-function updateVariableAttributes(block, selectedVariable) {
-  const existingAttributes = block.querySelectorAll(".variable-attribute");
-  existingAttributes.forEach((attr) => attr.remove());
+function createBlockTypeDropdown(blockTypes) {
+  const dropdown = document.createElement("select");
+  dropdown.classList.add("block-dropdown");
 
-  updateVariableValueInBlock(block, selectedVariable);
+  blockTypes.forEach((type) => {
+    const option = document.createElement("option");
+    option.value = type;
+    option.textContent = type;
+    dropdown.appendChild(option);
+  });
+
+  dropdown.value = blockTypes[0];
+  dropdown.addEventListener("change", function () {
+    const block = dropdown.closest(".box");
+    block.dataset.selected = dropdown.value; // Add data-selected attribute
+  });
+
+  return dropdown;
 }
 
 function createChildBox(parentID, parentBlockID) {
@@ -692,6 +708,17 @@ function createInputBlock(block, placeholder, className, dataKey, blockID) {
   block.appendChild(inputField);
 }
 
+// ==========================
+// 3.2. Update Functions
+// ==========================
+
+function updateVariableAttributes(block, selectedVariable) {
+  const existingAttributes = block.querySelectorAll(".variable-attribute");
+  existingAttributes.forEach((attr) => attr.remove());
+
+  updateVariableValueInBlock(block, selectedVariable);
+}
+
 function updateOperatorAttributes(block, selectedOperator) {
   const operatorLabel = document.createElement("span");
   operatorLabel.classList.add("operator-attribute");
@@ -703,6 +730,22 @@ function updateOperatorAttributes(block, selectedOperator) {
   }
 
   block.appendChild(operatorLabel);
+}
+
+// ==========================
+// 4. UI and Interactivity
+// ==========================
+
+// Function to toggle between showing and hiding block categories
+function toggleCategory(categoryId) {
+  const allCategories = document.querySelectorAll(".category-blocks");
+  allCategories.forEach((category) => {
+    if (category.id === categoryId) {
+      category.classList.toggle("hidden"); // Toggle visibility of the clicked category
+    } else {
+      category.classList.add("hidden"); // Hide all other categories
+    }
+  });
 }
 
 function addDepthInfo(block) {
@@ -731,37 +774,9 @@ function addBlockInteractivity(block) {
   block.addEventListener("click", selectBlock);
 }
 
-// Function to remove a block by its ID
-function removeBlock(blockId) {
-  const block = document.getElementById(blockId);
-  if (block) {
-    block.remove(); // Remove the block from the DOM
-    updateLineNumbers(); // Update line numbers after removal
-  }
-}
-
-// Function to update the line numbers based on the number of blocks
-function updateLineNumbers() {
-  const codeLinesContainer = document.querySelector(".code-lines");
-  const blocks = document.querySelectorAll("#box-container .box");
-
-  // Clear existing line numbers
-  codeLinesContainer.innerHTML = "";
-
-  // Create new line numbers based on the number of blocks
-  const totalLines = blocks.length + 1; // +1 for the extra empty line at the bottom
-  for (let i = 1; i <= totalLines; i++) {
-    const lineNumber = document.createElement("div");
-    lineNumber.classList.add("code-line");
-    if (i === totalLines) {
-      // This is the extra empty line at the bottom
-      lineNumber.textContent = i;
-    } else {
-      lineNumber.textContent = i; // Line numbers start from 1
-    }
-    codeLinesContainer.appendChild(lineNumber);
-  }
-}
+// ==========================
+// 5. Drag-and-Drop Functionality
+// ==========================
 
 // Event handler for starting a drag event on a block
 function dragStart(event) {
@@ -835,14 +850,6 @@ function dragEnd() {
   dragged = null; // Reset dragged block
 }
 
-document.querySelectorAll(".box").forEach((box) => {
-  box.draggable = true; // Make the box draggable
-  box.addEventListener("dragstart", dragStart);
-  box.addEventListener("dragover", dragOver);
-  box.addEventListener("drop", drop);
-  box.addEventListener("dragend", dragEnd);
-});
-
 function clearDropHighlights() {
   document
     .querySelectorAll(".drop-above, .drop-below, .drop-inside")
@@ -863,101 +870,9 @@ function updateDepth(block, targetBlock, depthChange) {
   }
 }
 
-// Function to toggle between showing and hiding block categories
-function toggleCategory(categoryId) {
-  const allCategories = document.querySelectorAll(".category-blocks");
-  allCategories.forEach((category) => {
-    if (category.id === categoryId) {
-      category.classList.toggle("hidden"); // Toggle visibility of the clicked category
-    } else {
-      category.classList.add("hidden"); // Hide all other categories
-    }
-  });
-}
-
-// Prevent click event from closing the category block (optional behavior)
-document.querySelectorAll(".category-blocks button").forEach((button) => {
-  button.addEventListener("click", (event) => {
-    event.stopPropagation(); // Stop click propagation to prevent closing the category
-  });
-});
-
-// Event listener to handle dragging over the left-side container for deleting blocks
-const codeContainer = document.querySelector(".code-container");
-codeContainer.addEventListener("dragover", function (event) {
-  event.preventDefault(); // Allow dropping by preventing default behavior
-});
-codeContainer.addEventListener("drop", function (event) {
-  event.preventDefault();
-  if (dragged) {
-    dragged.remove(); // Remove the dragged block
-    dragged = null; // Reset the dragged element
-    updateLineNumbers(); // Update line numbers after block removal
-  }
-});
-
-// Event listener to remove the drop target highlight when dragging leaves a block
-document.addEventListener("dragleave", function (event) {
-  const targetBlock = event.target.closest(".box");
-  if (targetBlock) {
-    targetBlock.classList.remove("drop-target"); // Remove drop target highlight
-  }
-});
-
-// Event handler for selecting a block when clicked
-function selectBlock(event) {
-  const targetBlock = event.target.closest(".box");
-
-  if (!targetBlock) return; // Exit if no block is found
-
-  // Clear previous selection if any
-  if (highlightedBlock) {
-    highlightedBlock.classList.remove("selected");
-  }
-
-  // Highlight the clicked block
-  highlightedBlock = targetBlock;
-  highlightedBlock.classList.add("selected");
-
-  event.stopPropagation(); // Prevent click event from propagating
-}
-
-// Event listener to deselect block when clicking outside the highlighted block
-document.addEventListener("click", function (event) {
-  if (highlightedBlock && !highlightedBlock.contains(event.target)) {
-    highlightedBlock.classList.remove("selected"); // Remove highlight
-    highlightedBlock = null; // Reset highlighted block
-  }
-});
-
-// Event listener to delete the highlighted block when the "Delete" key is pressed
-document.addEventListener("keydown", function (event) {
-  if (event.key === "Delete" && highlightedBlock) {
-    highlightedBlock.remove(); // Remove the highlighted block
-    highlightedBlock = null; // Reset the highlighted block
-    updateLineNumbers(); // Update line numbers after deletion
-  }
-});
-
-const pythonTextarea = document.getElementById("pythontext"); // creating const for element to pull from
-ptext = pythonTextarea.value; // initializing variable.
-
-// test function for storing textarea input as variable
-function StoreBlob() {
-  ptext = pythonTextarea.value;
-  ptext = ptext.toString();
-}
-
-// test function for sending stored state to blob to read into textarea
-function PullBlob() {
-  const blob = new Blob([ptext], { type: "text/plain" });
-  blob.text().then((text) => {
-    pythonTextarea.value = text; // sends contents of blob to textarea
-  });
-  // t.value = ptext; // less useful way to store information
-}
-
-const blockContainer = document.getElementById("box-container"); // Gets box container, could use as global variable?
+// ==========================
+// 6. Python Code Conversion
+// ==========================
 
 function blockToText() {
   pythontext.value = ""; // Clear the text area
@@ -1033,67 +948,9 @@ function toggleView() {
   }
 }
 
-document.querySelector('[name="btt"]').addEventListener("click", blockToText);
-document.querySelector('[name="ttb"]').addEventListener("click", textToBlock);
-document.getElementById("toggleButton").addEventListener("click", toggleView);
-document
-  .getElementById("store-p")
-  .querySelector("button")
-  .addEventListener("click", StoreBlob);
-document
-  .getElementById("pull-p")
-  .querySelector("button")
-  .addEventListener("click", PullBlob);
-
-/* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
-// Run Code button logic for swapping between Run/Stop
-function toggleRunButton() {
-    const button = document.getElementById("run-code-btn");
-    const icon = button.querySelector("i");
-
-    if (button.classList.contains("stop")) {
-        button.classList.remove("stop");
-        button.style.backgroundColor = "green"; // Change to green
-        icon.className = "icon-play"; // Change icon to play
-        button.setAttribute("data-tooltip", "Run Program (Ctrl+Enter)"); // Update tooltip
-        stopCode();
-        isRunning = false; // Update running state
-    } else {
-        button.classList.add("stop");
-        button.style.backgroundColor = "red"; // Change to red
-        icon.className = "icon-stop"; // Change icon to stop
-        button.setAttribute("data-tooltip", "Stop Program (Ctrl+Enter)"); // Update tooltip
-        runCode();
-        isRunning = true; // Update running state
-    }
-}
-*/
-
-// Event listener for CTRL + ENTER
-document.addEventListener("keydown", function (event) {
-  if (event.ctrlKey && event.key === "Enter") {
-    runCode();
-  }
-});
-
-// Placeholder functions for future implementation of running/stopping code; added for implementation of CTRL+ENTER
-let isRunning = false; // tracks if the program is running
-
-document.getElementById("output").style.whiteSpace = "pre-wrap";
-
-function outf(text) {
-  var mypre = document.getElementById("output");
-  mypre.innerHTML += text.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "\n";
-}
-
-function builtinRead(x) {
-  if (
-    Sk.builtinFiles === undefined ||
-    Sk.builtinFiles["files"][x] === undefined
-  )
-    throw "File not found: '" + x + "'";
-  return Sk.builtinFiles["files"][x];
-}
+// ==========================
+// 7. Code Execution
+// ==========================
 
 // placeholder function: start code
 function runCode() {
@@ -1143,20 +1000,95 @@ function runCode() {
   );
 }
 
+function outf(text) {
+  var mypre = document.getElementById("output");
+  mypre.innerHTML += text.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "\n";
+}
+
+function builtinRead(x) {
+  if (
+    Sk.builtinFiles === undefined ||
+    Sk.builtinFiles["files"][x] === undefined
+  )
+    throw "File not found: '" + x + "'";
+  return Sk.builtinFiles["files"][x];
+}
+
+function updateVariableValueInBlock(block, selectedVariable) {
+  const existingValueAttribute = block.querySelector(
+    ".variable-value-attribute"
+  );
+  if (existingValueAttribute) {
+    existingValueAttribute.remove();
+  }
+}
+
+// ==========================
+// 8. User Interaction
+// ==========================
+
+// test function for storing textarea input as variable
+function StoreBlob() {
+  ptext = pythonTextarea.value;
+  ptext = ptext.toString();
+}
+
+// test function for sending stored state to blob to read into textarea
+function PullBlob() {
+  const blob = new Blob([ptext], { type: "text/plain" });
+  blob.text().then((text) => {
+    pythonTextarea.value = text; // sends contents of blob to textarea
+  });
+  // t.value = ptext; // less useful way to store information
+}
+
+// Event handler for selecting a block when clicked
+function selectBlock(event) {
+  const targetBlock = event.target.closest(".box");
+
+  if (!targetBlock) return; // Exit if no block is found
+
+  // Clear previous selection if any
+  if (highlightedBlock) {
+    highlightedBlock.classList.remove("selected");
+  }
+
+  // Highlight the clicked block
+  highlightedBlock = targetBlock;
+  highlightedBlock.classList.add("selected");
+
+  event.stopPropagation(); // Prevent click event from propagating
+}
+
+function updateUserVariableDropdowns() {
+  const dropdowns = document.querySelectorAll(
+    ".block-dropdown[data-type='variable']"
+  );
+  dropdowns.forEach((dropdown) => {
+    dropdown.innerHTML = ""; // Clear existing options
+    userVariables.forEach((varName) => {
+      const option = document.createElement("option");
+      option.value = varName;
+      option.textContent = varName;
+      dropdown.appendChild(option);
+    });
+  });
+}
+
+// ==========================
+// 9. Additional Features (Resizing Columns, Dragging, etc.)
+// ==========================
+
+// Event listener for CTRL + ENTER
+document.addEventListener("keydown", function (event) {
+  if (event.ctrlKey && event.key === "Enter") {
+    runCode();
+  }
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   runCode();
 });
-
-/* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
-// placeholder function: stop code
-function stopCode() {
-    isRunning = false; // reset flag
-
-    // REPLACE BELOW WITH FUTURE IMPLEMENTATION LATER
-    console.log("test: code stopped");
-}
-// Placeholder end
-*/
 
 // login button functionality
 const loginButton = document.getElementById("loginButton");
@@ -1179,6 +1111,18 @@ saveButton.addEventListener("click", function () {
   localStorage.setItem("savedCode", pythonCode);
   alert("Code saved locally!");
 });
+
+document.querySelector('[name="btt"]').addEventListener("click", blockToText);
+document.querySelector('[name="ttb"]').addEventListener("click", textToBlock);
+document.getElementById("toggleButton").addEventListener("click", toggleView);
+document
+  .getElementById("store-p")
+  .querySelector("button")
+  .addEventListener("click", StoreBlob);
+document
+  .getElementById("pull-p")
+  .querySelector("button")
+  .addEventListener("click", PullBlob);
 
 //Code to resize the columns
 document.addEventListener("DOMContentLoaded", () => {
@@ -1244,3 +1188,104 @@ document.addEventListener("DOMContentLoaded", () => {
   spacer1.addEventListener("mousedown", (e) => startDrag(e, spacer1));
   spacer2.addEventListener("mousedown", (e) => startDrag(e, spacer2));
 });
+
+document.querySelectorAll(".box").forEach((box) => {
+  box.draggable = true; // Make the box draggable
+  box.addEventListener("dragstart", dragStart);
+  box.addEventListener("dragover", dragOver);
+  box.addEventListener("drop", drop);
+  box.addEventListener("dragend", dragEnd);
+});
+
+// Prevent click event from closing the category block (optional behavior)
+document.querySelectorAll(".category-blocks button").forEach((button) => {
+  button.addEventListener("click", (event) => {
+    event.stopPropagation(); // Stop click propagation to prevent closing the category
+  });
+});
+
+// Event listener to handle dragging over the left-side container for deleting blocks
+const codeContainer = document.querySelector(".code-container");
+codeContainer.addEventListener("dragover", function (event) {
+  event.preventDefault(); // Allow dropping by preventing default behavior
+});
+
+codeContainer.addEventListener("drop", function (event) {
+  event.preventDefault();
+  if (dragged) {
+    dragged.remove(); // Remove the dragged block
+    dragged = null; // Reset the dragged element
+    updateLineNumbers(); // Update line numbers after block removal
+  }
+});
+
+// Event listener to remove the drop target highlight when dragging leaves a block
+document.addEventListener("dragleave", function (event) {
+  const targetBlock = event.target.closest(".box");
+  if (targetBlock) {
+    targetBlock.classList.remove("drop-target"); // Remove drop target highlight
+  }
+});
+
+// Event listener to deselect block when clicking outside the highlighted block
+document.addEventListener("click", function (event) {
+  if (highlightedBlock && !highlightedBlock.contains(event.target)) {
+    highlightedBlock.classList.remove("selected"); // Remove highlight
+    highlightedBlock = null; // Reset highlighted block
+  }
+});
+
+// Event listener to delete the highlighted block when the "Delete" key is pressed
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Delete" && highlightedBlock) {
+    highlightedBlock.remove(); // Remove the highlighted block
+    highlightedBlock = null; // Reset the highlighted block
+    updateLineNumbers(); // Update line numbers after deletion
+  }
+});
+
+const pythonTextarea = document.getElementById("pythontext"); // creating const for element to pull from
+ptext = pythonTextarea.value; // initializing variable.
+
+const blockContainer = document.getElementById("box-container"); // Gets box container, could use as global variable?
+
+// Placeholder functions for future implementation of running/stopping code; added for implementation of CTRL+ENTER
+let isRunning = false; // tracks if the program is running
+
+document.getElementById("output").style.whiteSpace = "pre-wrap";
+
+
+/* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
+// Run Code button logic for swapping between Run/Stop
+function toggleRunButton() {
+    const button = document.getElementById("run-code-btn");
+    const icon = button.querySelector("i");
+
+    if (button.classList.contains("stop")) {
+        button.classList.remove("stop");
+        button.style.backgroundColor = "green"; // Change to green
+        icon.className = "icon-play"; // Change icon to play
+        button.setAttribute("data-tooltip", "Run Program (Ctrl+Enter)"); // Update tooltip
+        stopCode();
+        isRunning = false; // Update running state
+    } else {
+        button.classList.add("stop");
+        button.style.backgroundColor = "red"; // Change to red
+        icon.className = "icon-stop"; // Change icon to stop
+        button.setAttribute("data-tooltip", "Stop Program (Ctrl+Enter)"); // Update tooltip
+        runCode();
+        isRunning = true; // Update running state
+    }
+}
+*/
+
+/* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
+// placeholder function: stop code
+function stopCode() {
+    isRunning = false; // reset flag
+
+    // REPLACE BELOW WITH FUTURE IMPLEMENTATION LATER
+    console.log("test: code stopped");
+}
+// Placeholder end
+*/
