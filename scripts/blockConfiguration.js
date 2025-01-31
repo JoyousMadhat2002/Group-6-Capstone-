@@ -1,3 +1,7 @@
+// ==========================
+// 1. Block Configuration
+// ==========================
+
 const categoryColors = {
   movement: "#BFEFFF", // Baby Blue
   logic: "#5a80a5", // Steel Blue

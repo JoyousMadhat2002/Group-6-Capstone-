@@ -1,4 +1,5 @@
-import {categoryColors, blockCategory} from "./blockConfiguration.js";
+import { categoryColors, blockCategory } from "./scripts/blockConfiguration.js";
+import { getBlockDropdownList, getBlockProperties, getCategoryByBlockID, createBlockLabel } from "./scripts/blockProperties.js";
 
 let blockCounter = 0;
 let dragged = null;
@@ -7,7 +8,7 @@ let isPythonView = false;
 let userVariables = [];
 
 // ==========================
-// 1. Block Management Functions
+// 3. Block Management Functions
 // ==========================
 
 // Function to dynamically create buttons and assign background colors to categories
@@ -186,63 +187,7 @@ function updateLineNumbers() {
 }
 
 // ==========================
-// 2. Block Properties & Configuration
-// ==========================
-
-function getBlockDropdownList(blockID) {
-  if (blockID === "mathBlock") {
-    blockID = "arithmeticOps";
-  } else if (blockID === "comparisonBlock") {
-    blockID = "comparisonOps";
-  }
-
-  switch (blockID) {
-    case "arithmeticOps":
-      return ["---", "+", "-", "*", "/", "%", "**", "//"];
-    case "comparisonOps":
-      return ["---", "==", "!=", ">", "<", ">=", "<="];
-    case "logicalOps":
-      return ["---", "and", "or", "not"];
-    case "varOps":
-      return ["---", "=", "+=", "-=", "*=", "/="];
-    default:
-      return ["---"]; // Default case for blocks without specific types
-  }
-}
-
-function getBlockProperties(blockID) {
-  let blockCategoryColor = "#cccccc"; // Default block color
-  let childElement = null;
-
-  for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
-    categoryData.elements.forEach((element) => {
-      if (element.blockID === blockID) {
-        blockCategoryColor = categoryColors[categoryName] || blockCategoryColor;
-        childElement = element.childElement;
-      }
-    });
-  }
-
-  return { blockCategoryColor, childElement };
-}
-
-function getCategoryByBlockID(blockID) {
-  for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
-    if (categoryData.elements.some((element) => element.blockID === blockID)) {
-      return categoryName;
-    }
-  }
-  return null;
-}
-
-function createBlockLabel(block, blockID) {
-  const blockIDLabel = document.createElement("span");
-  blockIDLabel.classList.add("block-id-label");
-  block.appendChild(blockIDLabel);
-}
-
-// ==========================
-// 3. Handling Different Block Types
+// 4. Handling Different Block Types
 // ==========================
 
 function handleDefaultBlock(block, blockID) {
@@ -312,9 +257,8 @@ function handleControlBlock(block, blockID) {
   const topChildBox = createChildBox(block.id, blockID);
   const topLabel = document.createElement("span");
   topLabel.classList.add("block-top-label");
-  topLabel.textContent = `${
-    blockID.charAt(0).toUpperCase() + blockID.slice(1)
-  }:`;
+  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)
+    }:`;
   block.appendChild(topLabel);
   block.appendChild(topChildBox);
 
@@ -411,7 +355,7 @@ function handleVariableBlock(block) {
 }
 
 // ==========================
-// 4. Create Functions
+// 5. Create Functions
 // ==========================
 
 function createInputField(placeholder, className, dataKey, blockID) {
@@ -496,7 +440,29 @@ function createInputBlock(block, placeholder, className, dataKey, blockID) {
 }
 
 // ==========================
-// 5. Update Functions
+// 6. Child Block Functions
+// ==========================
+
+function addDepthInfo(block) {
+  const depthInfo = document.createElement("span");
+  depthInfo.classList.add("block-depth-info");
+  depthInfo.textContent = ` Depth: ${block.dataset.blockDepth}`;
+  block.appendChild(depthInfo);
+}
+
+function appendChildElement(block, childElement) {
+  if (childElement === "block") {
+    const childBox = document.createElement("div");
+    childBox.classList.add("child-box-container");
+    childBox.dataset.parentID = block.id;
+    childBox.dataset.parentBlockID = block.dataset.blockID;
+    childBox.dataset.blockDepth = parseInt(block.dataset.blockDepth) + 1;
+    block.appendChild(childBox);
+  }
+}
+
+// ==========================
+// 7. Update Functions
 // ==========================
 
 function updateVariableAttributes(block, selectedVariable) {
@@ -519,8 +485,20 @@ function updateOperatorAttributes(block, selectedOperator) {
   block.appendChild(operatorLabel);
 }
 
+function updateDepth(block, targetBlock, depthChange) {
+  const currentDepth = parseInt(block.dataset.blockDepth) || 0;
+  const newDepth = currentDepth + depthChange;
+  block.dataset.blockDepth = newDepth; // Update depth attribute
+
+  // Update depth display in the block's label
+  const depthInfo = block.querySelector(".block-depth-info");
+  if (depthInfo) {
+    depthInfo.textContent = ` Depth: ${newDepth}`;
+  }
+}
+
 // ==========================
-// 6. UI and Interactivity
+// 8. UI and Interactivity
 // ==========================
 
 // Function to toggle between showing and hiding block categories
@@ -535,24 +513,6 @@ function toggleCategory(categoryId) {
   });
 }
 
-function addDepthInfo(block) {
-  const depthInfo = document.createElement("span");
-  depthInfo.classList.add("block-depth-info");
-  depthInfo.textContent = ` Depth: ${block.dataset.blockDepth}`;
-  block.appendChild(depthInfo);
-}
-
-function appendChildElement(block, childElement) {
-  if (childElement === "block") {
-    const childBox = document.createElement("div");
-    childBox.classList.add("child-box-container");
-    childBox.dataset.parentID = block.id;
-    childBox.dataset.parentBlockID = block.dataset.blockID;
-    childBox.dataset.blockDepth = parseInt(block.dataset.blockDepth) + 1;
-    block.appendChild(childBox);
-  }
-}
-
 function addBlockInteractivity(block) {
   block.draggable = true;
   block.addEventListener("dragstart", dragStart);
@@ -560,10 +520,6 @@ function addBlockInteractivity(block) {
   block.addEventListener("drop", drop);
   block.addEventListener("click", selectBlock);
 }
-
-// ==========================
-// 7. Drag-and-Drop Functionality
-// ==========================
 
 // Event handler for starting a drag event on a block
 function dragStart(event) {
@@ -645,20 +601,58 @@ function clearDropHighlights() {
     });
 }
 
-function updateDepth(block, targetBlock, depthChange) {
-  const currentDepth = parseInt(block.dataset.blockDepth) || 0;
-  const newDepth = currentDepth + depthChange;
-  block.dataset.blockDepth = newDepth; // Update depth attribute
 
-  // Update depth display in the block's label
-  const depthInfo = block.querySelector(".block-depth-info");
-  if (depthInfo) {
-    depthInfo.textContent = ` Depth: ${newDepth}`;
+
+// test function for storing textarea input as variable
+function StoreBlob() {
+  ptext = pythonTextarea.value;
+  ptext = ptext.toString();
+}
+
+// test function for sending stored state to blob to read into textarea
+function PullBlob() {
+  const blob = new Blob([ptext], { type: "text/plain" });
+  blob.text().then((text) => {
+    pythonTextarea.value = text; // sends contents of blob to textarea
+  });
+  // t.value = ptext; // less useful way to store information
+}
+
+// Event handler for selecting a block when clicked
+function selectBlock(event) {
+  const targetBlock = event.target.closest(".box");
+
+  if (!targetBlock) return; // Exit if no block is found
+
+  // Clear previous selection if any
+  if (highlightedBlock) {
+    highlightedBlock.classList.remove("selected");
   }
+
+  // Highlight the clicked block
+  highlightedBlock = targetBlock;
+  highlightedBlock.classList.add("selected");
+
+  event.stopPropagation(); // Prevent click event from propagating
+}
+
+function updateUserVariableDropdowns() {
+  const dropdowns = document.querySelectorAll(
+    ".block-dropdown[data-type='variable']"
+  );
+  dropdowns.forEach((dropdown) => {
+    dropdown.innerHTML = ""; // Clear existing options
+    userVariables.forEach((varName) => {
+      const option = document.createElement("option");
+      option.value = varName;
+      option.textContent = varName;
+      dropdown.appendChild(option);
+    });
+  });
 }
 
 // ==========================
-// 8. Python Code Conversion
+// 9. Python Code Conversion
 // ==========================
 
 function blockToText() {
@@ -736,7 +730,7 @@ function toggleView() {
 }
 
 // ==========================
-// 9. Code Execution
+// 10. Code Execution
 // ==========================
 
 // placeholder function: start code
@@ -783,8 +777,7 @@ function runCode() {
     },
     function (err) {
       console.log(err.toString());
-    }
-  );
+    });
 }
 
 function outf(text) {
@@ -810,57 +803,6 @@ function updateVariableValueInBlock(block, selectedVariable) {
   }
 }
 
-// ==========================
-// 10. User Interaction
-// ==========================
-
-// test function for storing textarea input as variable
-function StoreBlob() {
-  ptext = pythonTextarea.value;
-  ptext = ptext.toString();
-}
-
-// test function for sending stored state to blob to read into textarea
-function PullBlob() {
-  const blob = new Blob([ptext], { type: "text/plain" });
-  blob.text().then((text) => {
-    pythonTextarea.value = text; // sends contents of blob to textarea
-  });
-  // t.value = ptext; // less useful way to store information
-}
-
-// Event handler for selecting a block when clicked
-function selectBlock(event) {
-  const targetBlock = event.target.closest(".box");
-
-  if (!targetBlock) return; // Exit if no block is found
-
-  // Clear previous selection if any
-  if (highlightedBlock) {
-    highlightedBlock.classList.remove("selected");
-  }
-
-  // Highlight the clicked block
-  highlightedBlock = targetBlock;
-  highlightedBlock.classList.add("selected");
-
-  event.stopPropagation(); // Prevent click event from propagating
-}
-
-function updateUserVariableDropdowns() {
-  const dropdowns = document.querySelectorAll(
-    ".block-dropdown[data-type='variable']"
-  );
-  dropdowns.forEach((dropdown) => {
-    dropdown.innerHTML = ""; // Clear existing options
-    userVariables.forEach((varName) => {
-      const option = document.createElement("option");
-      option.value = varName;
-      option.textContent = varName;
-      dropdown.appendChild(option);
-    });
-  });
-}
 
 // ==========================
 // 11. Event Listeners
@@ -1046,6 +988,7 @@ function setupDraggableBlocks() {
 // 13. Miscellaneous Code
 // ==========================
 
+/*
 function initializeMiscellaneous() {
   const pythonTextarea = document.getElementById("pythontext");
   ptext = pythonTextarea.value;
@@ -1056,7 +999,7 @@ function initializeMiscellaneous() {
 
   document.getElementById("output").style.whiteSpace = "pre-wrap";
 }
-
+*/
 // ==========================
 // Main Initialization Function
 // ==========================
@@ -1069,7 +1012,7 @@ function initializeApp() {
   setupButtonFunctionalityListeners();
   setupColumnResizing();
   setupDraggableBlocks();
-  initializeMiscellaneous();
+  //initializeMiscellaneous();
 }
 
 // Call the main initialization function
