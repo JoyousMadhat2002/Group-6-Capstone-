@@ -644,22 +644,25 @@ function blockToText(pc) {
 
   let parentContainer = document.getElementById(pc);
 
-
-
-
   let blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
   for (let i = 0; i < blockChildElements.length; i++){
     let childID = blockChildElements[i].dataset.blockID;
-    console.log(i)
+    console.log(childID);
+    if (blockChildElements[i].className == "box" || blockChildElements[i].className == "child-box-container" || blockChildElements[i].className == "child-box-container-horizontal" || blockChildElements[i].className == "box selected"){
+        console.log(blockChildElements[i].className);
+    
 
-    for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
-      pythontext.value += "    "; // Add spaces for indentation
-    }
-
+    
     if (childID == "for" ||childID == "if" || childID == "while" ){
-      pythontext.value += `${blockChildElements[i].dataset.blockID} \n`;
+      
+      for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
+      pythontext.value += "    "; // Add spaces for indentation
+      }
 
+      pythontext.value += `${blockChildElements[i].dataset.blockID} \n`; // print blockID
+      
     }
+  }
     // pythontext.value += `${blockChildElements[i].dataset.blockID} \n`;
   }
 }
@@ -681,8 +684,18 @@ function textToBlock(container) {
       lines[i] = lines[i].trim();
       // line = line.split(" ");
 
-      let tokens = lines[i].split(" ");
-      console.log(tokens);
+      let tokens = lines[i].split(" "); // splits each line into tokens
+      console.log(tokens); // testing, can remove
+
+
+      if (tokens[0] == "if"){
+        newBlock("if");
+        for(let j = 1; j < tokens.length; j++){
+          console.log(tokens[j]);
+          //ifBlock.textContent += j;
+        }
+
+      }
 
     }
   }
