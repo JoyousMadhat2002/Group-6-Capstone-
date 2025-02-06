@@ -145,10 +145,8 @@ function newBlock(blockID) {
   }
 
   if (blockID !== "varDeclOps") {
-    addDepthInfo(newBlock);
     appendChildElement(newBlock, childElement);
     container.appendChild(newBlock);
-
     addBlockInteractivity(newBlock);
     updateLineNumbers();
   }
@@ -254,32 +252,39 @@ function handleMathOrComparisonBlock(block, blockID) {
 }
 
 function handleControlBlock(block, blockID) {
-  const topChildBox = createChildBox(block.id, blockID);
+  if (blockID === "if") {
+    handleIfBlock(block, blockID);
+  } else if (blockID === "for" || blockID === "while") {
+    handleLoopBlocks(block, blockID);
+  }
+}
+
+function handleIfBlock(block, blockID) {
+  const topChildBox = createChildBoxHorizontal(block.id, blockID);
   const topLabel = document.createElement("span");
   topLabel.classList.add("block-top-label");
-  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)
-    }:`;
+  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)}:`;
+  block.appendChild(topLabel);
+  block.appendChild(topChildBox);
+  addBlockInteractivity(block);
+  updateLineNumbers();
+}
+
+function handleLoopBlocks(block, blockID) {
+  const topChildBox = createChildBoxHorizontal(block.id, blockID);
+  const topLabel = document.createElement("span");
+  topLabel.classList.add("block-top-label");
+  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)}:`;
   block.appendChild(topLabel);
   block.appendChild(topChildBox);
 
   if (blockID === "for") {
-    const extraTopChildBox = createChildBox(block.id, blockID);
+    const extraTopChildBox = createChildBoxHorizontal(block.id, blockID);
     const extraTopLabel = document.createElement("span");
     extraTopLabel.classList.add("block-top-label");
     extraTopLabel.textContent = "Range:";
     block.appendChild(extraTopLabel);
     block.appendChild(extraTopChildBox);
-  }
-}
-
-function handleVariableDeclarationBlock(block) {
-  const variableName = prompt("Enter a new variable name:");
-  if (!variableName) return;
-
-  if (!userVariables.includes(variableName)) {
-    userVariables.push(variableName);
-    updateUserVariableDropdowns(); // Update dropdowns
-    refreshCategoryButtons(); // Refresh the category buttons
   }
 }
 
@@ -426,7 +431,7 @@ function createBlockTypeDropdown(blockTypes) {
   return dropdown;
 }
 
-function createChildBox(parentID, parentBlockID) {
+function createChildBoxHorizontal(parentID, parentBlockID) {
   const childBox = document.createElement("div");
   childBox.classList.add("child-box-container-horizontal");
   childBox.dataset.parentID = parentID;
@@ -457,9 +462,103 @@ function appendChildElement(block, childElement) {
     childBox.dataset.parentID = block.id;
     childBox.dataset.parentBlockID = block.dataset.blockID;
     childBox.dataset.blockDepth = parseInt(block.dataset.blockDepth) + 1;
+
+    // Set initial if-elif-else-id to 0 for the first block
+    if (!block.dataset.ifElifElseId) {
+      block.dataset.ifElifElseId = 0;
+    }
+
+    childBox.dataset.ifElifElseId = block.dataset.ifElifElseId;
+
     block.appendChild(childBox);
+
+    if (block.dataset.blockID === "if") {
+      // Add the elif-else section with the plusIcon
+      const elifElseDiv = document.createElement("div");
+      elifElseDiv.classList.add("elif-else");
+      const plusIcon = document.createElement("i");
+      plusIcon.classList.add("fa-solid", "fa-plus");
+      elifElseDiv.appendChild(plusIcon);
+      block.appendChild(elifElseDiv);
+
+      // Call the function to set up the dropdown menu and its functionality
+      setupDropdownMenu(plusIcon, block, elifElseDiv);
+    }
   }
 }
+
+function setupDropdownMenu(plusIcon, block, elifElseDiv) {
+  // Create the dropdown menu
+  const dropdown = document.createElement("div");
+  dropdown.classList.add("dropdown-menu");
+  dropdown.style.display = "none"; // Hide the dropdown by default
+
+  // Create the menu items
+  const elseIfOption = document.createElement("div");
+  elseIfOption.textContent = "else if";
+  elseIfOption.classList.add("dropdown-item");
+  dropdown.appendChild(elseIfOption);
+
+  const elseOption = document.createElement("div");
+  elseOption.textContent = "else";
+  elseOption.classList.add("dropdown-item");
+  dropdown.appendChild(elseOption);
+
+  // Add dropdown to the block
+  block.appendChild(dropdown);
+
+  // Toggle dropdown visibility when the plus icon is clicked
+  plusIcon.addEventListener("click", function () {
+    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+  });
+
+  // Add click events to the options
+  elseIfOption.addEventListener("click", function () {
+    // Insert the text 'else if:' in a span
+    const elseIfSpan = document.createElement("span");
+    elseIfSpan.textContent = "else if:";
+    block.appendChild(elseIfSpan);
+
+    // Remove the previous plus sign before adding a new child block
+    elifElseDiv.removeChild(plusIcon); // Remove the plus sign
+
+    // Increment the if-elif-else-id and create the horizontal child box
+    block.dataset.ifElifElseId = parseInt(block.dataset.ifElifElseId) + 1;
+
+    // Call createChildBoxHorizontal before the normal child box
+    const horizontalChildBox = createChildBoxHorizontal(block.id, block.dataset.blockID);
+    block.appendChild(horizontalChildBox);
+
+    // Call appendChildElement again to add a child block
+    appendChildElement(block, "block");
+
+    // Close dropdown
+    dropdown.style.display = "none";
+  });
+
+  elseOption.addEventListener("click", function () {
+    // Insert the text 'else:' in a span
+    const elseSpan = document.createElement("span");
+    elseSpan.textContent = "else:";
+    block.appendChild(elseSpan);
+
+    // Remove the previous plus sign before adding a new child block
+    elifElseDiv.removeChild(plusIcon); // Remove the plus sign
+
+    // Increment the if-elif-else-id for else block
+    block.dataset.ifElifElseId = parseInt(block.dataset.ifElifElseId) + 1;
+
+    // Call appendChildElement again to add a child block
+    appendChildElement(block, "block");
+
+    // Close dropdown
+    dropdown.style.display = "none";
+  });
+}
+
+
+
+
 
 // ==========================
 // 7. Update Functions

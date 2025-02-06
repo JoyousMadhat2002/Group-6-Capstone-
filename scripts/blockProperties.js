@@ -20,6 +20,8 @@ function getBlockDropdownList(blockID) {
       return ["---", "and", "or", "not"];
     case "varOps":
       return ["---", "=", "+=", "-=", "*=", "/="];
+    case "if":
+      return ["---", "else if", "else"];
     default:
       return ["---"]; // Default case for blocks without specific types
   }
