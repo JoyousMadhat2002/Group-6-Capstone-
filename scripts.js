@@ -456,7 +456,6 @@ function appendChildElement(block, childElement) {
     childBox.classList.add("child-box-container");
     childBox.dataset.parentID = block.id;
     childBox.dataset.parentBlockID = block.dataset.blockID;
-    childBox.dataset.blockDepth = parseInt(block.dataset.blockDepth) + 1;
     block.appendChild(childBox);
   }
 }
@@ -603,21 +602,6 @@ function clearDropHighlights() {
 
 
 
-// test function for storing textarea input as variable
-function StoreBlob() {
-  ptext = pythonTextarea.value;
-  ptext = ptext.toString();
-}
-
-// test function for sending stored state to blob to read into textarea
-function PullBlob() {
-  const blob = new Blob([ptext], { type: "text/plain" });
-  blob.text().then((text) => {
-    pythonTextarea.value = text; // sends contents of blob to textarea
-  });
-  // t.value = ptext; // less useful way to store information
-}
-
 // Event handler for selecting a block when clicked
 function selectBlock(event) {
   const targetBlock = event.target.closest(".box");
@@ -655,36 +639,39 @@ function updateUserVariableDropdowns() {
 // 9. Python Code Conversion
 // ==========================
 
-function blockToText() {
+function blockToText(pc) {
   pythontext.value = ""; // Clear the text area
 
-  let blockChildElements = blockContainer.children; // Get all children/blocks from the box-container
+  let parentContainer = document.getElementById(pc);
 
-  for (let i = 0; i < blockChildElements.length; i++) {
-    // Loop through children/blocks
-    // Add indentation based on the block's depth
+
+
+
+  let blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
+  for (let i = 0; i < blockChildElements.length; i++){
+    let childID = blockChildElements[i].dataset.blockID;
+    console.log(i)
+
     for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
       pythontext.value += "    "; // Add spaces for indentation
     }
 
-    // Add blockID, blockType, XValue, Operator, and YValue to the text area
-    pythontext.value += `blockID: ${blockChildElements[i].dataset.blockID} `;
-    pythontext.value += `XValue: ${blockChildElements[i].dataset.blockXValue} `;
-    pythontext.value += `Operator: ${blockChildElements[i].dataset.blockOperator} `;
-    pythontext.value += `YValue: ${blockChildElements[i].dataset.blockYValue}\n`;
+    if (childID == "for" ||childID == "if" || childID == "while" ){
+      pythontext.value += `${blockChildElements[i].dataset.blockID} \n`;
 
-    console.log(blockChildElements[i]); // Log the block element for debugging
+    }
+    // pythontext.value += `${blockChildElements[i].dataset.blockID} \n`;
   }
 }
 
 // Function to convert text programming to block programming
-function textToBlock() {
+function textToBlock(container) {
   let text = pythontext.value;
 
   let lines = text.split("\n"); // Separate lines for parsing
   // console.log(lines);
 
-  document.getElementById("box-container").innerHTML = ""; // Clear block container
+  document.getElementById(container).innerHTML = ""; // Clear block container
 
   let depthBuilder = ["box-container"]; //
   let currDepth = 0;
@@ -695,12 +682,8 @@ function textToBlock() {
       // line = line.split(" ");
 
       let tokens = lines[i].split(" ");
+      console.log(tokens);
 
-      let a = tokens[0];
-      let b = tokens[1];
-      let c = tokens[2];
-      let d = tokens[3];
-      let builtBlock = newBlock(a, b, c, d);
     }
   }
 }
@@ -708,22 +691,16 @@ function textToBlock() {
 function toggleView() {
   var x = document.getElementById("python-code-result");
   var y = document.getElementById("box-container");
-  var storeButton = document.getElementById("store-p");
-  var pullButton = document.getElementById("pull-p");
   var toggleButton = document.getElementById("toggleButton");
 
   if (x.style.display === "block") {
     x.style.display = "none";
     y.style.display = "block";
-    storeButton.style.display = "none";
-    pullButton.style.display = "none";
     toggleButton.textContent = "Python";
     isPythonView = false; // Switch to Block view
   } else {
     x.style.display = "block";
     y.style.display = "none";
-    storeButton.style.display = "inline"; // Show the store and pull buttons
-    pullButton.style.display = "inline";
     toggleButton.textContent = "Block";
     isPythonView = true; // Switch to Python view
   }
@@ -847,17 +824,13 @@ function setupSaveButtonListener() {
 }
 
 function setupButtonFunctionalityListeners() {
-  document.querySelector('[name="btt"]').addEventListener("click", blockToText);
-  document.querySelector('[name="ttb"]').addEventListener("click", textToBlock);
+  document.querySelector('[name="btt"]').addEventListener("click", function(){
+    blockToText("box-container");
+  });
+  document.querySelector('[name="ttb"]').addEventListener("click", function(){
+    textToBlock("box-container");
+  });
   document.getElementById("toggleButton").addEventListener("click", toggleView);
-  document
-    .getElementById("store-p")
-    .querySelector("button")
-    .addEventListener("click", StoreBlob);
-  document
-    .getElementById("pull-p")
-    .querySelector("button")
-    .addEventListener("click", PullBlob);
 }
 
 // ==========================
