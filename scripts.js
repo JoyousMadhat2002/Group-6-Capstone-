@@ -152,6 +152,7 @@ function newBlock(blockID) {
     addBlockInteractivity(newBlock);
     updateLineNumbers();
   }
+  return newBlock.id;
 }
 
 // Function to remove a block by its ID
@@ -640,32 +641,45 @@ function updateUserVariableDropdowns() {
 // ==========================
 
 function blockToText(pc) {
-  pythontext.value = ""; // Clear the text area
-
+  //pythontext.value = ""; // Clear the text area
+  
   let parentContainer = document.getElementById(pc);
+  
+  
+  let blockChildElements;
+  // section for top half
 
-  let blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
+  // section for bottom half
+  if(pc == "box-container"){
+  blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
+  }
+  else{
+  blockChildElements = parentContainer.querySelector('.child-box-container').children; // Get all children/blocks from the box-container
+  }
   for (let i = 0; i < blockChildElements.length; i++){
     let childID = blockChildElements[i].dataset.blockID;
     console.log(childID);
-    if (blockChildElements[i].className == "box" || blockChildElements[i].className == "child-box-container" || blockChildElements[i].className == "child-box-container-horizontal" || blockChildElements[i].className == "box selected"){
-        console.log(blockChildElements[i].className);
-    
+    console.log(`cycle: ${i}`);
+    console.log(blockChildElements.length);
 
-    
+    for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
+      pythontext.value += "    "; // Add spaces for indentation
+    }
+
     if (childID == "for" ||childID == "if" || childID == "while" ){
       
-      for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
-      pythontext.value += "    "; // Add spaces for indentation
+      pythontext.value += `${childID} \n`;
+      let cbc = blockChildElements[i].querySelector('.child-box-container');
+      if (cbc.children.length > 0){
+        blockToText(blockChildElements[i].id);
+        console.log(`child elements: ${cbc.children.length} \n`);
       }
-
-      pythontext.value += `${blockChildElements[i].dataset.blockID} \n`; // print blockID
+      
       
     }
   }
-    // pythontext.value += `${blockChildElements[i].dataset.blockID} \n`;
-  }
 }
+
 
 // Function to convert text programming to block programming
 function textToBlock(container) {
@@ -684,18 +698,13 @@ function textToBlock(container) {
       lines[i] = lines[i].trim();
       // line = line.split(" ");
 
-      let tokens = lines[i].split(" "); // splits each line into tokens
-      console.log(tokens); // testing, can remove
-
-
-      if (tokens[0] == "if"){
-        newBlock("if");
-        for(let j = 1; j < tokens.length; j++){
-          console.log(tokens[j]);
-          //ifBlock.textContent += j;
-        }
-
+      let tokens = lines[i].split(" ");
+      if (tokens[i] == "for" || tokens[i] == "if" || tokens[i] == "while" ){
+        let nbCons = newBlock(tokens[i]);
+        let nbRef = document.getElementById(nbCons);
+        console.log(nbRef);
       }
+      console.log(tokens);
 
     }
   }
@@ -838,6 +847,7 @@ function setupSaveButtonListener() {
 
 function setupButtonFunctionalityListeners() {
   document.querySelector('[name="btt"]').addEventListener("click", function(){
+    pythontext.value = ""; // Clear the text area
     blockToText("box-container");
   });
   document.querySelector('[name="ttb"]').addEventListener("click", function(){
