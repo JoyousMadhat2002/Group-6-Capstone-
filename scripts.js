@@ -689,54 +689,73 @@ function textToBlock(container) {
   }
 
   let lines = text.split("\n"); // Separate lines for parsing
-  console.log(lines);
+ 
   
 
   
 
-  let depthBuilder = ["box-container"]; //
+  let depthBuilder = ["box-container"]; // counting preceeding zeros for depth
   let currDepth = 0;
-
+  let linecount = 0;
   for (let i = 0; i < lines.length; i++) {
-    let linecount = 0;
-    for (i = 0; i < lines.length; i++){
-      if(lines[i] == " "){
+    for (let j = 0; j < lines[i].length; j++){
+      console.log("line[j]]: " + `${j}`);
+      if(lines[i][j] ==  " "){
         linecount++;
       }
       else{
         break;
       }
     }
+  
 
-    // setting 
-    if (linecount == 0){
-      currDepth == 1;
+    // setting currDepth based on number of indentations
+    
+    if (linecount < 1){
+      
+      currDepth = 1;
+      console.log("currDepth: " + `${currDepth}`);
+      console.log("linecount: " + `${linecount}`);
+      console.log("linecount < 1");
     }
     else {
-      currDepth = linecount/4;
+      currDepth = (linecount/4) + 1;
+      console.log("currDepth: " + `${currDepth}`);
+      console.log("linecount: " + `${linecount}`);
+      console.log("linecount > 1");
     }
-    console.log("linecount: " + `${linecount}`);
 
-    let tokens = lines[i].trim().split(" ");
+
+    let tokens = lines[i].trim().split(" "); // trimming spaces from front and back of string, then splitting into tokens
+
+    // logic to build blocks
     if (tokens != ""){
-      console.log(i);
-      console.log(tokens);
       if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for"){
-        console.log("If statement");
+        console.log(`${tokens[0]}` + " statement");
         let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
         let nbRef = document.getElementById(nbCons); // created reference to newblock
+
+        // update depth
+        if(true){
+
+        }
 
         // checking for comparison block operators
         if (tokens[2] == "==" || tokens[2] == "!=" || tokens[2] == ">=" || tokens[2] == "<=" || tokens[2] == "<" || tokens[2] == ">"){
           let nbComp = newBlock("comparisonBlock");
           let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
-          console.log(compElems);
+          for (let k = 0; k<3;k++){
+            if(compElems[k].querySelector(".math-comparison-input")){
+              compElems[k].querySelector(".math-comparison-input").value = tokens[k+1];
+            }
+            compElems[k].dataset.blockValue = tokens[k+1];          
+          }
           
           let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
           nbHz.appendChild(document.getElementById(nbComp));
         }
         else if (tokens[2] == "+"){
-          let x;
+          let x = 0;
         }
 
         
@@ -744,6 +763,7 @@ function textToBlock(container) {
       
 
     }
+    linecount = 0;
     
   }
 
