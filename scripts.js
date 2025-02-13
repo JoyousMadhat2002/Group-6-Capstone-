@@ -684,30 +684,69 @@ function blockToText(pc) {
 // Function to convert text programming to block programming
 function textToBlock(container) {
   let text = pythontext.value;
+  if(container == "box-container"){
+    document.getElementById(container).innerHTML = ""; // Clear block container
+  }
 
   let lines = text.split("\n"); // Separate lines for parsing
-  // console.log(lines);
+  console.log(lines);
+  
 
-  document.getElementById(container).innerHTML = ""; // Clear block container
+  
 
   let depthBuilder = ["box-container"]; //
   let currDepth = 0;
 
   for (let i = 0; i < lines.length; i++) {
-    if (lines[i] != "") {
-      lines[i] = lines[i].trim();
-      // line = line.split(" ");
-
-      let tokens = lines[i].split(" ");
-      if (tokens[i] == "for" || tokens[i] == "if" || tokens[i] == "while" ){
-        let nbCons = newBlock(tokens[i]);
-        let nbRef = document.getElementById(nbCons);
-        console.log(nbRef);
+    let linecount = 0;
+    for (i = 0; i < lines.length; i++){
+      if(lines[i] == " "){
+        linecount++;
       }
+      else{
+        break;
+      }
+    }
+
+    // setting 
+    if (linecount == 0){
+      currDepth == 1;
+    }
+    else {
+      currDepth = linecount/4;
+    }
+    console.log("linecount: " + `${linecount}`);
+
+    let tokens = lines[i].trim().split(" ");
+    if (tokens != ""){
+      console.log(i);
       console.log(tokens);
+      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for"){
+        console.log("If statement");
+        let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+        let nbRef = document.getElementById(nbCons); // created reference to newblock
+
+        // checking for comparison block operators
+        if (tokens[2] == "==" || tokens[2] == "!=" || tokens[2] == ">=" || tokens[2] == "<=" || tokens[2] == "<" || tokens[2] == ">"){
+          let nbComp = newBlock("comparisonBlock");
+          let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
+          console.log(compElems);
+          
+          let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
+          nbHz.appendChild(document.getElementById(nbComp));
+        }
+        else if (tokens[2] == "+"){
+          let x;
+        }
+
+        
+      }
+      
 
     }
+    
   }
+
 }
 
 function toggleView() {
