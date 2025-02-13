@@ -150,6 +150,7 @@ function newBlock(blockID) {
     addBlockInteractivity(newBlock);
     updateLineNumbers();
   }
+  return newBlock.id;
 }
 
 // Function to remove a block by its ID
@@ -461,6 +462,8 @@ function appendChildElement(block, childElement) {
     childBox.classList.add("child-box-container");
     childBox.dataset.parentID = block.id;
     childBox.dataset.parentBlockID = block.dataset.blockID;
+
+
     childBox.dataset.blockDepth = parseInt(block.dataset.blockDepth) + 1;
 
     // Set initial if-elif-else-id to 0 for the first block
@@ -751,21 +754,6 @@ function calculateDepth(block) {
   return depth;
 }
 
-// test function for storing textarea input as variable
-function StoreBlob() {
-  ptext = pythonTextarea.value;
-  ptext = ptext.toString();
-}
-
-// test function for sending stored state to blob to read into textarea
-function PullBlob() {
-  const blob = new Blob([ptext], { type: "text/plain" });
-  blob.text().then((text) => {
-    pythonTextarea.value = text; // sends contents of blob to textarea
-  });
-  // t.value = ptext; // less useful way to store information
-}
-
 // Event handler for selecting a block when clicked
 function selectBlock(event) {
   const targetBlock = event.target.closest(".box");
@@ -803,75 +791,148 @@ function updateUserVariableDropdowns() {
 // 9. Python Code Conversion
 // ==========================
 
-function blockToText() {
-  pythontext.value = ""; // Clear the text area
+function blockToText(pc) {
+  //pythontext.value = ""; // Clear the text area
+  
+  let parentContainer = document.getElementById(pc);
+  
+  
+  let blockChildElements;
+  // section for top half
 
-  let blockChildElements = blockContainer.children; // Get all children/blocks from the box-container
+  // section for bottom half
+  if(pc == "box-container"){
+  blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
+  }
+  else{
+  blockChildElements = parentContainer.querySelector('.child-box-container').children; // Get all children/blocks from the box-container
+  }
+  for (let i = 0; i < blockChildElements.length; i++){
+    let childID = blockChildElements[i].dataset.blockID;
+    console.log(childID);
+    console.log(`cycle: ${i}`);
+    console.log(blockChildElements.length);
 
-  for (let i = 0; i < blockChildElements.length; i++) {
-    // Loop through children/blocks
-    // Add indentation based on the block's depth
     for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
       pythontext.value += "    "; // Add spaces for indentation
     }
 
-    // Add blockID, blockType, XValue, Operator, and YValue to the text area
-    pythontext.value += `blockID: ${blockChildElements[i].dataset.blockID} `;
-    pythontext.value += `XValue: ${blockChildElements[i].dataset.blockXValue} `;
-    pythontext.value += `Operator: ${blockChildElements[i].dataset.blockOperator} `;
-    pythontext.value += `YValue: ${blockChildElements[i].dataset.blockYValue}\n`;
-
-    console.log(blockChildElements[i]); // Log the block element for debugging
+    if (childID == "for" ||childID == "if" || childID == "while" ){
+      
+      pythontext.value += `${childID} \n`;
+      let cbc = blockChildElements[i].querySelector('.child-box-container');
+      if (cbc.children.length > 0){
+        blockToText(blockChildElements[i].id);
+        console.log(`child elements: ${cbc.children.length} \n`);
+      }
+      
+      
+    }
   }
 }
 
+
 // Function to convert text programming to block programming
-function textToBlock() {
+function textToBlock(container) {
   let text = pythontext.value;
+  if(container == "box-container"){
+    document.getElementById(container).innerHTML = ""; // Clear block container
+  }
 
   let lines = text.split("\n"); // Separate lines for parsing
-  // console.log(lines);
+ 
+  
 
-  document.getElementById("box-container").innerHTML = ""; // Clear block container
+  
 
-  let depthBuilder = ["box-container"]; //
+  let depthBuilder = ["box-container"]; // counting preceeding zeros for depth
   let currDepth = 0;
-
+  let linecount = 0;
   for (let i = 0; i < lines.length; i++) {
-    if (lines[i] != "") {
-      lines[i] = lines[i].trim();
-      // line = line.split(" ");
-
-      let tokens = lines[i].split(" ");
-
-      let a = tokens[0];
-      let b = tokens[1];
-      let c = tokens[2];
-      let d = tokens[3];
-      let builtBlock = newBlock(a, b, c, d);
+    for (let j = 0; j < lines[i].length; j++){
+      console.log("line[j]]: " + `${j}`);
+      if(lines[i][j] ==  " "){
+        linecount++;
+      }
+      else{
+        break;
+      }
     }
+  
+
+    // setting currDepth based on number of indentations
+    
+    if (linecount < 1){
+      
+      currDepth = 1;
+      console.log("currDepth: " + `${currDepth}`);
+      console.log("linecount: " + `${linecount}`);
+      console.log("linecount < 1");
+    }
+    else {
+      currDepth = (linecount/4) + 1;
+      console.log("currDepth: " + `${currDepth}`);
+      console.log("linecount: " + `${linecount}`);
+      console.log("linecount > 1");
+    }
+
+
+    let tokens = lines[i].trim().split(" "); // trimming spaces from front and back of string, then splitting into tokens
+
+    // logic to build blocks
+    if (tokens != ""){
+      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for"){
+        console.log(`${tokens[0]}` + " statement");
+        let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+        let nbRef = document.getElementById(nbCons); // created reference to newblock
+
+        // update depth
+        if(true){
+
+        }
+
+        // checking for comparison block operators
+        if (tokens[2] == "==" || tokens[2] == "!=" || tokens[2] == ">=" || tokens[2] == "<=" || tokens[2] == "<" || tokens[2] == ">"){
+          let nbComp = newBlock("comparisonBlock");
+          let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
+          for (let k = 0; k<3;k++){
+            if(compElems[k].querySelector(".math-comparison-input")){
+              compElems[k].querySelector(".math-comparison-input").value = tokens[k+1];
+            }
+            compElems[k].dataset.blockValue = tokens[k+1];          
+          }
+          
+          let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
+          nbHz.appendChild(document.getElementById(nbComp));
+        }
+        else if (tokens[2] == "+"){
+          let x = 0;
+        }
+
+        
+      }
+      
+
+    }
+    linecount = 0;
+    
   }
+
 }
 
 function toggleView() {
   var x = document.getElementById("python-code-result");
   var y = document.getElementById("box-container");
-  var storeButton = document.getElementById("store-p");
-  var pullButton = document.getElementById("pull-p");
   var toggleButton = document.getElementById("toggleButton");
 
   if (x.style.display === "block") {
     x.style.display = "none";
     y.style.display = "block";
-    storeButton.style.display = "none";
-    pullButton.style.display = "none";
     toggleButton.textContent = "Python";
     isPythonView = false; // Switch to Block view
   } else {
     x.style.display = "block";
     y.style.display = "none";
-    storeButton.style.display = "inline"; // Show the store and pull buttons
-    pullButton.style.display = "inline";
     toggleButton.textContent = "Block";
     isPythonView = true; // Switch to Python view
   }
@@ -997,17 +1058,14 @@ function setupSaveButtonListener() {
 }
 
 function setupButtonFunctionalityListeners() {
-  document.querySelector('[name="btt"]').addEventListener("click", blockToText);
-  document.querySelector('[name="ttb"]').addEventListener("click", textToBlock);
+  document.querySelector('[name="btt"]').addEventListener("click", function(){
+    pythontext.value = ""; // Clear the text area
+    blockToText("box-container");
+  });
+  document.querySelector('[name="ttb"]').addEventListener("click", function(){
+    textToBlock("box-container");
+  });
   document.getElementById("toggleButton").addEventListener("click", toggleView);
-  document
-    .getElementById("store-p")
-    .querySelector("button")
-    .addEventListener("click", StoreBlob);
-  document
-    .getElementById("pull-p")
-    .querySelector("button")
-    .addEventListener("click", PullBlob);
 }
 
 // ==========================
