@@ -242,7 +242,8 @@ select.block-dropdown {
   border-bottom: 6px solid yellow;
 }
 
-.box.drop-inside {
+.box.drop-inside, .child-box-container.highlight-inside,
+.child-box-container-horizontal.highlight-inside {
   border: 6px solid yellow;
 }
 

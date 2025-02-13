@@ -584,6 +584,7 @@ function updateOperatorAttributes(block, selectedOperator) {
   block.appendChild(operatorLabel);
 }
 
+// May not be needed anymore (look at calculateDepth() function)
 function updateDepth(block, targetBlock, depthChange) {
   const currentDepth = parseInt(block.dataset.blockDepth) || 0;
   const newDepth = currentDepth + depthChange;
@@ -612,6 +613,7 @@ function toggleCategory(categoryId) {
   });
 }
 
+// Function to add interactivity to blocks
 function addBlockInteractivity(block) {
   block.draggable = true;
   block.addEventListener("dragstart", dragStart);
@@ -629,33 +631,48 @@ function dragStart(event) {
   }
 }
 
-// Event handler to allow the block to be dropped
+// Event handler for dragging over a block
 function dragOver(event) {
   event.preventDefault();
 
   const targetBlock = event.target.closest(".box");
   if (!targetBlock || targetBlock === dragged) return;
 
-  // Get dimensions of the target block and cursor position
   const rect = targetBlock.getBoundingClientRect();
   const offsetY = event.clientY - rect.top;
-  const margin = rect.height * 0.25; // Increase margin size for top and bottom zones (25% of block height)
+  const margin = rect.height * 0.25;
 
-  // Remove existing highlights
-  clearDropHighlights();
+  clearDropHighlights(); // Clear previous highlights
 
   if (offsetY < margin) {
-    // Highlight drop above
-    targetBlock.classList.add("drop-above");
+      targetBlock.classList.add("drop-above");
   } else if (offsetY > rect.height - margin) {
-    // Highlight drop below
-    targetBlock.classList.add("drop-below");
+      targetBlock.classList.add("drop-below");
   } else {
-    // Highlight drop inside (if child container exists)
-    const childContainer = targetBlock.querySelector(".child-box-container");
-    if (childContainer) {
-      targetBlock.classList.add("drop-inside");
-    }
+      const childContainers = targetBlock.querySelectorAll(
+          ".child-box-container, .child-box-container-horizontal"
+      );
+
+      let closestContainer = null;
+      let smallestDistance = Infinity;
+
+      childContainers.forEach((container) => {
+          // Avoid dragging into its own container
+          if (dragged.contains(container)) return;
+
+          const containerRect = container.getBoundingClientRect();
+          const distance = Math.abs(event.clientY - containerRect.top);
+
+          // Check if the container is empty or available for a new block
+          if (distance < smallestDistance && container.children.length === 0) {
+              smallestDistance = distance;
+              closestContainer = container;
+          }
+      });
+
+      if (closestContainer) {
+          closestContainer.classList.add("highlight-inside");
+      }
   }
 }
 
@@ -663,44 +680,85 @@ function dragOver(event) {
 function drop(event) {
   event.preventDefault();
   const targetBlock = event.target.closest(".box");
-  if (!dragged || !targetBlock || targetBlock === dragged) return; // Skip invalid drops
 
-  // Determine drop zone and perform appropriate action
+  // Exit if no block is found or the target is the dragged block
+  if (!dragged || !targetBlock || targetBlock === dragged) return;
+
+  // Move the dragged block to the target position
   if (targetBlock.classList.contains("drop-above")) {
-    // Drop above
-    targetBlock.parentNode.insertBefore(dragged, targetBlock);
-    updateDepth(dragged, targetBlock, -1); // Adjust depth relative to target block
+      targetBlock.parentNode.insertBefore(dragged, targetBlock);
   } else if (targetBlock.classList.contains("drop-below")) {
-    // Drop below
-    targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
-    updateDepth(dragged, targetBlock, -1); // Adjust depth relative to target block
-  } else if (targetBlock.classList.contains("drop-inside")) {
-    const childContainer = targetBlock.querySelector(".child-box-container");
-    if (childContainer) {
-      // Drop inside child container
-      childContainer.appendChild(dragged);
-      updateDepth(dragged, targetBlock, 1); // Increase depth
-    }
+      targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
+  } else {
+      const highlightedContainer = document.querySelector(".highlight-inside");
+      if (highlightedContainer) {
+          highlightedContainer.appendChild(dragged);
+      }
   }
 
-  clearDropHighlights(); // Clean up
-  dragged = null; // Reset the dragged block
+  // Recalculate and update the block's depth
+  const newDepth = calculateDepth(dragged);
+  dragged.dataset.blockDepth = newDepth;
+
+  // Update the depth for all nested blocks
+  updateNestedDepths(dragged);
+
+  //test function to show depth (remove later)
+  //showDepth(dragged);
+
+  clearDropHighlights();
+  dragged = null;
 }
 
+
+//test function to show depth
+function showDepth(block) {
+  const depthLabel = block.querySelector(".block-depth-info");
+  if (!depthLabel) {
+      const label = document.createElement("span");
+      label.classList.add("block-depth-info");
+      block.appendChild(label);
+  }
+  block.querySelector(".block-depth-info").textContent = `Depth: ${block.dataset.blockDepth}`;
+}
+
+// Function to update the depth of all nested blocks
+function updateNestedDepths(block) {
+  const newDepth = calculateDepth(block);
+  block.dataset.blockDepth = newDepth;
+
+  const childBlocks = block.querySelectorAll(".box");
+  childBlocks.forEach((childBlock) => {
+      updateNestedDepths(childBlock);  // Recursively update depth for each child block
+  });
+}
+
+// Event handler for ending a drag event
 function dragEnd() {
   clearDropHighlights(); // Clear all highlights
   dragged = null; // Reset dragged block
 }
 
+// Function to clear all drop highlights
 function clearDropHighlights() {
-  document
-    .querySelectorAll(".drop-above, .drop-below, .drop-inside")
-    .forEach((block) => {
-      block.classList.remove("drop-above", "drop-below", "drop-inside");
-    });
+  document.querySelectorAll(".drop-above, .drop-below, .highlight-inside")
+      .forEach((block) => {
+          block.classList.remove("drop-above", "drop-below", "highlight-inside");
+      });
 }
 
+// Function to calculate the depth of a block
+function calculateDepth(block) {
+  let depth = 0;
+  let parent = block.closest(".child-box-container, .child-box-container-horizontal");
 
+  while (parent) {
+      depth++;
+      parent = parent.parentElement.closest(".child-box-container, .child-box-container-horizontal");
+  }
+
+  return depth;
+}
 
 // test function for storing textarea input as variable
 function StoreBlob() {
@@ -832,18 +890,8 @@ function toggleView() {
 // 10. Code Execution
 // ==========================
 
-// placeholder function: start code
+// Function to run the Python code
 function runCode() {
-  /* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
-    if (isRunning == true) {
-        // if program currently running, and CTRL+ENTER hit again, stop code
-        stopCode();
-        return;
-    }
-    */
-
-  //isRunning = true; // set flag for code running // NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
-
   console.log("test: code running");
   var prog = document.getElementById("pythontext").value; // Python code input
   var mypre = document.getElementById("output"); // Output area
@@ -854,12 +902,13 @@ function runCode() {
   Sk.configure({ output: outf, read: builtinRead });
   (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = "mycanvas";
 
+  //KEEP INDENTS AS IS FOR PYTHON CODE; DO NOT CHANGE turtleSetupCode
   var turtleSetupCode = `
-    import turtle
-    t = turtle.Turtle()
-    t.shape("turtle")
-    t.color("green")
-    t.setheading(90)
+import turtle
+t = turtle.Turtle()
+t.shape("turtle")
+t.color("green")
+t.setheading(90)
   `;
 
   var cleanedProg = prog.trimStart();
@@ -879,11 +928,13 @@ function runCode() {
     });
 }
 
+// Function to handle the output of the Python code
 function outf(text) {
   var mypre = document.getElementById("output");
   mypre.innerHTML += text.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "\n";
 }
 
+// Function to read built-in files
 function builtinRead(x) {
   if (
     Sk.builtinFiles === undefined ||
@@ -912,6 +963,15 @@ function setupKeydownListener() {
     if (event.ctrlKey && event.key === "Enter") {
       runCode();
     }
+  });
+}
+
+
+function setupClearHighlightsOnClickListener() {
+  // event listener for clearing highlights when clicking 
+  // (fixes glitch with highlights not clearing properly after dragging and dropping)
+  document.addEventListener("click", function () {
+    clearDropHighlights();
   });
 }
 
@@ -1111,6 +1171,7 @@ function initializeApp() {
   setupButtonFunctionalityListeners();
   setupColumnResizing();
   setupDraggableBlocks();
+  setupClearHighlightsOnClickListener();
   //initializeMiscellaneous();
 }
 
