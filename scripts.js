@@ -145,10 +145,8 @@ function newBlock(blockID) {
   }
 
   if (blockID !== "varDeclOps") {
-    addDepthInfo(newBlock);
     appendChildElement(newBlock, childElement);
     container.appendChild(newBlock);
-
     addBlockInteractivity(newBlock);
     updateLineNumbers();
   }
@@ -255,32 +253,39 @@ function handleMathOrComparisonBlock(block, blockID) {
 }
 
 function handleControlBlock(block, blockID) {
-  const topChildBox = createChildBox(block.id, blockID);
+  if (blockID === "if") {
+    handleIfBlock(block, blockID);
+  } else if (blockID === "for" || blockID === "while") {
+    handleLoopBlocks(block, blockID);
+  }
+}
+
+function handleIfBlock(block, blockID) {
+  const topChildBox = createChildBoxHorizontal(block.id, blockID);
   const topLabel = document.createElement("span");
   topLabel.classList.add("block-top-label");
-  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)
-    }:`;
+  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)}:`;
+  block.appendChild(topLabel);
+  block.appendChild(topChildBox);
+  addBlockInteractivity(block);
+  updateLineNumbers();
+}
+
+function handleLoopBlocks(block, blockID) {
+  const topChildBox = createChildBoxHorizontal(block.id, blockID);
+  const topLabel = document.createElement("span");
+  topLabel.classList.add("block-top-label");
+  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)}:`;
   block.appendChild(topLabel);
   block.appendChild(topChildBox);
 
   if (blockID === "for") {
-    const extraTopChildBox = createChildBox(block.id, blockID);
+    const extraTopChildBox = createChildBoxHorizontal(block.id, blockID);
     const extraTopLabel = document.createElement("span");
     extraTopLabel.classList.add("block-top-label");
     extraTopLabel.textContent = "Range:";
     block.appendChild(extraTopLabel);
     block.appendChild(extraTopChildBox);
-  }
-}
-
-function handleVariableDeclarationBlock(block) {
-  const variableName = prompt("Enter a new variable name:");
-  if (!variableName) return;
-
-  if (!userVariables.includes(variableName)) {
-    userVariables.push(variableName);
-    updateUserVariableDropdowns(); // Update dropdowns
-    refreshCategoryButtons(); // Refresh the category buttons
   }
 }
 
@@ -427,7 +432,7 @@ function createBlockTypeDropdown(blockTypes) {
   return dropdown;
 }
 
-function createChildBox(parentID, parentBlockID) {
+function createChildBoxHorizontal(parentID, parentBlockID) {
   const childBox = document.createElement("div");
   childBox.classList.add("child-box-container-horizontal");
   childBox.dataset.parentID = parentID;
@@ -457,9 +462,106 @@ function appendChildElement(block, childElement) {
     childBox.classList.add("child-box-container");
     childBox.dataset.parentID = block.id;
     childBox.dataset.parentBlockID = block.dataset.blockID;
+
+
+    childBox.dataset.blockDepth = parseInt(block.dataset.blockDepth) + 1;
+
+    // Set initial if-elif-else-id to 0 for the first block
+    if (!block.dataset.ifElifElseId) {
+      block.dataset.ifElifElseId = 0;
+    }
+
+    childBox.dataset.ifElifElseId = block.dataset.ifElifElseId;
+
     block.appendChild(childBox);
+
+    if (block.dataset.blockID === "if") {
+      // Add the elif-else section with the plusIcon
+      const elifElseDiv = document.createElement("div");
+      elifElseDiv.classList.add("elif-else");
+      const plusIcon = document.createElement("i");
+      plusIcon.classList.add("fa-solid", "fa-plus");
+      elifElseDiv.appendChild(plusIcon);
+      block.appendChild(elifElseDiv);
+
+      // Call the function to set up the dropdown menu and its functionality
+      setupDropdownMenu(plusIcon, block, elifElseDiv);
+    }
   }
 }
+
+function setupDropdownMenu(plusIcon, block, elifElseDiv) {
+  // Create the dropdown menu
+  const dropdown = document.createElement("div");
+  dropdown.classList.add("dropdown-menu");
+  dropdown.style.display = "none"; // Hide the dropdown by default
+
+  // Create the menu items
+  const elseIfOption = document.createElement("div");
+  elseIfOption.textContent = "else if";
+  elseIfOption.classList.add("dropdown-item");
+  dropdown.appendChild(elseIfOption);
+
+  const elseOption = document.createElement("div");
+  elseOption.textContent = "else";
+  elseOption.classList.add("dropdown-item");
+  dropdown.appendChild(elseOption);
+
+  // Add dropdown to the block
+  block.appendChild(dropdown);
+
+  // Toggle dropdown visibility when the plus icon is clicked
+  plusIcon.addEventListener("click", function () {
+    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+  });
+
+  // Add click events to the options
+  elseIfOption.addEventListener("click", function () {
+    // Insert the text 'else if:' in a span
+    const elseIfSpan = document.createElement("span");
+    elseIfSpan.textContent = "else if:";
+    block.appendChild(elseIfSpan);
+
+    // Remove the previous plus sign before adding a new child block
+    elifElseDiv.removeChild(plusIcon); // Remove the plus sign
+
+    // Increment the if-elif-else-id and create the horizontal child box
+    block.dataset.ifElifElseId = parseInt(block.dataset.ifElifElseId) + 1;
+
+    // Call createChildBoxHorizontal before the normal child box
+    const horizontalChildBox = createChildBoxHorizontal(block.id, block.dataset.blockID);
+    block.appendChild(horizontalChildBox);
+
+    // Call appendChildElement again to add a child block
+    appendChildElement(block, "block");
+
+    // Close dropdown
+    dropdown.style.display = "none";
+  });
+
+  elseOption.addEventListener("click", function () {
+    // Insert the text 'else:' in a span
+    const elseSpan = document.createElement("span");
+    elseSpan.textContent = "else:";
+    block.appendChild(elseSpan);
+
+    // Remove the previous plus sign before adding a new child block
+    elifElseDiv.removeChild(plusIcon); // Remove the plus sign
+
+    // Increment the if-elif-else-id for else block
+    block.dataset.ifElifElseId = parseInt(block.dataset.ifElifElseId) + 1;
+
+    // Call appendChildElement again to add a child block
+    appendChildElement(block, "block");
+
+    // Close dropdown
+    dropdown.style.display = "none";
+  });
+}
+
+
+
+
 
 // ==========================
 // 7. Update Functions
@@ -485,6 +587,7 @@ function updateOperatorAttributes(block, selectedOperator) {
   block.appendChild(operatorLabel);
 }
 
+// May not be needed anymore (look at calculateDepth() function)
 function updateDepth(block, targetBlock, depthChange) {
   const currentDepth = parseInt(block.dataset.blockDepth) || 0;
   const newDepth = currentDepth + depthChange;
@@ -513,6 +616,7 @@ function toggleCategory(categoryId) {
   });
 }
 
+// Function to add interactivity to blocks
 function addBlockInteractivity(block) {
   block.draggable = true;
   block.addEventListener("dragstart", dragStart);
@@ -530,78 +634,125 @@ function dragStart(event) {
   }
 }
 
-// Event handler to allow the block to be dropped
+// Event handler for dragging over a block
 function dragOver(event) {
   event.preventDefault();
 
   const targetBlock = event.target.closest(".box");
   if (!targetBlock || targetBlock === dragged) return;
 
-  // Get dimensions of the target block and cursor position
-  const rect = targetBlock.getBoundingClientRect();
-  const offsetY = event.clientY - rect.top;
-  const margin = rect.height * 0.25; // Increase margin size for top and bottom zones (25% of block height)
+  clearDropHighlights(); // Clear previous highlights
 
-  // Remove existing highlights
-  clearDropHighlights();
+  const childContainers = targetBlock.querySelectorAll(
+      ".child-box-container, .child-box-container-horizontal"
+  );
 
-  if (offsetY < margin) {
-    // Highlight drop above
-    targetBlock.classList.add("drop-above");
-  } else if (offsetY > rect.height - margin) {
-    // Highlight drop below
-    targetBlock.classList.add("drop-below");
-  } else {
-    // Highlight drop inside (if child container exists)
-    const childContainer = targetBlock.querySelector(".child-box-container");
-    if (childContainer) {
-      targetBlock.classList.add("drop-inside");
-    }
+  let closestContainer = null;
+  let smallestDistance = Infinity;
+
+  childContainers.forEach((container) => {
+      if (dragged.contains(container)) return; // Prevent dragging into its own child container
+
+      const containerRect = container.getBoundingClientRect();
+      const distance = Math.abs(event.clientY - containerRect.top);
+
+      // Find the closest container based on distance (even if it's not empty)
+      if (distance < smallestDistance) {
+          smallestDistance = distance;
+          closestContainer = container;
+      }
+  });
+
+  if (closestContainer) {
+      closestContainer.classList.add("highlight-inside");
   }
 }
+
+
 
 // Event handler for handling the drop action
 function drop(event) {
   event.preventDefault();
-  const targetBlock = event.target.closest(".box");
-  if (!dragged || !targetBlock || targetBlock === dragged) return; // Skip invalid drops
 
-  // Determine drop zone and perform appropriate action
-  if (targetBlock.classList.contains("drop-above")) {
-    // Drop above
-    targetBlock.parentNode.insertBefore(dragged, targetBlock);
-    updateDepth(dragged, targetBlock, -1); // Adjust depth relative to target block
-  } else if (targetBlock.classList.contains("drop-below")) {
-    // Drop below
-    targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
-    updateDepth(dragged, targetBlock, -1); // Adjust depth relative to target block
-  } else if (targetBlock.classList.contains("drop-inside")) {
-    const childContainer = targetBlock.querySelector(".child-box-container");
-    if (childContainer) {
-      // Drop inside child container
-      childContainer.appendChild(dragged);
-      updateDepth(dragged, targetBlock, 1); // Increase depth
-    }
+  if (!dragged) return;
+
+  const highlightedContainer = document.querySelector(".highlight-inside");
+  if (highlightedContainer) {
+      highlightedContainer.appendChild(dragged); // Drop into the highlighted container
+  } else {
+      const targetBlock = event.target.closest(".box");
+      if (!targetBlock || targetBlock === dragged) return;
+
+      if (targetBlock.classList.contains("drop-above")) {
+          targetBlock.parentNode.insertBefore(dragged, targetBlock);
+      } else if (targetBlock.classList.contains("drop-below")) {
+          targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
+      }
   }
 
-  clearDropHighlights(); // Clean up
-  dragged = null; // Reset the dragged block
+  // Recalculate and update the block's depth
+  const newDepth = calculateDepth(dragged);
+  dragged.dataset.blockDepth = newDepth;
+
+  // Update the depth for all nested blocks
+  updateNestedDepths(dragged);
+
+  //test function to show depth (remove later)
+  //showDepth(dragged);
+
+  clearDropHighlights();
+  dragged = null;
 }
 
+
+//test function to show depth
+function showDepth(block) {
+  const depthLabel = block.querySelector(".block-depth-info");
+  if (!depthLabel) {
+      const label = document.createElement("span");
+      label.classList.add("block-depth-info");
+      block.appendChild(label);
+  }
+  block.querySelector(".block-depth-info").textContent = `Depth: ${block.dataset.blockDepth}`;
+}
+
+// Function to update the depth of all nested blocks
+function updateNestedDepths(block) {
+  const newDepth = calculateDepth(block);
+  block.dataset.blockDepth = newDepth;
+
+  const childBlocks = block.querySelectorAll(".box");
+  childBlocks.forEach((childBlock) => {
+      updateNestedDepths(childBlock);  // Recursively update depth for each child block
+  });
+}
+
+// Event handler for ending a drag event
 function dragEnd() {
   clearDropHighlights(); // Clear all highlights
   dragged = null; // Reset dragged block
 }
 
+// Function to clear all drop highlights
 function clearDropHighlights() {
-  document
-    .querySelectorAll(".drop-above, .drop-below, .drop-inside")
-    .forEach((block) => {
-      block.classList.remove("drop-above", "drop-below", "drop-inside");
-    });
+  document.querySelectorAll(".drop-above, .drop-below, .highlight-inside")
+      .forEach((block) => {
+          block.classList.remove("drop-above", "drop-below", "highlight-inside");
+      });
 }
 
+// Function to calculate the depth of a block
+function calculateDepth(block) {
+  let depth = 0;
+  let parent = block.closest(".child-box-container, .child-box-container-horizontal");
 
+  while (parent) {
+      depth++;
+      parent = parent.parentElement.closest(".child-box-container, .child-box-container-horizontal");
+  }
+
+  return depth;
+}
 
 // Event handler for selecting a block when clicked
 function selectBlock(event) {
@@ -791,18 +942,8 @@ function toggleView() {
 // 10. Code Execution
 // ==========================
 
-// placeholder function: start code
+// Function to run the Python code
 function runCode() {
-  /* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
-    if (isRunning == true) {
-        // if program currently running, and CTRL+ENTER hit again, stop code
-        stopCode();
-        return;
-    }
-    */
-
-  //isRunning = true; // set flag for code running // NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
-
   console.log("test: code running");
   var prog = document.getElementById("pythontext").value; // Python code input
   var mypre = document.getElementById("output"); // Output area
@@ -813,12 +954,13 @@ function runCode() {
   Sk.configure({ output: outf, read: builtinRead });
   (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = "mycanvas";
 
+  //KEEP INDENTS AS IS FOR PYTHON CODE; DO NOT CHANGE turtleSetupCode
   var turtleSetupCode = `
-    import turtle
-    t = turtle.Turtle()
-    t.shape("turtle")
-    t.color("green")
-    t.setheading(90)
+import turtle
+t = turtle.Turtle()
+t.shape("turtle")
+t.color("green")
+t.setheading(90)
   `;
 
   var cleanedProg = prog.trimStart();
@@ -838,11 +980,13 @@ function runCode() {
     });
 }
 
+// Function to handle the output of the Python code
 function outf(text) {
   var mypre = document.getElementById("output");
   mypre.innerHTML += text.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "\n";
 }
 
+// Function to read built-in files
 function builtinRead(x) {
   if (
     Sk.builtinFiles === undefined ||
@@ -871,6 +1015,15 @@ function setupKeydownListener() {
     if (event.ctrlKey && event.key === "Enter") {
       runCode();
     }
+  });
+}
+
+
+function setupClearHighlightsOnClickListener() {
+  // event listener for clearing highlights when clicking 
+  // (fixes glitch with highlights not clearing properly after dragging and dropping)
+  document.addEventListener("click", function () {
+    clearDropHighlights();
   });
 }
 
@@ -1067,6 +1220,7 @@ function initializeApp() {
   setupButtonFunctionalityListeners();
   setupColumnResizing();
   setupDraggableBlocks();
+  setupClearHighlightsOnClickListener();
   //initializeMiscellaneous();
 }
 

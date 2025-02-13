@@ -200,10 +200,17 @@ select.block-dropdown {
   border: #000000 1px solid;
 }
 
+.elif-else{
+  margin-left: auto;
+}
+
 .child-box-container {
+  width: fit-content;
+  height: auto;
   margin-left: 10px;
   border: #000000 1px solid;
   background-color: #f1f1f1;
+  min-width: 25px;
 }
 
 .child-box-container-horizontal {
@@ -235,7 +242,8 @@ select.block-dropdown {
   border-bottom: 6px solid yellow;
 }
 
-.box.drop-inside {
+.box.drop-inside, .child-box-container.highlight-inside,
+.child-box-container-horizontal.highlight-inside {
   border: 6px solid yellow;
 }
 
