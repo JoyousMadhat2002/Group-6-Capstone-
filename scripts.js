@@ -638,61 +638,52 @@ function dragOver(event) {
   const targetBlock = event.target.closest(".box");
   if (!targetBlock || targetBlock === dragged) return;
 
-  const rect = targetBlock.getBoundingClientRect();
-  const offsetY = event.clientY - rect.top;
-  const margin = rect.height * 0.25;
-
   clearDropHighlights(); // Clear previous highlights
 
-  if (offsetY < margin) {
-      targetBlock.classList.add("drop-above");
-  } else if (offsetY > rect.height - margin) {
-      targetBlock.classList.add("drop-below");
-  } else {
-      const childContainers = targetBlock.querySelectorAll(
-          ".child-box-container, .child-box-container-horizontal"
-      );
+  const childContainers = targetBlock.querySelectorAll(
+      ".child-box-container, .child-box-container-horizontal"
+  );
 
-      let closestContainer = null;
-      let smallestDistance = Infinity;
+  let closestContainer = null;
+  let smallestDistance = Infinity;
 
-      childContainers.forEach((container) => {
-          // Avoid dragging into its own container
-          if (dragged.contains(container)) return;
+  childContainers.forEach((container) => {
+      if (dragged.contains(container)) return; // Prevent dragging into its own child container
 
-          const containerRect = container.getBoundingClientRect();
-          const distance = Math.abs(event.clientY - containerRect.top);
+      const containerRect = container.getBoundingClientRect();
+      const distance = Math.abs(event.clientY - containerRect.top);
 
-          // Check if the container is empty or available for a new block
-          if (distance < smallestDistance && container.children.length === 0) {
-              smallestDistance = distance;
-              closestContainer = container;
-          }
-      });
-
-      if (closestContainer) {
-          closestContainer.classList.add("highlight-inside");
+      // Find the closest container based on distance (even if it's not empty)
+      if (distance < smallestDistance) {
+          smallestDistance = distance;
+          closestContainer = container;
       }
+  });
+
+  if (closestContainer) {
+      closestContainer.classList.add("highlight-inside");
   }
 }
+
+
 
 // Event handler for handling the drop action
 function drop(event) {
   event.preventDefault();
-  const targetBlock = event.target.closest(".box");
 
-  // Exit if no block is found or the target is the dragged block
-  if (!dragged || !targetBlock || targetBlock === dragged) return;
+  if (!dragged) return;
 
-  // Move the dragged block to the target position
-  if (targetBlock.classList.contains("drop-above")) {
-      targetBlock.parentNode.insertBefore(dragged, targetBlock);
-  } else if (targetBlock.classList.contains("drop-below")) {
-      targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
+  const highlightedContainer = document.querySelector(".highlight-inside");
+  if (highlightedContainer) {
+      highlightedContainer.appendChild(dragged); // Drop into the highlighted container
   } else {
-      const highlightedContainer = document.querySelector(".highlight-inside");
-      if (highlightedContainer) {
-          highlightedContainer.appendChild(dragged);
+      const targetBlock = event.target.closest(".box");
+      if (!targetBlock || targetBlock === dragged) return;
+
+      if (targetBlock.classList.contains("drop-above")) {
+          targetBlock.parentNode.insertBefore(dragged, targetBlock);
+      } else if (targetBlock.classList.contains("drop-below")) {
+          targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
       }
   }
 
