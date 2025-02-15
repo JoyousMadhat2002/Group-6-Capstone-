@@ -114,34 +114,29 @@ function newBlock(blockID) {
 
   createBlockLabel(newBlock, blockID);
 
+  // Handle different block types
   if (blockID === "mathBlock" || blockID === "comparisonBlock") {
-    handleMathOrComparisonBlock(newBlock, blockID); // Pass blockID here
+    handleMathOrComparisonBlock(newBlock, blockID);
   } else if (["if", "while", "for"].includes(blockID)) {
     handleControlBlock(newBlock, blockID);
   } else if (blockID === "mathText") {
     createInputBlock(newBlock, "0", "math-input", "blockValue", blockID);
   } else if (blockID === "printText") {
-    createInputBlock(
-      newBlock,
-      "Enter Text",
-      "text-input",
-      "blockValue",
-      blockID
-    );
+    createInputBlock(newBlock, "Enter Text", "text-input", "blockValue", blockID);
   } else if (blockID === "varDeclOps") {
-    handleVariableDeclarationBlock(newBlock); // Handle variable declaration block
+    handleVariableDeclarationBlock(newBlock);
   } else if (blockID === "varOps") {
-    handleVariableOperationBlock(newBlock); // Handle variable operation block
+    handleVariableOperationBlock(newBlock);
   } else if (blockID === "variableBlock") {
-    handleVariableBlock(newBlock); // Handle variable block
+    handleVariableBlock(newBlock);
   } else if (
     blockID === "arithmeticOps" ||
     blockID === "comparisonOps" ||
     blockID === "logicalOps"
   ) {
-    handleOperatorBlock(newBlock, blockID); // Handle operator blocks
+    handleOperatorBlock(newBlock, blockID);
   } else {
-    handleDefaultBlock(newBlock, blockID); // Handle default block
+    handleDefaultBlock(newBlock, blockID);
   }
 
   if (blockID !== "varDeclOps") {
@@ -632,11 +627,9 @@ function resetAndUpdateElifElseIds(block) {
 
   // Reset and update the IDs sequentially
   elifElseBlocks.forEach((elifElseBlock, index) => {
-    elifElseBlock.dataset.ifElifElseId = index + 1;
+    elifElseBlock.dataset.ifElifElseId = index + 1; // Set the ID for elif-else elements
   });
 
-  // Update the parent block's ID counter to the latest ID
-  block.dataset.ifElifElseId = elifElseBlocks.length;
 }
 
 function updateUserVariableDropdowns() {
