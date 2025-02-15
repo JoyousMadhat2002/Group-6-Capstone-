@@ -289,6 +289,17 @@ function handleLoopBlocks(block, blockID) {
   }
 }
 
+function handleVariableDeclarationBlock(block) {
+  const variableName = prompt("Enter a new variable name:");
+  if (!variableName) return;
+
+  if (!userVariables.includes(variableName)) {
+    userVariables.push(variableName);
+    updateUserVariableDropdowns(); // Update dropdowns
+    refreshCategoryButtons(); // Refresh the category buttons
+  }
+}
+
 function handleVariableOperationBlock(block) {
   const container = document.createElement("div");
   container.classList.add("childBox-Container-Horizontal");
@@ -360,6 +371,92 @@ function handleVariableBlock(block) {
   block.appendChild(container);
 }
 
+function handleElseIfOption(block, elifElseDiv, dropdown, plusIcon) {
+  if (elifElseDiv.children.length === 1 && elifElseDiv.contains(plusIcon)) {
+    elifElseDiv.remove(); // Remove the plus icon container if it exists
+  }
+
+  // Create the new "else if" block
+  const newElifElseDiv = createElifElseDiv("elif");
+  const elseIfSpan = createSpan("else if:");
+  newElifElseDiv.appendChild(elseIfSpan);
+
+  const horizontalChildBox = createChildBoxHorizontal(block.id, block.dataset.blockID);
+  newElifElseDiv.appendChild(horizontalChildBox);
+
+  // Append the new "else if" block to the parent block
+  block.appendChild(newElifElseDiv);
+  appendChildElement(block, "block");
+
+  // Move the "else" block and plus icon to the end
+  const elseBlock = block.querySelector('.elif-else[data-elif-else-type="else"]');
+  const plusIconDiv = block.querySelector('.elif-else[data-elif-else-type="plus"]');
+
+  if (elseBlock) {
+    block.appendChild(elseBlock); // Move the "else" block to the end
+  }
+  if (plusIconDiv) {
+    block.appendChild(plusIconDiv); // Move the plus icon to the end
+  } else {
+    // If the plus icon doesn't exist, create it and append it to the end
+    const newPlusIcon = createPlusIcon();
+    const newElifElseDivForPlus = createElifElseDiv("plus");
+    newElifElseDivForPlus.appendChild(newPlusIcon);
+    block.appendChild(newElifElseDivForPlus);
+
+    // Set up the dropdown menu for the new plus icon
+    setupDropdownMenu(newPlusIcon, block, newElifElseDivForPlus);
+  }
+
+  // Reset and update the IDs for all elif-else blocks
+  resetAndUpdateElifElseIds(block);
+
+  // Increment the "else if" counter
+  block.dataset.elseIfCount = parseInt(block.dataset.elseIfCount || 0) + 1;
+
+  dropdown.remove(); // Remove the dropdown menu
+  dropdown.style.display = "none";
+}
+
+function handleElseOption(block, elifElseDiv, dropdown, plusIcon) {
+  if (elifElseDiv.children.length === 1 && elifElseDiv.contains(plusIcon)) {
+    elifElseDiv.remove(); // Remove the plus icon container if it exists
+  }
+
+  // Create the new "else" block
+  const newElifElseDiv = createElifElseDiv("else");
+  const elseSpan = createSpan("else:");
+  newElifElseDiv.appendChild(elseSpan);
+
+  // Append the new "else" block to the parent block
+  block.appendChild(newElifElseDiv);
+  appendChildElement(block, "block");
+
+  // Move the plus icon to the end
+  const plusIconDiv = block.querySelector('.elif-else[data-elif-else-type="plus"]');
+  if (plusIconDiv) {
+    block.appendChild(plusIconDiv); // Move the plus icon to the end
+  } else {
+    // If the plus icon doesn't exist, create it and append it to the end
+    const newPlusIcon = createPlusIcon();
+    const newElifElseDivForPlus = createElifElseDiv("plus");
+    newElifElseDivForPlus.appendChild(newPlusIcon);
+    block.appendChild(newElifElseDivForPlus);
+
+    // Set up the dropdown menu for the new plus icon
+    setupDropdownMenu(newPlusIcon, block, newElifElseDivForPlus);
+  }
+
+  // Reset and update the IDs for all elif-else blocks
+  resetAndUpdateElifElseIds(block);
+
+  // Increment the "else" counter
+  block.dataset.elseCount = parseInt(block.dataset.elseCount || 0) + 1;
+
+  dropdown.remove(); // Remove the dropdown menu
+  dropdown.style.display = "none";
+}
+
 // ==========================
 // 5. Create Functions
 // ==========================
@@ -412,49 +509,48 @@ function createOperatorDropdown(blockID) {
   return dropdown;
 }
 
-function createBlockTypeDropdown(blockTypes) {
-  const dropdown = document.createElement("select");
-  dropdown.classList.add("block-dropdown");
-
-  blockTypes.forEach((type) => {
-    const option = document.createElement("option");
-    option.value = type;
-    option.textContent = type;
-    dropdown.appendChild(option);
-  });
-
-  dropdown.value = blockTypes[0];
-  dropdown.addEventListener("change", function () {
-    const block = dropdown.closest(".box");
-    block.dataset.selected = dropdown.value; // Add data-selected attribute
-  });
-
-  return dropdown;
-}
-
-function createChildBoxHorizontal(parentID, parentBlockID) {
-  const childBox = document.createElement("div");
-  childBox.classList.add("child-box-container-horizontal");
-  childBox.dataset.parentID = parentID;
-  childBox.dataset.parentBlockID = parentBlockID;
-  return childBox;
-}
-
 function createInputBlock(block, placeholder, className, dataKey, blockID) {
   const inputField = createInputField(placeholder, className, dataKey, blockID);
   block.appendChild(inputField);
 }
 
+function createDropdownMenu() {
+  const dropdown = document.createElement("div");
+  dropdown.classList.add("dropdown-menu");
+  dropdown.style.display = "none";
+  return dropdown;
+}
+
+function createDropdownOption(text, onClickHandler) {
+  const option = document.createElement("div");
+  option.textContent = text;
+  option.classList.add("dropdown-item");
+  option.addEventListener("click", onClickHandler);
+  return option;
+}
+
+function createElifElseDiv(type) {
+  const div = document.createElement("div");
+  div.classList.add("elif-else");
+  div.setAttribute("data-elif-else-type", type);
+  return div;
+}
+
+function createSpan(text) {
+  const span = document.createElement("span");
+  span.textContent = text;
+  return span;
+}
+
+function createPlusIcon() {
+  const icon = document.createElement("i");
+  icon.classList.add("fa-solid", "fa-plus");
+  return icon;
+}
+
 // ==========================
 // 6. Child Block Functions
 // ==========================
-
-function addDepthInfo(block) {
-  const depthInfo = document.createElement("span");
-  depthInfo.classList.add("block-depth-info");
-  depthInfo.textContent = ` Depth: ${block.dataset.blockDepth}`;
-  block.appendChild(depthInfo);
-}
 
 function appendChildElement(block, childElement) {
   if (childElement === "block") {
@@ -466,107 +562,47 @@ function appendChildElement(block, childElement) {
 
     childBox.dataset.blockDepth = parseInt(block.dataset.blockDepth) + 1;
 
-    // Set initial if-elif-else-id to 0 for the first block
-    if (!block.dataset.ifElifElseId) {
-      block.dataset.ifElifElseId = 0;
+    // Append the child-box-container to the appropriate parent
+    if (block.dataset.blockID === "if") {
+      const elifElseDiv = block.querySelector(".elif-else:last-child");
+      if (elifElseDiv) {
+        elifElseDiv.appendChild(childBox);
+      } else {
+        block.appendChild(childBox);
+      }
+    } else {
+      block.appendChild(childBox);
     }
 
-    childBox.dataset.ifElifElseId = block.dataset.ifElifElseId;
-
-    block.appendChild(childBox);
-
     if (block.dataset.blockID === "if") {
-      // Add the elif-else section with the plusIcon
-      const elifElseDiv = document.createElement("div");
-      elifElseDiv.classList.add("elif-else");
-      const plusIcon = document.createElement("i");
-      plusIcon.classList.add("fa-solid", "fa-plus");
-      elifElseDiv.appendChild(plusIcon);
-      block.appendChild(elifElseDiv);
+      const existingElifElseDiv = block.querySelector(".elif-else");
+      if (!existingElifElseDiv) {
+        const elifElseDiv = document.createElement("div");
+        elifElseDiv.classList.add("elif-else");
+        const plusIcon = document.createElement("i");
+        plusIcon.classList.add("fa-solid", "fa-plus");
+        elifElseDiv.appendChild(plusIcon);
+        block.appendChild(elifElseDiv);
 
-      // Call the function to set up the dropdown menu and its functionality
-      setupDropdownMenu(plusIcon, block, elifElseDiv);
+        // Set up the dropdown menu for the plus icon
+        setupDropdownMenu(plusIcon, block, elifElseDiv);
+      }
     }
   }
 }
 
-function setupDropdownMenu(plusIcon, block, elifElseDiv) {
-  // Create the dropdown menu
-  const dropdown = document.createElement("div");
-  dropdown.classList.add("dropdown-menu");
-  dropdown.style.display = "none"; // Hide the dropdown by default
-
-  // Create the menu items
-  const elseIfOption = document.createElement("div");
-  elseIfOption.textContent = "else if";
-  elseIfOption.classList.add("dropdown-item");
-  dropdown.appendChild(elseIfOption);
-
-  const elseOption = document.createElement("div");
-  elseOption.textContent = "else";
-  elseOption.classList.add("dropdown-item");
-  dropdown.appendChild(elseOption);
-
-  // Add dropdown to the block
-  block.appendChild(dropdown);
-
-  // Toggle dropdown visibility when the plus icon is clicked
-  plusIcon.addEventListener("click", function () {
-    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
-  });
-
-  // Add click events to the options
-  elseIfOption.addEventListener("click", function () {
-    // Insert the text 'else if:' in a span
-    const elseIfSpan = document.createElement("span");
-    elseIfSpan.textContent = "else if:";
-    block.appendChild(elseIfSpan);
-
-    // Remove the previous plus sign before adding a new child block
-    elifElseDiv.removeChild(plusIcon); // Remove the plus sign
-
-    // Increment the if-elif-else-id and create the horizontal child box
-    block.dataset.ifElifElseId = parseInt(block.dataset.ifElifElseId) + 1;
-
-    // Call createChildBoxHorizontal before the normal child box
-    const horizontalChildBox = createChildBoxHorizontal(block.id, block.dataset.blockID);
-    block.appendChild(horizontalChildBox);
-
-    // Call appendChildElement again to add a child block
-    appendChildElement(block, "block");
-
-    // Close dropdown
-    dropdown.style.display = "none";
-  });
-
-  elseOption.addEventListener("click", function () {
-    // Insert the text 'else:' in a span
-    const elseSpan = document.createElement("span");
-    elseSpan.textContent = "else:";
-    block.appendChild(elseSpan);
-
-    // Remove the previous plus sign before adding a new child block
-    elifElseDiv.removeChild(plusIcon); // Remove the plus sign
-
-    // Increment the if-elif-else-id for else block
-    block.dataset.ifElifElseId = parseInt(block.dataset.ifElifElseId) + 1;
-
-    // Call appendChildElement again to add a child block
-    appendChildElement(block, "block");
-
-    // Close dropdown
-    dropdown.style.display = "none";
-  });
+function createChildBoxHorizontal(parentID, parentBlockID) {
+  const childBox = document.createElement("div");
+  childBox.classList.add("child-box-container-horizontal");
+  childBox.dataset.parentID = parentID;
+  childBox.dataset.parentBlockID = parentBlockID;
+  return childBox;
 }
-
-
-
 
 
 // ==========================
 // 7. Update Functions
 // ==========================
-
 function updateVariableAttributes(block, selectedVariable) {
   const existingAttributes = block.querySelectorAll(".variable-attribute");
   existingAttributes.forEach((attr) => attr.remove());
@@ -598,6 +634,34 @@ function updateDepth(block, targetBlock, depthChange) {
   if (depthInfo) {
     depthInfo.textContent = ` Depth: ${newDepth}`;
   }
+}
+
+function resetAndUpdateElifElseIds(block) {
+  // Get all elif-else blocks within the parent block
+  const elifElseBlocks = block.querySelectorAll('.elif-else[data-elif-else-type="if"], .elif-else[data-elif-else-type="elif"], .elif-else[data-elif-else-type="else"]');
+
+  // Reset and update the IDs sequentially
+  elifElseBlocks.forEach((elifElseBlock, index) => {
+    elifElseBlock.dataset.ifElifElseId = index + 1;
+  });
+
+  // Update the parent block's ID counter to the latest ID
+  block.dataset.ifElifElseId = elifElseBlocks.length;
+}
+
+function updateUserVariableDropdowns() {
+  const dropdowns = document.querySelectorAll(
+    ".block-dropdown[data-type='variable']"
+  );
+  dropdowns.forEach((dropdown) => {
+    dropdown.innerHTML = ""; // Clear existing options
+    userVariables.forEach((varName) => {
+      const option = document.createElement("option");
+      option.value = varName;
+      option.textContent = varName;
+      dropdown.appendChild(option);
+    });
+  });
 }
 
 // ==========================
@@ -772,18 +836,41 @@ function selectBlock(event) {
   event.stopPropagation(); // Prevent click event from propagating
 }
 
-function updateUserVariableDropdowns() {
-  const dropdowns = document.querySelectorAll(
-    ".block-dropdown[data-type='variable']"
-  );
-  dropdowns.forEach((dropdown) => {
-    dropdown.innerHTML = ""; // Clear existing options
-    userVariables.forEach((varName) => {
-      const option = document.createElement("option");
-      option.value = varName;
-      option.textContent = varName;
-      dropdown.appendChild(option);
-    });
+function toggleDropdownVisibility(dropdown) {
+  dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+}
+
+function setupDropdownMenu(plusIcon, block, elifElseDiv) {
+  const dropdown = createDropdownMenu();
+  block.appendChild(dropdown);
+
+  // Initialize counters for else if and else blocks using the block's dataset
+  if (!block.dataset.elseIfCount) block.dataset.elseIfCount = 0;
+  if (!block.dataset.elseCount) block.dataset.elseCount = 0;
+
+  // Function to update the dropdown options
+  const updateDropdownOptions = () => {
+    dropdown.innerHTML = "";
+
+    // Always add the "else if" option
+    const elseIfOption = createDropdownOption("else if", () =>
+      handleElseIfOption(block, elifElseDiv, dropdown, plusIcon)
+    );
+    dropdown.appendChild(elseIfOption);
+
+    // Add the "else" option only if there is no else block yet
+    if (block.dataset.elseCount === "0") {
+      const elseOption = createDropdownOption("else", () =>
+        handleElseOption(block, elifElseDiv, dropdown, plusIcon)
+      );
+      dropdown.appendChild(elseOption);
+    }
+  };
+
+  // Update dropdown options every time the dropdown is opened
+  plusIcon.addEventListener("click", () => {
+    updateDropdownOptions();
+    toggleDropdownVisibility(dropdown);
   });
 }
 
@@ -995,16 +1082,6 @@ function builtinRead(x) {
     throw "File not found: '" + x + "'";
   return Sk.builtinFiles["files"][x];
 }
-
-function updateVariableValueInBlock(block, selectedVariable) {
-  const existingValueAttribute = block.querySelector(
-    ".variable-value-attribute"
-  );
-  if (existingValueAttribute) {
-    existingValueAttribute.remove();
-  }
-}
-
 
 // ==========================
 // 11. Event Listeners

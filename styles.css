@@ -201,8 +201,15 @@ select.block-dropdown {
 }
 
 .elif-else{
-  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  float: left;
 }
+
+.dropdown-menu {
+  background-color: #f1f1f1;
+}
+
 
 .child-box-container {
   width: fit-content;
