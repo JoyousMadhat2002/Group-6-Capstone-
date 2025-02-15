@@ -206,8 +206,8 @@ select.block-dropdown {
   float: left;
 }
 
-.elif-else .dropdown-menu {
-  align-items: right;
+.dropdown-menu {
+  background-color: #f1f1f1;
 }
 
 
