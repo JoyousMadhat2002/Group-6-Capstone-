@@ -221,12 +221,7 @@ function handleMathOrComparisonBlock(block, blockID) {
   });
 
   // Input 1
-  const input1 = createInputField(
-    "0",
-    "math-comparison-input",
-    "block-1-value",
-    blockID
-  );
+  const input1 = createChildBoxHorizontal(block.id, blockID);
   horizontalContainers[0].appendChild(input1);
 
   // Operator Dropdown
@@ -235,12 +230,7 @@ function handleMathOrComparisonBlock(block, blockID) {
   horizontalContainers[1].appendChild(operatorDropdown);
 
   // Input 2
-  const input2 = createInputField(
-    "0",
-    "math-comparison-input",
-    "block-2-value",
-    blockID
-  );
+  const input2 = createChildBoxHorizontal(block.id, blockID);
   horizontalContainers[2].appendChild(input2);
 
   // Append containers to the block
