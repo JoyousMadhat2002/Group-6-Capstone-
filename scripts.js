@@ -600,6 +600,25 @@ function createChildBoxHorizontal(parentID, parentBlockID) {
 // ==========================
 // 7. Update Functions
 // ==========================
+function updateVariableAttributes(block, selectedVariable) {
+  const existingAttributes = block.querySelectorAll(".variable-attribute");
+  existingAttributes.forEach((attr) => attr.remove());
+
+  updateVariableValueInBlock(block, selectedVariable);
+}
+
+function updateOperatorAttributes(block, selectedOperator) {
+  const operatorLabel = document.createElement("span");
+  operatorLabel.classList.add("operator-attribute");
+  operatorLabel.textContent = `Operator: ${selectedOperator}`;
+
+  const existingOperatorLabel = block.querySelector(".operator-attribute");
+  if (existingOperatorLabel) {
+    existingOperatorLabel.remove();
+  }
+
+  block.appendChild(operatorLabel);
+}
 
 function updateDepth(block, targetBlock, depthChange) {
   const currentDepth = parseInt(block.dataset.blockDepth) || 0;
