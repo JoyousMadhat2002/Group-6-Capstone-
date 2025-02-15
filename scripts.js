@@ -150,6 +150,7 @@ function newBlock(blockID) {
     addBlockInteractivity(newBlock);
     updateLineNumbers();
   }
+  return newBlock.id;
 }
 
 // Function to remove a block by its ID
@@ -557,6 +558,8 @@ function appendChildElement(block, childElement) {
     childBox.classList.add("child-box-container");
     childBox.dataset.parentID = block.id;
     childBox.dataset.parentBlockID = block.dataset.blockID;
+
+
     childBox.dataset.blockDepth = parseInt(block.dataset.blockDepth) + 1;
 
     // Append the child-box-container to the appropriate parent
@@ -620,6 +623,7 @@ function updateOperatorAttributes(block, selectedOperator) {
   block.appendChild(operatorLabel);
 }
 
+// May not be needed anymore (look at calculateDepth() function)
 function updateDepth(block, targetBlock, depthChange) {
   const currentDepth = parseInt(block.dataset.blockDepth) || 0;
   const newDepth = currentDepth + depthChange;
@@ -676,6 +680,7 @@ function toggleCategory(categoryId) {
   });
 }
 
+// Function to add interactivity to blocks
 function addBlockInteractivity(block) {
   block.draggable = true;
   block.addEventListener("dragstart", dragStart);
@@ -693,90 +698,124 @@ function dragStart(event) {
   }
 }
 
-// Event handler to allow the block to be dropped
+// Event handler for dragging over a block
 function dragOver(event) {
   event.preventDefault();
 
   const targetBlock = event.target.closest(".box");
   if (!targetBlock || targetBlock === dragged) return;
 
-  // Get dimensions of the target block and cursor position
-  const rect = targetBlock.getBoundingClientRect();
-  const offsetY = event.clientY - rect.top;
-  const margin = rect.height * 0.25; // Increase margin size for top and bottom zones (25% of block height)
+  clearDropHighlights(); // Clear previous highlights
 
-  // Remove existing highlights
-  clearDropHighlights();
+  const childContainers = targetBlock.querySelectorAll(
+      ".child-box-container, .child-box-container-horizontal"
+  );
 
-  if (offsetY < margin) {
-    // Highlight drop above
-    targetBlock.classList.add("drop-above");
-  } else if (offsetY > rect.height - margin) {
-    // Highlight drop below
-    targetBlock.classList.add("drop-below");
-  } else {
-    // Highlight drop inside (if child container exists)
-    const childContainer = targetBlock.querySelector(".child-box-container");
-    if (childContainer) {
-      targetBlock.classList.add("drop-inside");
-    }
+  let closestContainer = null;
+  let smallestDistance = Infinity;
+
+  childContainers.forEach((container) => {
+      if (dragged.contains(container)) return; // Prevent dragging into its own child container
+
+      const containerRect = container.getBoundingClientRect();
+      const distance = Math.abs(event.clientY - containerRect.top);
+
+      // Find the closest container based on distance (even if it's not empty)
+      if (distance < smallestDistance) {
+          smallestDistance = distance;
+          closestContainer = container;
+      }
+  });
+
+  if (closestContainer) {
+      closestContainer.classList.add("highlight-inside");
   }
 }
+
+
 
 // Event handler for handling the drop action
 function drop(event) {
   event.preventDefault();
-  const targetBlock = event.target.closest(".box");
-  if (!dragged || !targetBlock || targetBlock === dragged) return; // Skip invalid drops
 
-  // Determine drop zone and perform appropriate action
-  if (targetBlock.classList.contains("drop-above")) {
-    // Drop above
-    targetBlock.parentNode.insertBefore(dragged, targetBlock);
-    updateDepth(dragged, targetBlock, -1); // Adjust depth relative to target block
-  } else if (targetBlock.classList.contains("drop-below")) {
-    // Drop below
-    targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
-    updateDepth(dragged, targetBlock, -1); // Adjust depth relative to target block
-  } else if (targetBlock.classList.contains("drop-inside")) {
-    const childContainer = targetBlock.querySelector(".child-box-container");
-    if (childContainer) {
-      // Drop inside child container
-      childContainer.appendChild(dragged);
-      updateDepth(dragged, targetBlock, 1); // Increase depth
-    }
+  if (!dragged) return;
+
+  const highlightedContainer = document.querySelector(".highlight-inside");
+  if (highlightedContainer) {
+      highlightedContainer.appendChild(dragged); // Drop into the highlighted container
+  } else {
+      const targetBlock = event.target.closest(".box");
+      if (!targetBlock || targetBlock === dragged) return;
+
+      if (targetBlock.classList.contains("drop-above")) {
+          targetBlock.parentNode.insertBefore(dragged, targetBlock);
+      } else if (targetBlock.classList.contains("drop-below")) {
+          targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
+      }
   }
 
-  clearDropHighlights(); // Clean up
-  dragged = null; // Reset the dragged block
+  // Recalculate and update the block's depth
+  const newDepth = calculateDepth(dragged);
+  dragged.dataset.blockDepth = newDepth;
+
+  // Update the depth for all nested blocks
+  updateNestedDepths(dragged);
+
+  //test function to show depth (remove later)
+  //showDepth(dragged);
+
+  clearDropHighlights();
+  dragged = null;
 }
 
+
+//test function to show depth
+function showDepth(block) {
+  const depthLabel = block.querySelector(".block-depth-info");
+  if (!depthLabel) {
+      const label = document.createElement("span");
+      label.classList.add("block-depth-info");
+      block.appendChild(label);
+  }
+  block.querySelector(".block-depth-info").textContent = `Depth: ${block.dataset.blockDepth}`;
+}
+
+// Function to update the depth of all nested blocks
+function updateNestedDepths(block) {
+  const newDepth = calculateDepth(block);
+  block.dataset.blockDepth = newDepth;
+
+  const childBlocks = block.querySelectorAll(".box");
+  childBlocks.forEach((childBlock) => {
+      updateNestedDepths(childBlock);  // Recursively update depth for each child block
+  });
+}
+
+// Event handler for ending a drag event
 function dragEnd() {
   clearDropHighlights(); // Clear all highlights
   dragged = null; // Reset dragged block
 }
 
+// Function to clear all drop highlights
 function clearDropHighlights() {
-  document
-    .querySelectorAll(".drop-above, .drop-below, .drop-inside")
-    .forEach((block) => {
-      block.classList.remove("drop-above", "drop-below", "drop-inside");
-    });
+  document.querySelectorAll(".drop-above, .drop-below, .highlight-inside")
+      .forEach((block) => {
+          block.classList.remove("drop-above", "drop-below", "highlight-inside");
+      });
 }
 
-// test function for storing textarea input as variable
-function StoreBlob() {
-  ptext = pythonTextarea.value;
-  ptext = ptext.toString();
-}
+// Function to calculate the depth of a block
+function calculateDepth(block) {
+  let depth = 0;
+  let parent = block.closest(".child-box-container, .child-box-container-horizontal");
 
-// test function for sending stored state to blob to read into textarea
-function PullBlob() {
-  const blob = new Blob([ptext], { type: "text/plain" });
-  blob.text().then((text) => {
-    pythonTextarea.value = text; // sends contents of blob to textarea
-  });
-  // t.value = ptext; // less useful way to store information
+  while (parent) {
+      depth++;
+      parent = parent.parentElement.closest(".child-box-container, .child-box-container-horizontal");
+  }
+
+  return depth;
 }
 
 // Event handler for selecting a block when clicked
@@ -839,75 +878,148 @@ function setupDropdownMenu(plusIcon, block, elifElseDiv) {
 // 9. Python Code Conversion
 // ==========================
 
-function blockToText() {
-  pythontext.value = ""; // Clear the text area
+function blockToText(pc) {
+  //pythontext.value = ""; // Clear the text area
+  
+  let parentContainer = document.getElementById(pc);
+  
+  
+  let blockChildElements;
+  // section for top half
 
-  let blockChildElements = blockContainer.children; // Get all children/blocks from the box-container
+  // section for bottom half
+  if(pc == "box-container"){
+  blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
+  }
+  else{
+  blockChildElements = parentContainer.querySelector('.child-box-container').children; // Get all children/blocks from the box-container
+  }
+  for (let i = 0; i < blockChildElements.length; i++){
+    let childID = blockChildElements[i].dataset.blockID;
+    console.log(childID);
+    console.log(`cycle: ${i}`);
+    console.log(blockChildElements.length);
 
-  for (let i = 0; i < blockChildElements.length; i++) {
-    // Loop through children/blocks
-    // Add indentation based on the block's depth
     for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
       pythontext.value += "    "; // Add spaces for indentation
     }
 
-    // Add blockID, blockType, XValue, Operator, and YValue to the text area
-    pythontext.value += `blockID: ${blockChildElements[i].dataset.blockID} `;
-    pythontext.value += `XValue: ${blockChildElements[i].dataset.blockXValue} `;
-    pythontext.value += `Operator: ${blockChildElements[i].dataset.blockOperator} `;
-    pythontext.value += `YValue: ${blockChildElements[i].dataset.blockYValue}\n`;
-
-    console.log(blockChildElements[i]); // Log the block element for debugging
+    if (childID == "for" ||childID == "if" || childID == "while" ){
+      
+      pythontext.value += `${childID} \n`;
+      let cbc = blockChildElements[i].querySelector('.child-box-container');
+      if (cbc.children.length > 0){
+        blockToText(blockChildElements[i].id);
+        console.log(`child elements: ${cbc.children.length} \n`);
+      }
+      
+      
+    }
   }
 }
 
+
 // Function to convert text programming to block programming
-function textToBlock() {
+function textToBlock(container) {
   let text = pythontext.value;
+  if(container == "box-container"){
+    document.getElementById(container).innerHTML = ""; // Clear block container
+  }
 
   let lines = text.split("\n"); // Separate lines for parsing
-  // console.log(lines);
+ 
+  
 
-  document.getElementById("box-container").innerHTML = ""; // Clear block container
+  
 
-  let depthBuilder = ["box-container"]; //
+  let depthBuilder = ["box-container"]; // counting preceeding zeros for depth
   let currDepth = 0;
-
+  let linecount = 0;
   for (let i = 0; i < lines.length; i++) {
-    if (lines[i] != "") {
-      lines[i] = lines[i].trim();
-      // line = line.split(" ");
-
-      let tokens = lines[i].split(" ");
-
-      let a = tokens[0];
-      let b = tokens[1];
-      let c = tokens[2];
-      let d = tokens[3];
-      let builtBlock = newBlock(a, b, c, d);
+    for (let j = 0; j < lines[i].length; j++){
+      console.log("line[j]]: " + `${j}`);
+      if(lines[i][j] ==  " "){
+        linecount++;
+      }
+      else{
+        break;
+      }
     }
+  
+
+    // setting currDepth based on number of indentations
+    
+    if (linecount < 1){
+      
+      currDepth = 1;
+      console.log("currDepth: " + `${currDepth}`);
+      console.log("linecount: " + `${linecount}`);
+      console.log("linecount < 1");
+    }
+    else {
+      currDepth = (linecount/4) + 1;
+      console.log("currDepth: " + `${currDepth}`);
+      console.log("linecount: " + `${linecount}`);
+      console.log("linecount > 1");
+    }
+
+
+    let tokens = lines[i].trim().split(" "); // trimming spaces from front and back of string, then splitting into tokens
+
+    // logic to build blocks
+    if (tokens != ""){
+      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for"){
+        console.log(`${tokens[0]}` + " statement");
+        let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+        let nbRef = document.getElementById(nbCons); // created reference to newblock
+
+        // update depth
+        if(true){
+
+        }
+
+        // checking for comparison block operators
+        if (tokens[2] == "==" || tokens[2] == "!=" || tokens[2] == ">=" || tokens[2] == "<=" || tokens[2] == "<" || tokens[2] == ">"){
+          let nbComp = newBlock("comparisonBlock");
+          let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
+          for (let k = 0; k<3;k++){
+            if(compElems[k].querySelector(".math-comparison-input")){
+              compElems[k].querySelector(".math-comparison-input").value = tokens[k+1];
+            }
+            compElems[k].dataset.blockValue = tokens[k+1];          
+          }
+          
+          let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
+          nbHz.appendChild(document.getElementById(nbComp));
+        }
+        else if (tokens[2] == "+"){
+          let x = 0;
+        }
+
+        
+      }
+      
+
+    }
+    linecount = 0;
+    
   }
+
 }
 
 function toggleView() {
   var x = document.getElementById("python-code-result");
   var y = document.getElementById("box-container");
-  var storeButton = document.getElementById("store-p");
-  var pullButton = document.getElementById("pull-p");
   var toggleButton = document.getElementById("toggleButton");
 
   if (x.style.display === "block") {
     x.style.display = "none";
     y.style.display = "block";
-    storeButton.style.display = "none";
-    pullButton.style.display = "none";
     toggleButton.textContent = "Python";
     isPythonView = false; // Switch to Block view
   } else {
     x.style.display = "block";
     y.style.display = "none";
-    storeButton.style.display = "inline"; // Show the store and pull buttons
-    pullButton.style.display = "inline";
     toggleButton.textContent = "Block";
     isPythonView = true; // Switch to Python view
   }
@@ -917,18 +1029,8 @@ function toggleView() {
 // 10. Code Execution
 // ==========================
 
-// placeholder function: start code
+// Function to run the Python code
 function runCode() {
-  /* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
-    if (isRunning == true) {
-        // if program currently running, and CTRL+ENTER hit again, stop code
-        stopCode();
-        return;
-    }
-    */
-
-  //isRunning = true; // set flag for code running // NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
-
   console.log("test: code running");
   var prog = document.getElementById("pythontext").value; // Python code input
   var mypre = document.getElementById("output"); // Output area
@@ -939,12 +1041,13 @@ function runCode() {
   Sk.configure({ output: outf, read: builtinRead });
   (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = "mycanvas";
 
+  //KEEP INDENTS AS IS FOR PYTHON CODE; DO NOT CHANGE turtleSetupCode
   var turtleSetupCode = `
-    import turtle
-    t = turtle.Turtle()
-    t.shape("turtle")
-    t.color("green")
-    t.setheading(90)
+import turtle
+t = turtle.Turtle()
+t.shape("turtle")
+t.color("green")
+t.setheading(90)
   `;
 
   var cleanedProg = prog.trimStart();
@@ -964,11 +1067,13 @@ function runCode() {
     });
 }
 
+// Function to handle the output of the Python code
 function outf(text) {
   var mypre = document.getElementById("output");
   mypre.innerHTML += text.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "\n";
 }
 
+// Function to read built-in files
 function builtinRead(x) {
   if (
     Sk.builtinFiles === undefined ||
@@ -987,6 +1092,15 @@ function setupKeydownListener() {
     if (event.ctrlKey && event.key === "Enter") {
       runCode();
     }
+  });
+}
+
+
+function setupClearHighlightsOnClickListener() {
+  // event listener for clearing highlights when clicking 
+  // (fixes glitch with highlights not clearing properly after dragging and dropping)
+  document.addEventListener("click", function () {
+    clearDropHighlights();
   });
 }
 
@@ -1021,17 +1135,14 @@ function setupSaveButtonListener() {
 }
 
 function setupButtonFunctionalityListeners() {
-  document.querySelector('[name="btt"]').addEventListener("click", blockToText);
-  document.querySelector('[name="ttb"]').addEventListener("click", textToBlock);
+  document.querySelector('[name="btt"]').addEventListener("click", function(){
+    pythontext.value = ""; // Clear the text area
+    blockToText("box-container");
+  });
+  document.querySelector('[name="ttb"]').addEventListener("click", function(){
+    textToBlock("box-container");
+  });
   document.getElementById("toggleButton").addEventListener("click", toggleView);
-  document
-    .getElementById("store-p")
-    .querySelector("button")
-    .addEventListener("click", StoreBlob);
-  document
-    .getElementById("pull-p")
-    .querySelector("button")
-    .addEventListener("click", PullBlob);
 }
 
 // ==========================
@@ -1186,6 +1297,7 @@ function initializeApp() {
   setupButtonFunctionalityListeners();
   setupColumnResizing();
   setupDraggableBlocks();
+  setupClearHighlightsOnClickListener();
   //initializeMiscellaneous();
 }
 
