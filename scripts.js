@@ -879,9 +879,6 @@ function blockToText(pc) {
   }
   for (let i = 0; i < blockChildElements.length; i++){
     let childID = blockChildElements[i].dataset.blockID;
-    console.log(childID);
-    console.log(`cycle: ${i}`);
-    console.log(blockChildElements.length);
 
     for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
       pythontext.value += "    "; // Add spaces for indentation
@@ -889,14 +886,18 @@ function blockToText(pc) {
 
     if (childID == "for" ||childID == "if" || childID == "while" ){
       
-      pythontext.value += `${childID} \n`;
+      pythontext.value += `${childID}\n`;
       let cbc = blockChildElements[i].querySelector('.child-box-container');
       if (cbc.children.length > 0){
         blockToText(blockChildElements[i].id);
-        console.log(`child elements: ${cbc.children.length} \n`);
       }
       
       
+    }
+
+    //logic for adding continue and break to text block
+    if (childID == "continue" ||childID == "break"){
+      pythontext.value += `${childID}\n`;
     }
   }
 }
