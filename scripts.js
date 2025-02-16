@@ -115,8 +115,8 @@ function newBlock(blockID) {
   createBlockLabel(newBlock, blockID);
 
   // Handle different block types
-  if (blockID === "mathBlock" || blockID === "comparisonBlock") {
-    handleMathOrComparisonBlock(newBlock, blockID);
+  if (blockID === "mathBlock" || blockID === "comparisonBlock" || blockID === "varOps") {
+    handleMathOrComparisonOrVariableBlock(newBlock, blockID);
   } else if (["if", "while", "for"].includes(blockID)) {
     handleControlBlock(newBlock, blockID);
   } else if (blockID === "mathText") {
@@ -125,8 +125,6 @@ function newBlock(blockID) {
     createInputBlock(newBlock, "Enter Text", "text-input", "blockValue", blockID);
   } else if (blockID === "varDeclOps") {
     handleVariableDeclarationBlock(newBlock);
-  } else if (blockID === "varOps") {
-    handleVariableOperationBlock(newBlock);
   } else if (blockID === "variableBlock") {
     handleVariableBlock(newBlock);
   } else if (
@@ -208,32 +206,44 @@ function handleOperatorBlock(block, blockID) {
   block.appendChild(dropdown);
 }
 
-function handleMathOrComparisonBlock(block, blockID) {
-  const horizontalContainers = [1, 2, 3].map(() => {
-    const container = document.createElement("div");
-    container.classList.add("childBox-Container-Horizontal");
-    return container;
-  });
+function handleMathOrComparisonOrVariableBlock(block, blockID) {
+  const container = document.createElement("div");
+  container.classList.add("childBox-Container-Horizontal");
 
-  // Input 1
-  const input1 = createChildBoxHorizontal(block.id, blockID);
-  horizontalContainers[0].appendChild(input1);
+  // Create the left-hand side container for the variable or math/comparison block
+  const leftContainer = createChildBoxHorizontal(block.id, blockID);
+  container.appendChild(leftContainer);
 
-  // Operator Dropdown
-  const operatorDropdown = createOperatorDropdown(blockID); // Pass blockID here
+  // Create and append the operator dropdown
+  const operatorDropdown = createOperatorDropdown(blockID);
   operatorDropdown.dataset.dropdownType = "operator";
-  horizontalContainers[1].appendChild(operatorDropdown);
+  container.appendChild(operatorDropdown);
 
-  // Input 2
-  const input2 = createChildBoxHorizontal(block.id, blockID);
-  horizontalContainers[2].appendChild(input2);
+  // Create the right-hand side container for the value block
+  const rightContainer = createChildBoxHorizontal(block.id, blockID);
+  container.appendChild(rightContainer);
 
-  // Append containers to the block
-  horizontalContainers.forEach((container) => block.appendChild(container));
+  block.appendChild(container);
 
-  // Update data attributes
+  // Update data attributes based on changes in the operator dropdown
   operatorDropdown.addEventListener("change", function () {
     block.dataset.blockOperator = operatorDropdown.value;
+  });
+
+  // Handle changes in the left-hand side container (variable or math/comparison block)
+  leftContainer.addEventListener("change", function () {
+    const leftBlock = leftContainer.querySelector(".box");
+    if (leftBlock) {
+      block.dataset.block1Value = leftBlock.dataset.blockValue || "";
+    }
+  });
+
+  // Handle changes in the right-hand side container (value block)
+  rightContainer.addEventListener("change", function () {
+    const rightBlock = rightContainer.querySelector(".box");
+    if (rightBlock) {
+      block.dataset.block2Value = rightBlock.dataset.blockValue || "";
+    }
   });
 }
 
@@ -283,53 +293,6 @@ function handleVariableDeclarationBlock(block) {
     updateUserVariableDropdowns(); // Update dropdowns
     refreshCategoryButtons(); // Refresh the category buttons
   }
-}
-
-function handleVariableOperationBlock(block) {
-  const container = document.createElement("div");
-  container.classList.add("childBox-Container-Horizontal");
-
-  // Variable Dropdown
-  const variableDropdown = document.createElement("select");
-  variableDropdown.classList.add("block-dropdown");
-  variableDropdown.setAttribute("data-type", "variable"); // Add this line
-  userVariables.forEach((varName) => {
-    const option = document.createElement("option");
-    option.value = varName;
-    option.textContent = varName;
-    variableDropdown.appendChild(option);
-  });
-
-  variableDropdown.addEventListener("change", function () {
-    block.dataset.block1Value = variableDropdown.value;
-  });
-
-  container.appendChild(variableDropdown);
-
-  // Operator Dropdown
-  const operatorDropdown = createOperatorDropdown("varOps");
-  operatorDropdown.dataset.dropdownType = "operator";
-  container.appendChild(operatorDropdown);
-
-  // Value Input
-  const valueInput = createInputField(
-    "0",
-    "math-comparison-input",
-    "block2Value",
-    "varOps"
-  );
-  container.appendChild(valueInput);
-
-  block.appendChild(container);
-
-  // Update data attributes
-  operatorDropdown.addEventListener("change", function () {
-    block.dataset.blockOperator = operatorDropdown.value;
-  });
-
-  valueInput.addEventListener("input", function () {
-    block.dataset.block2Value = valueInput.value.trim();
-  });
 }
 
 function handleVariableBlock(block) {
@@ -675,66 +638,59 @@ function addBlockInteractivity(block) {
 // Event handler for starting a drag event on a block
 function dragStart(event) {
   dragged = event.target.closest(".box");
-  console.log("dragStart: ", dragged);
   if (dragged) {
     event.dataTransfer.effectAllowed = "move"; // Allow movement
+    event.dataTransfer.setData("text/plain", dragged.id); // Store the block ID
   }
 }
 
-// Event handler for dragging over a block
+// Event handler for dragging over a block or container
 function dragOver(event) {
   event.preventDefault();
+  const targetBlock = event.target.closest(".box, .child-box-container, .child-box-container-horizontal");
 
-  const targetBlock = event.target.closest(".box");
   if (!targetBlock || targetBlock === dragged) return;
+
+  // Check if the target container is inside the dragged block
+  if (dragged.contains(targetBlock)) {
+    return;
+  }
 
   clearDropHighlights(); // Clear previous highlights
 
-  const childContainers = targetBlock.querySelectorAll(
-      ".child-box-container, .child-box-container-horizontal"
-  );
+  // Highlight the target container or block
+  if (targetBlock.classList.contains("child-box-container") || targetBlock.classList.contains("child-box-container-horizontal")) {
+    targetBlock.classList.add("highlight-inside");
+  } else if (targetBlock.classList.contains("box")) {
+    const rect = targetBlock.getBoundingClientRect();
+    const offsetY = event.clientY - rect.top;
 
-  let closestContainer = null;
-  let smallestDistance = Infinity;
-
-  childContainers.forEach((container) => {
-      if (dragged.contains(container)) return; // Prevent dragging into its own child container
-
-      const containerRect = container.getBoundingClientRect();
-      const distance = Math.abs(event.clientY - containerRect.top);
-
-      // Find the closest container based on distance (even if it's not empty)
-      if (distance < smallestDistance) {
-          smallestDistance = distance;
-          closestContainer = container;
-      }
-  });
-
-  if (closestContainer) {
-      closestContainer.classList.add("highlight-inside");
+    if (offsetY < rect.height / 2) {
+      targetBlock.classList.add("drop-above");
+    } else {
+      targetBlock.classList.add("drop-below");
+    }
   }
 }
-
-
 
 // Event handler for handling the drop action
 function drop(event) {
   event.preventDefault();
-
   if (!dragged) return;
 
-  const highlightedContainer = document.querySelector(".highlight-inside");
-  if (highlightedContainer) {
-      highlightedContainer.appendChild(dragged); // Drop into the highlighted container
-  } else {
-      const targetBlock = event.target.closest(".box");
-      if (!targetBlock || targetBlock === dragged) return;
+  const targetBlock = event.target.closest(".box, .child-box-container, .child-box-container-horizontal");
 
-      if (targetBlock.classList.contains("drop-above")) {
-          targetBlock.parentNode.insertBefore(dragged, targetBlock);
-      } else if (targetBlock.classList.contains("drop-below")) {
-          targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
-      }
+  if (!targetBlock || targetBlock === dragged) return;
+
+  if (targetBlock.classList.contains("highlight-inside")) {
+    // Drop inside a container
+    targetBlock.appendChild(dragged);
+  } else if (targetBlock.classList.contains("drop-above")) {
+    // Drop above a block
+    targetBlock.parentNode.insertBefore(dragged, targetBlock);
+  } else if (targetBlock.classList.contains("drop-below")) {
+    // Drop below a block
+    targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
   }
 
   // Recalculate and update the block's depth
@@ -744,13 +700,46 @@ function drop(event) {
   // Update the depth for all nested blocks
   updateNestedDepths(dragged);
 
-  //test function to show depth (remove later)
-  //showDepth(dragged);
-
   clearDropHighlights();
   dragged = null;
 }
 
+// Function to clear all drop highlights
+function clearDropHighlights() {
+  document.querySelectorAll(".drop-above, .drop-below, .highlight-inside").forEach((block) => {
+    block.classList.remove("drop-above", "drop-below", "highlight-inside");
+  });
+}
+
+// Function to calculate the depth of a block
+function calculateDepth(block) {
+  let depth = 0;
+  let parent = block.closest(".child-box-container, .child-box-container-horizontal");
+
+  while (parent) {
+    depth++;
+    parent = parent.parentElement.closest(".child-box-container, .child-box-container-horizontal");
+  }
+
+  return depth;
+}
+
+// Function to update the depth of all nested blocks
+function updateNestedDepths(block) {
+  const newDepth = calculateDepth(block);
+  block.dataset.blockDepth = newDepth;
+
+  const childBlocks = block.querySelectorAll(".box");
+  childBlocks.forEach((childBlock) => {
+    updateNestedDepths(childBlock); // Recursively update depth for each child block
+  });
+}
+
+// Event handler for ending a drag event
+function dragEnd() {
+  clearDropHighlights(); // Clear all highlights
+  dragged = null; // Reset dragged block
+}
 
 //test function to show depth
 function showDepth(block) {
@@ -761,44 +750,6 @@ function showDepth(block) {
       block.appendChild(label);
   }
   block.querySelector(".block-depth-info").textContent = `Depth: ${block.dataset.blockDepth}`;
-}
-
-// Function to update the depth of all nested blocks
-function updateNestedDepths(block) {
-  const newDepth = calculateDepth(block);
-  block.dataset.blockDepth = newDepth;
-
-  const childBlocks = block.querySelectorAll(".box");
-  childBlocks.forEach((childBlock) => {
-      updateNestedDepths(childBlock);  // Recursively update depth for each child block
-  });
-}
-
-// Event handler for ending a drag event
-function dragEnd() {
-  clearDropHighlights(); // Clear all highlights
-  dragged = null; // Reset dragged block
-}
-
-// Function to clear all drop highlights
-function clearDropHighlights() {
-  document.querySelectorAll(".drop-above, .drop-below, .highlight-inside")
-      .forEach((block) => {
-          block.classList.remove("drop-above", "drop-below", "highlight-inside");
-      });
-}
-
-// Function to calculate the depth of a block
-function calculateDepth(block) {
-  let depth = 0;
-  let parent = block.closest(".child-box-container, .child-box-container-horizontal");
-
-  while (parent) {
-      depth++;
-      parent = parent.parentElement.closest(".child-box-container, .child-box-container-horizontal");
-  }
-
-  return depth;
 }
 
 // Event handler for selecting a block when clicked

@@ -188,7 +188,7 @@ select.block-dropdown {
 
 .box {
   width: fit-content;
-  height: auto;
+  height: fit-content;
   min-height: 25px;
   background-color: transparent;
   border: none;
@@ -198,6 +198,7 @@ select.block-dropdown {
   border: 2px solid transparent;
   position: relative;
   border: #000000 1px solid;
+  margin-bottom: 5px;
 }
 
 .elif-else{
@@ -210,21 +211,30 @@ select.block-dropdown {
   background-color: #f1f1f1;
 }
 
-
 .child-box-container {
   width: fit-content;
   height: auto;
   margin-left: 10px;
+  margin-bottom: 10px;
   border: #000000 1px solid;
   background-color: #f1f1f1;
   min-width: 25px;
+  min-height: 25px;
 }
 
 .child-box-container-horizontal {
+  display: flex;
+  flex-direction: row;
   border: #000000 1px solid;
-  min-width: auto;
+  min-width: 25px;
   min-height: 25px;
   background-color: #f1f1f1;
+  margin-bottom: 10px;
+}
+
+.childBox-Container-Horizontal{
+  display: flex;
+  flex-direction: row;
 }
 
 .block-x, .block-y, .block-op {
