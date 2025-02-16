@@ -847,7 +847,11 @@ function blockToText(pc) {
     }
 
     //logic for adding continue and break to text block
-    if (childID == "continue" ||childID == "break"){
+    else if (childID == "continue" ||childID == "break"){
+      pythontext.value += `${childID}\n`;
+    }
+
+    else{
       pythontext.value += `${childID}\n`;
     }
   }
