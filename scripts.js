@@ -1,5 +1,7 @@
 import { categoryColors, blockCategory } from "./scripts/blockConfiguration.js";
 import { getBlockDropdownList, getBlockProperties, getCategoryByBlockID, createBlockLabel } from "./scripts/blockProperties.js";
+import { EditorView, basicSetup } from "codemirror";
+import { python } from "@codemirror/lang-python";
 
 let blockCounter = 0;
 let dragged = null;
@@ -968,10 +970,21 @@ function toggleView() {
 // 10. Code Execution
 // ==========================
 
+const editor = new EditorView({
+  parent: document.getElementById("pythontext"),
+  extensions: [basicSetup, python()],
+});
+
+function getCode() {
+  return editor.state.doc.toString();
+}
+
+document.getElementById("run-code-btn").addEventListener("click", runCode);
+
 // Function to run the Python code
 function runCode() {
   console.log("test: code running");
-  var prog = document.getElementById("pythontext").value; // Python code input
+  var prog = getCode();
   var mypre = document.getElementById("output"); // Output area
   mypre.innerHTML = ""; // Clear previous output
 
@@ -987,7 +1000,7 @@ t = turtle.Turtle()
 t.shape("turtle")
 t.color("green")
 t.setheading(90)
-  `;
+`;
 
   var cleanedProg = prog.trimStart();
   console.log("user code:", prog);
@@ -1005,6 +1018,8 @@ t.setheading(90)
       console.log(err.toString());
     });
 }
+
+window.runCode = runCode; 
 
 // Function to handle the output of the Python code
 function outf(text) {
