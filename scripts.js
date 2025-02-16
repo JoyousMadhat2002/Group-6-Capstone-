@@ -1,5 +1,7 @@
 import { categoryColors, blockCategory } from "./scripts/blockConfiguration.js";
 import { getBlockDropdownList, getBlockProperties, getCategoryByBlockID, createBlockLabel } from "./scripts/blockProperties.js";
+import { EditorView, basicSetup } from "codemirror";
+import { python } from "@codemirror/lang-python";
 
 let blockCounter = 0;
 let dragged = null;
@@ -733,6 +735,17 @@ function toggleView() {
 // 10. Code Execution
 // ==========================
 
+const editor = new EditorView({
+  parent: document.getElementById("pythontext"),
+  extensions: [basicSetup, python()],
+});
+
+function getCode() {
+  return editor.state.doc.toString();
+}
+
+document.getElementById("run-code-btn").addEventListener("click", runCode);
+
 // placeholder function: start code
 function runCode() {
   /* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
@@ -746,7 +759,7 @@ function runCode() {
   //isRunning = true; // set flag for code running // NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
 
   console.log("test: code running");
-  var prog = document.getElementById("pythontext").value; // Python code input
+  var prog = getCode()
   var mypre = document.getElementById("output"); // Output area
   mypre.innerHTML = ""; // Clear previous output
 
@@ -756,12 +769,12 @@ function runCode() {
   (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = "mycanvas";
 
   var turtleSetupCode = `
-    import turtle
-    t = turtle.Turtle()
-    t.shape("turtle")
-    t.color("green")
-    t.setheading(90)
-  `;
+import turtle
+t = turtle.Turtle()
+t.shape("turtle")
+t.color("green")
+t.setheading(90)
+`;
 
   var cleanedProg = prog.trimStart();
   console.log("user code:", prog);
@@ -778,7 +791,9 @@ function runCode() {
     function (err) {
       console.log(err.toString());
     });
-}
+} 
+
+window.runCode = runCode; 
 
 function outf(text) {
   var mypre = document.getElementById("output");

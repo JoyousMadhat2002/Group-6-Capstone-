@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Pencil-PythonCode</title>
+    <script type="importmap">
+    {
+        "imports": {
+            "codemirror": "https://esm.sh/codemirror",
+            "@codemirror/lang-python": "https://esm.sh/@codemirror/lang-python"
+        }
+    }
+    </script>
 </head>
 
 <body>
@@ -98,7 +106,7 @@
                     <div class="results">
                         <div class="python-code-result" id="python-code-result">
                             <!-- Python text input area -->
-                            <textarea id="pythontext" class="textarea"></textarea>
+                            <div id="pythontext"></div>
                         </div>
                         <!-- Container added to test, used as reference for where to place block objects -->
                         <div class="block-code-result" id="box-container" data-blockDepth=0>
@@ -130,10 +138,11 @@
 </body>
 
 <!-- link to script file for functions -->
- 
+
 <script type="module" src="/scripts.js"></script>
 <script src="skulpt-dist-master/skulpt.min.js" type="text/javascript"></script>
 <script src="skulpt-dist-master/skulpt-stdlib.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script>
+
 
 </html>
