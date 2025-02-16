@@ -70,6 +70,7 @@ const blockCategory = {
       },
       {
         name: "for",
+        name: "for",
         blockID: "for",
         description: "For loop",
         type: "loop",
@@ -156,6 +157,7 @@ const blockCategory = {
   },
   functions: {
     elements: [
+      /* Future implementation
       {
         name: "def",
         blockID: "def",
@@ -172,6 +174,7 @@ const blockCategory = {
         parentElement: "block",
         childElement: ["expression"],
       },
+      */
       {
         name: "print",
         blockID: "print",
