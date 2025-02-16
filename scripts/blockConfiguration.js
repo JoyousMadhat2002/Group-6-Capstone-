@@ -23,7 +23,6 @@ const blockCategory = {
         type: "movement",
         parentElement: "block",
         childElement: ["value"], // accepts a numeric value
-        sisterElement: null,
       },
       {
         name: "right",
@@ -32,7 +31,6 @@ const blockCategory = {
         type: "movement",
         parentElement: "block",
         childElement: ["value"], // accepts an angle
-        sisterElement: null,
       },
       {
         name: "back",
@@ -41,7 +39,6 @@ const blockCategory = {
         type: "movement",
         parentElement: "block",
         childElement: ["value"], // accepts a numeric value
-        sisterElement: null,
       },
       {
         name: "left",
@@ -50,7 +47,6 @@ const blockCategory = {
         type: "movement",
         parentElement: "block",
         childElement: ["value"], // accepts an angle
-        sisterElement: null,
       },
     ],
   },
@@ -63,7 +59,6 @@ const blockCategory = {
         type: "control",
         parentElement: "block",
         childElement: "block",
-        sisterElement: ["elif", "else"],
       },
       {
         name: "while",
@@ -72,16 +67,15 @@ const blockCategory = {
         type: "loop",
         parentElement: "block",
         childElement: "block",
-        sisterElement: null,
       },
       {
+        name: "for",
         name: "for",
         blockID: "for",
         description: "For loop",
         type: "loop",
         parentElement: "block",
         childElement: "block",
-        sisterElement: null,
       },
       {
         name: "break",
@@ -90,7 +84,6 @@ const blockCategory = {
         type: "loop",
         parentElement: "block",
         childElement: null,
-        sisterElement: null,
       },
       {
         name: "continue",
@@ -99,7 +92,6 @@ const blockCategory = {
         type: "loop",
         parentElement: "block",
         childElement: null,
-        sisterElement: null,
       },
     ],
   },
@@ -112,7 +104,6 @@ const blockCategory = {
         type: "arithmetic",
         parentElement: "block",
         childElement: ["operator", "operand1", "operand2"],
-        sisterElement: null,
       },
       {
         name: "Math Text Block",
@@ -121,7 +112,6 @@ const blockCategory = {
         type: "text",
         parentElement: "block",
         childElement: ["text"],
-        sisterElement: null,
       },
       {
         name: "Math Block",
@@ -130,7 +120,6 @@ const blockCategory = {
         type: "arithmetic",
         parentElement: "block",
         childElement: ["block", "operator", "operand1", "operand2"],
-        sisterElement: null,
       },
     ],
   },
@@ -143,7 +132,6 @@ const blockCategory = {
         type: "comparison",
         parentElement: "block",
         childElement: ["operator", "operand1", "operand2"],
-        sisterElement: null,
       },
       {
         name: "Comparison Block",
@@ -152,7 +140,6 @@ const blockCategory = {
         type: "comparison",
         parentElement: "block",
         childElement: ["block", "operator", "operand1", "operand2"],
-        sisterElement: null,
       },
     ],
   },
@@ -165,12 +152,12 @@ const blockCategory = {
         type: "logical",
         parentElement: "block",
         childElement: ["operator", "operand1", "operand2"],
-        sisterElement: null,
       },
     ],
   },
   functions: {
     elements: [
+      /* Future implementation
       {
         name: "def",
         blockID: "def",
@@ -178,7 +165,6 @@ const blockCategory = {
         type: "function",
         parentElement: "block",
         childElement: ["function_name", "arguments"],
-        sisterElement: null,
       },
       {
         name: "return",
@@ -187,8 +173,8 @@ const blockCategory = {
         type: "function",
         parentElement: "block",
         childElement: ["expression"],
-        sisterElement: null,
       },
+      */
       {
         name: "print",
         blockID: "print",
@@ -196,7 +182,6 @@ const blockCategory = {
         type: "function",
         parentElement: "block",
         childElement: ["expression"],
-        sisterElement: null,
       },
       {
         name: "Text",
@@ -205,7 +190,6 @@ const blockCategory = {
         type: "text",
         parentElement: "block",
         childElement: ["text"],
-        sisterElement: null,
       },
     ],
   },
@@ -218,7 +202,6 @@ const blockCategory = {
         type: "variable",
         parentElement: "block",
         childElement: ["variable", "value"],
-        sisterElement: null,
       },
       {
         name: "Variable Operations",
@@ -227,7 +210,6 @@ const blockCategory = {
         type: "variable",
         parentElement: "block",
         childElement: ["variable", "operator", "value"],
-        sisterElement: null,
       },
       {
         name: "Variable Block",
@@ -236,7 +218,6 @@ const blockCategory = {
         type: "variable",
         parentElement: "block",
         childElement: null,
-        sisterElement: null,
       },
     ],
   },
