@@ -668,7 +668,16 @@ function dragOver(event) {
     if (offsetY < rect.height / 2) {
       targetBlock.classList.add("drop-above");
     } else {
-      targetBlock.classList.add("drop-below");
+      // Check if the target block is the last block in the container
+      const container = targetBlock.parentElement;
+      const lastBlock = container.lastElementChild;
+
+      if (targetBlock === lastBlock) {
+        // If it's the last block, allow dropping below it
+        targetBlock.classList.add("drop-below");
+      } else {
+        targetBlock.classList.add("drop-below");
+      }
     }
   }
 }
@@ -690,7 +699,16 @@ function drop(event) {
     targetBlock.parentNode.insertBefore(dragged, targetBlock);
   } else if (targetBlock.classList.contains("drop-below")) {
     // Drop below a block
-    targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
+    const container = targetBlock.parentElement;
+    const lastBlock = container.lastElementChild;
+
+    if (targetBlock === lastBlock) {
+      // If the target is the last block, append the dragged block after it
+      container.appendChild(dragged);
+    } else {
+      // Otherwise, insert the dragged block after the target block
+      targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
+    }
   }
 
   // Recalculate and update the block's depth
@@ -943,19 +961,19 @@ function textToBlock(container) {
 
 function toggleView() {
   var x = document.getElementById("python-code-result");
-  var y = document.getElementById("box-container");
+  var y = document.getElementById("block-container"); // Changed to block-container
   var toggleButton = document.getElementById("toggleButton");
 
-  if (x.style.display === "block") {
-    x.style.display = "none";
-    y.style.display = "block";
-    toggleButton.textContent = "Python";
-    isPythonView = false; // Switch to Block view
-  } else {
-    x.style.display = "block";
-    y.style.display = "none";
+  if (x.classList.contains("hidden")) {
+    x.classList.remove("hidden");
+    y.classList.add("hidden");
     toggleButton.textContent = "Block";
     isPythonView = true; // Switch to Python view
+  } else {
+    x.classList.add("hidden");
+    y.classList.remove("hidden");
+    toggleButton.textContent = "Python";
+    isPythonView = false; // Switch to Block view
   }
 }
 
