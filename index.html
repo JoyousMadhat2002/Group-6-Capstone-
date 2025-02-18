@@ -86,27 +86,33 @@
         <div class="handle1"></div>
 
         <div class="result-container">
-
+            
             <div class="code-result">
+
                 <div class="toggle-buttons">
+
                     <p><button class="Button" name="btt">btt</button></p>
                     <p><button class="Button" name="ttb">ttb</button></p>
                     <p><button id="toggleButton" class="Button" name="toggleView">Python</button></p>
                 </div>
-                <div class="codes">
-                    <div class="code-lines">
 
+                <div class="codes">
+
+                    <div class="python-code-result hidden" id="python-code-result">
+                        <!-- Python text input area -->
+                        <div id="pythontext"></div>
                     </div>
-                    <div class="results">
-                        <div class="python-code-result" id="python-code-result">
-                            <!-- Python text input area -->
-                            <div id="pythontext"></div>
+
+                    <div class="block-code-result-container" id="block-container" data-blockDepth=0>
+                        <!-- Block code input area -->
+                        <div class="code-lines">
+
                         </div>
-                        <!-- Container added to test, used as reference for where to place block objects -->
-                        <div class="block-code-result" id="box-container" data-blockDepth=0>
                         
+                        <div class="block-code-result" id="box-container" data-blockDepth=0>
+                            
                         </div>
-                    </div>
+                    </div>  
                 </div>
             </div>
         </div>
