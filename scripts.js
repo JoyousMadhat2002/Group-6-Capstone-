@@ -1,5 +1,7 @@
 import { categoryColors, blockCategory } from "./scripts/blockConfiguration.js";
 import { getBlockDropdownList, getBlockProperties, getCategoryByBlockID, createBlockLabel } from "./scripts/blockProperties.js";
+import { EditorView, basicSetup } from "codemirror";
+import { python } from "@codemirror/lang-python";
 
 let blockCounter = 0;
 let dragged = null;
@@ -848,9 +850,6 @@ function blockToText(pc) {
   }
   for (let i = 0; i < blockChildElements.length; i++){
     let childID = blockChildElements[i].dataset.blockID;
-    console.log(childID);
-    console.log(`cycle: ${i}`);
-    console.log(blockChildElements.length);
 
     for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
       pythontext.value += "    "; // Add spaces for indentation
@@ -858,14 +857,22 @@ function blockToText(pc) {
 
     if (childID == "for" ||childID == "if" || childID == "while" ){
       
-      pythontext.value += `${childID} \n`;
+      pythontext.value += `${childID}\n`;
       let cbc = blockChildElements[i].querySelector('.child-box-container');
       if (cbc.children.length > 0){
         blockToText(blockChildElements[i].id);
-        console.log(`child elements: ${cbc.children.length} \n`);
       }
       
       
+    }
+
+    //logic for adding continue and break to text block
+    else if (childID == "continue" ||childID == "break"){
+      pythontext.value += `${childID}\n`;
+    }
+
+    else{
+      pythontext.value += `${childID}\n`;
     }
   }
 }
@@ -981,10 +988,21 @@ function toggleView() {
 // 10. Code Execution
 // ==========================
 
+const editor = new EditorView({
+  parent: document.getElementById("pythontext"),
+  extensions: [basicSetup, python()],
+});
+
+function getCode() {
+  return editor.state.doc.toString();
+}
+
+document.getElementById("run-code-btn").addEventListener("click", runCode);
+
 // Function to run the Python code
 function runCode() {
   console.log("test: code running");
-  var prog = document.getElementById("pythontext").value; // Python code input
+  var prog = getCode();
   var mypre = document.getElementById("output"); // Output area
   mypre.innerHTML = ""; // Clear previous output
 
@@ -1000,7 +1018,7 @@ t = turtle.Turtle()
 t.shape("turtle")
 t.color("green")
 t.setheading(90)
-  `;
+`;
 
   var cleanedProg = prog.trimStart();
   console.log("user code:", prog);
@@ -1018,6 +1036,8 @@ t.setheading(90)
       console.log(err.toString());
     });
 }
+
+window.runCode = runCode; 
 
 // Function to handle the output of the Python code
 function outf(text) {
