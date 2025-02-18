@@ -1028,13 +1028,6 @@ t.setheading(90)
   var myPromise = Sk.misceval.asyncToPromise(function () {
     return Sk.importMainWithBody("<stdin>", false, fullProg, true);
   });
-  myPromise.then(
-    function (mod) {
-      console.log("success");
-    },
-    function (err) {
-      console.log(err.toString());
-    });
 }
 
 window.runCode = runCode; 
@@ -1066,7 +1059,6 @@ function setupKeydownListener() {
     }
   });
 }
-
 
 function setupClearHighlightsOnClickListener() {
   // event listener for clearing highlights when clicking 
