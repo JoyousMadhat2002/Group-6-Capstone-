@@ -56,7 +56,6 @@ body {
   margin-right: 10px;
 }
 
-
 .result-container {
   display: flex;
   flex-direction: row;
@@ -108,13 +107,10 @@ body {
   display: flex;
 }
 
-
 .results{
   display: flex;
   flex-direction: row;
 }
-
-
 
 button {
   cursor: pointer;
