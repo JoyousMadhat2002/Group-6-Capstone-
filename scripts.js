@@ -135,6 +135,22 @@ function newBlock(blockID) {
     blockID === "logicalOps"
   ) {
     handleOperatorBlock(newBlock, blockID);
+  } else if (
+    blockID === "mathConstants" ||
+    blockID === "roundingTruncation" ||
+    blockID === "absSign" ||
+    blockID === "numberTheory" ||
+    blockID === "sumProd" ||
+    blockID === "floatManipulation" ||
+    blockID === "comparisonValidation" ||
+    blockID === "remainderDivision" ||
+    blockID === "logExpFunctions" ||
+    blockID === "trigFunctions" ||
+    blockID === "hyperbolicFunctions" ||
+    blockID === "specialFunctions"
+    
+  ) {
+    handleMathFunctionBlock(newBlock, blockID); // Handle math function blocks
   } else {
     handleDefaultBlock(newBlock, blockID);
   }
@@ -199,13 +215,24 @@ function handleOperatorBlock(block, blockID) {
     (element) => element.blockID === blockID
   ).name;
 
-  const blockLabel = document.createElement("span");
-  blockLabel.textContent = `${blockName}`;
-  block.appendChild(blockLabel);
-
   // Create and append the dropdown list
   const dropdown = createOperatorDropdown(blockID);
   block.appendChild(dropdown);
+}
+
+function handleMathFunctionBlock(block, blockID) {
+  const mathPrefix = document.createElement("span");
+  mathPrefix.textContent = "math.";
+  block.appendChild(mathPrefix);
+
+  const dropdown = createOperatorDropdown(blockID);
+  block.appendChild(dropdown);
+  if (blockID != "mathConstants") {
+    // Add a horizontal child block for the value input
+    const childContainer = createChildBoxHorizontal(block.id, blockID);
+    block.appendChild(childContainer);
+  }
+
 }
 
 function handleMathOrComparisonOrVariableBlock(block, blockID) {
@@ -765,9 +792,9 @@ function dragEnd() {
 function showDepth(block) {
   const depthLabel = block.querySelector(".block-depth-info");
   if (!depthLabel) {
-      const label = document.createElement("span");
-      label.classList.add("block-depth-info");
-      block.appendChild(label);
+    const label = document.createElement("span");
+    label.classList.add("block-depth-info");
+    block.appendChild(label);
   }
   block.querySelector(".block-depth-info").textContent = `Depth: ${block.dataset.blockDepth}`;
 }
@@ -834,89 +861,83 @@ function setupDropdownMenu(plusIcon, block, elifElseDiv) {
 
 function blockToText(pc) {
   //pythontext.value = ""; // Clear the text area
-  
+
   let parentContainer = document.getElementById(pc);
-  
-  
+
+
   let blockChildElements;
   // section for top half
 
   // section for bottom half
-  if(pc == "box-container"){
-  blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
+  if (pc == "box-container") {
+    blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
   }
-  else{
-  blockChildElements = parentContainer.querySelector('.child-box-container').children; // Get all children/blocks from the box-container
+  else {
+    blockChildElements = parentContainer.querySelector('.child-box-container').children; // Get all children/blocks from the box-container
   }
-  for (let i = 0; i < blockChildElements.length; i++){
+  for (let i = 0; i < blockChildElements.length; i++) {
     let childID = blockChildElements[i].dataset.blockID;
 
     for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
       pythontext.value += "    "; // Add spaces for indentation
     }
 
-    if (childID == "for" ||childID == "if" || childID == "while" ){
-      
+    if (childID == "for" || childID == "if" || childID == "while") {
+
       pythontext.value += `${childID}\n`;
       let cbc = blockChildElements[i].querySelector('.child-box-container');
-      if (cbc.children.length > 0){
+      if (cbc.children.length > 0) {
         blockToText(blockChildElements[i].id);
       }
-      
-      
+
+
     }
 
     //logic for adding continue and break to text block
-    else if (childID == "continue" ||childID == "break"){
+    else if (childID == "continue" || childID == "break") {
       pythontext.value += `${childID}\n`;
     }
 
-    else{
+    else {
       pythontext.value += `${childID}\n`;
     }
   }
 }
 
-
 // Function to convert text programming to block programming
 function textToBlock(container) {
   let text = pythontext.value;
-  if(container == "box-container"){
+  if (container == "box-container") {
     document.getElementById(container).innerHTML = ""; // Clear block container
   }
 
   let lines = text.split("\n"); // Separate lines for parsing
- 
-  
-
-  
-
   let depthBuilder = ["box-container"]; // counting preceeding zeros for depth
   let currDepth = 0;
   let linecount = 0;
   for (let i = 0; i < lines.length; i++) {
-    for (let j = 0; j < lines[i].length; j++){
+    for (let j = 0; j < lines[i].length; j++) {
       console.log("line[j]]: " + `${j}`);
-      if(lines[i][j] ==  " "){
+      if (lines[i][j] == " ") {
         linecount++;
       }
-      else{
+      else {
         break;
       }
     }
-  
+
 
     // setting currDepth based on number of indentations
-    
-    if (linecount < 1){
-      
+
+    if (linecount < 1) {
+
       currDepth = 1;
       console.log("currDepth: " + `${currDepth}`);
       console.log("linecount: " + `${linecount}`);
       console.log("linecount < 1");
     }
     else {
-      currDepth = (linecount/4) + 1;
+      currDepth = (linecount / 4) + 1;
       console.log("currDepth: " + `${currDepth}`);
       console.log("linecount: " + `${linecount}`);
       console.log("linecount > 1");
@@ -926,42 +947,42 @@ function textToBlock(container) {
     let tokens = lines[i].trim().split(" "); // trimming spaces from front and back of string, then splitting into tokens
 
     // logic to build blocks
-    if (tokens != ""){
-      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for"){
+    if (tokens != "") {
+      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for") {
         console.log(`${tokens[0]}` + " statement");
         let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
         let nbRef = document.getElementById(nbCons); // created reference to newblock
 
         // update depth
-        if(true){
+        if (true) {
 
         }
 
         // checking for comparison block operators
-        if (tokens[2] == "==" || tokens[2] == "!=" || tokens[2] == ">=" || tokens[2] == "<=" || tokens[2] == "<" || tokens[2] == ">"){
+        if (tokens[2] == "==" || tokens[2] == "!=" || tokens[2] == ">=" || tokens[2] == "<=" || tokens[2] == "<" || tokens[2] == ">") {
           let nbComp = newBlock("comparisonBlock");
           let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
-          for (let k = 0; k<3;k++){
-            if(compElems[k].querySelector(".math-comparison-input")){
-              compElems[k].querySelector(".math-comparison-input").value = tokens[k+1];
+          for (let k = 0; k < 3; k++) {
+            if (compElems[k].querySelector(".math-comparison-input")) {
+              compElems[k].querySelector(".math-comparison-input").value = tokens[k + 1];
             }
-            compElems[k].dataset.blockValue = tokens[k+1];          
+            compElems[k].dataset.blockValue = tokens[k + 1];
           }
-          
+
           let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
           nbHz.appendChild(document.getElementById(nbComp));
         }
-        else if (tokens[2] == "+"){
+        else if (tokens[2] == "+") {
           let x = 0;
         }
 
-        
+
       }
-      
+
 
     }
     linecount = 0;
-    
+
   }
 
 }
@@ -1030,7 +1051,7 @@ t.setheading(90)
   });
 }
 
-window.runCode = runCode; 
+window.runCode = runCode;
 
 // Function to handle the output of the Python code
 function outf(text) {
@@ -1099,11 +1120,11 @@ function setupSaveButtonListener() {
 }
 
 function setupButtonFunctionalityListeners() {
-  document.querySelector('[name="btt"]').addEventListener("click", function(){
+  document.querySelector('[name="btt"]').addEventListener("click", function () {
     pythontext.value = ""; // Clear the text area
     blockToText("box-container");
   });
-  document.querySelector('[name="ttb"]').addEventListener("click", function(){
+  document.querySelector('[name="ttb"]').addEventListener("click", function () {
     textToBlock("box-container");
   });
   document.getElementById("toggleButton").addEventListener("click", toggleView);
@@ -1252,6 +1273,59 @@ function initializeMiscellaneous() {
 // ==========================
 // Main Initialization Function
 // ==========================
+
+document.addEventListener("DOMContentLoaded", function () {
+  let tooltip;
+
+  function createTooltip() {
+    tooltip = document.createElement("div");
+    tooltip.id = "tooltip";
+    Object.assign(tooltip.style, {
+      position: "absolute",
+      backgroundColor: "#333",
+      color: "#fff",
+      padding: "5px",
+      borderRadius: "5px",
+      fontSize: "12px",
+      pointerEvents: "none",
+      zIndex: "1000",
+      display: "none"
+    });
+    document.body.appendChild(tooltip);
+  }
+
+  function showTooltip(event, text) {
+    if (!tooltip) createTooltip();
+    tooltip.innerText = text;
+    tooltip.style.left = `${event.pageX + 10}px`;
+    tooltip.style.top = `${event.pageY + 10}px`;
+    tooltip.style.display = "block";
+  }
+
+  function hideTooltip() {
+    if (tooltip) tooltip.style.display = "none";
+  }
+
+  function handleHover(event) {
+    let target = event.target;
+    if (target.closest(".category-blocks button")) {
+      showTooltip(event, target.getAttribute("title") || "No description available");
+    } else if (target.closest(".box")) {
+      let block = target.closest(".box");
+      let blockID = block.dataset.blockID;
+      let description = blockID ? getBlockProperties(blockID)?.description || "No description available." : "Block ID not found.";
+      showTooltip(event, description);
+    }
+  }
+
+  document.body.addEventListener("mouseover", handleHover);
+  document.body.addEventListener("mouseout", (event) => {
+    if (event.target.closest(".category-blocks button") || event.target.closest(".box")) {
+      hideTooltip();
+    }
+  });
+});
+
 
 function initializeApp() {
   setupKeydownListener();

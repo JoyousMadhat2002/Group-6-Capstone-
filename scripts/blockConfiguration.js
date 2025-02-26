@@ -5,7 +5,7 @@
 const categoryColors = {
   movement: "#BFEFFF", // Baby Blue
   logic: "#5a80a5", // Steel Blue
-  math: "#5ba55a", // Medium Sea Green
+  math: "#5abd42", // Green
   comparison: "#ffcc99", // Peach
   boolean: "#80cbc4", // Aqua Marine
   functions: "#995ba6", // Amethyst Purple
@@ -103,7 +103,7 @@ const blockCategory = {
         description: "Arithmetic operators (+, -, *, /, %, **, //)",
         type: "arithmetic",
         parentElement: "block",
-        childElement: ["operator", "operand1", "operand2"],
+        childElement: ["operator"],
       },
       {
         name: "Math Text Block",
@@ -123,6 +123,7 @@ const blockCategory = {
       },
     ],
   },
+
   comparison: {
     elements: [
       {
@@ -131,7 +132,7 @@ const blockCategory = {
         description: "Comparison operators (==, !=, >, <, >=, <=)",
         type: "comparison",
         parentElement: "block",
-        childElement: ["operator", "operand1", "operand2"],
+        childElement: ["operator"],
       },
       {
         name: "Comparison Block",
@@ -191,6 +192,103 @@ const blockCategory = {
         parentElement: "block",
         childElement: ["text"],
       },
+      {
+        name: "Math Constants",
+        blockID: "mathConstants",
+        description: "Math constants (pi, e, tau, inf, nan)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["constant"],
+      },
+      {
+        name: "Rounding and Truncation",
+        blockID: "roundingTruncation",
+        description: "Rounding and truncation functions (ceil, floor, trunc, round, nearbyint, rint)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["function", "value"],
+      },
+      {
+        name: "Absolute Value and Sign",
+        blockID: "absSign",
+        description: "Absolute value and sign-related functions (fabs, copysign, nextafter)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["function", "value"],
+      },
+      {
+        name: "Number Theory and Combinatorics",
+        blockID: "numberTheory",
+        description: "Number theory and combinatorics functions (gcd, lcm, comb, perm, factorial)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["function", "value"],
+      },
+      {
+        name: "Summation and Products",
+        blockID: "sumProd",
+        description: "Summation and product functions (fsum, prod)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["function", "value"],
+      },
+      {
+        name: "Floating-Point Manipulation",
+        blockID: "floatManipulation",
+        description: "Floating-point manipulation functions (frexp, ldexp, modf)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["function", "value"],
+      },
+      {
+        name: "Comparison and Validation",
+        blockID: "comparisonValidation",
+        description: "Comparison and validation functions (isclose, isfinite, isinf, isnan, isqrt)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["function", "value"],
+      },
+      {
+        name: "Remainder and Division",
+        blockID: "remainderDivision",
+        description: "Remainder and division functions (fmod, remainder)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["function", "value"],
+      },
+      {
+        name: "Logarithmic and Exponential Functions",
+        blockID: "logExpFunctions",
+        description: "Logarithmic and exponential functions (exp, expm1, log, log1p, log2, log10, pow, sqrt)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["function", "value"],
+      },
+      {
+        name: "Trigonometric Functions",
+        blockID: "trigFunctions",
+        description: "Trigonometric functions (acos, asin, atan, atan2, cos, sin, tan, degrees, radians, dist, hypot)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["function", "value"],
+      },
+      {
+        name: "Hyperbolic Functions",
+        blockID: "hyperbolicFunctions",
+        description: "Hyperbolic functions (acosh, asinh, atanh, cosh, sinh, tanh)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["function", "value"],
+      },
+      {
+        name: "Special Functions",
+        blockID: "specialFunctions",
+        description: "Special functions (erf, erfc, gamma, lgamma)",
+        type: "arithmetic",
+        parentElement: "block",
+        childElement: ["function", "value"],
+      },
+      
     ],
   },
   variables: {
