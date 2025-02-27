@@ -135,9 +135,10 @@ function newBlock(blockID) {
     blockID === "logicalOps"
   ) {
     handleOperatorBlock(newBlock, blockID);
-  } else if(blockID === "print"){
+  } else if(blockID === "print") {
     handlePrintBlock(newBlock, blockID);
-
+  } else if (blockID === "movement") {
+    handleMovementBlock(newBlock, blockID);
   } else if (
     blockID === "mathConstants" ||
     blockID === "roundingTruncation" ||
@@ -220,6 +221,24 @@ function handlePrintBlock(newBlock, blockID){
 
   const childContainer = createChildBoxHorizontal(newBlock.id, blockID);
   newBlock.appendChild(childContainer);
+}
+
+function handleMovementBlock(block, blockID) {
+  const turtlePrefix = document.createElement("span"); //temp text
+  turtlePrefix.textContent = "turtle.";
+  block.appendChild(turtlePrefix);
+
+  const dropdown = createOperatorDropdown(blockID);
+  block.appendChild(dropdown);
+
+  if (blockID != "movement") {
+    const childContainer = createChildBoxHorizontal(block.id, blockID);
+    block.appendChild(childContainer);
+  }
+
+  // Add a horizontal child block for the value input
+  const childContainer = createChildBoxHorizontal(block.id, blockID);
+  block.appendChild(childContainer);
 }
 
 function handleOperatorBlock(block, blockID) {

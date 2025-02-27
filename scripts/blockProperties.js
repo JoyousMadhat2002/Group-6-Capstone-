@@ -12,6 +12,8 @@ function getBlockDropdownList(blockID) {
   }
 
   switch (blockID) {
+    case "movement":
+      return ["---", "right", "left", "forward", "back"]
     case "arithmeticOps":
       return ["---", "+", "-", "*", "/", "%", "**", "//"];
     case "comparisonOps":
@@ -25,7 +27,8 @@ function getBlockDropdownList(blockID) {
     case "roundingTruncation":
       return [
         "---",
-        "ceil", "floor", "trunc", "round", "nearbyint", "rint"
+        "ceil", "floor", "trunc", 
+        "round", "nearbyint", "rint"
       ];
     case "absSign":
       return [
@@ -60,18 +63,21 @@ function getBlockDropdownList(blockID) {
     case "logExpFunctions":
       return [
         "---",
-        "exp", "expm1", "log", "log1p", "log2", "log10", "pow", "sqrt"
+        "exp", "expm1", "log", "log1p", 
+        "log2", "log10", "pow", "sqrt"
       ];
     case "trigFunctions":
       return [
         "---",
         "acos", "asin", "atan", "atan2", 
-        "cos", "sin", "tan", "degrees", "radians", "dist", "hypot"
+        "cos", "sin", "tan", "degrees", 
+        "radians", "dist", "hypot"
       ];
     case "hyperbolicFunctions":
       return [
         "---",
-        "acosh", "asinh", "atanh", "cosh", "sinh", "tanh"
+        "acosh", "asinh", "atanh", 
+        "cosh", "sinh", "tanh"
       ];
     case "specialFunctions":
       return [

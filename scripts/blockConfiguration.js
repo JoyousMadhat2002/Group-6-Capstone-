@@ -17,37 +17,13 @@ const blockCategory = {
   movement: {
     elements: [
       {
-        name: "forward",
-        blockID: "t.forward(100)",
-        description: "Move the turtle forward",
+        name: "movement",
+        blockID: "movement",
+        description: "Movement for Turtle",
         type: "movement",
         parentElement: "block",
-        childElement: ["value"], // accepts a numeric value
-      },
-      {
-        name: "right",
-        blockID: "t.right(90)",
-        description: "Turn the turtle right",
-        type: "movement",
-        parentElement: "block",
-        childElement: ["value"], // accepts an angle
-      },
-      {
-        name: "back",
-        blockID: "t.back(100)",
-        description: "Move the turtle backward",
-        type: "movement",
-        parentElement: "block",
-        childElement: ["value"], // accepts a numeric value
-      },
-      {
-        name: "left",
-        blockID: "t.left(90)",
-        description: "Turn the turtle left",
-        type: "movement",
-        parentElement: "block",
-        childElement: ["value"], // accepts an angle
-      },
+        childElement: ["function", "value"],
+      }
     ],
   },
   logic: {
