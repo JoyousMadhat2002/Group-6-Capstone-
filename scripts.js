@@ -135,6 +135,9 @@ function newBlock(blockID) {
     blockID === "logicalOps"
   ) {
     handleOperatorBlock(newBlock, blockID);
+  } else if(blockID === "print"){
+    handlePrintBlock(newBlock, blockID);
+
   } else if (
     blockID === "mathConstants" ||
     blockID === "roundingTruncation" ||
@@ -208,6 +211,15 @@ function handleDefaultBlock(block, blockID) {
   const blockLabel = document.createElement("span");
   blockLabel.textContent = `${blockName}`;
   block.appendChild(blockLabel);
+}
+
+function handlePrintBlock(newBlock, blockID){
+  const printLabel = document.createElement("span");
+  printLabel.textContent = "print";
+  newBlock.appendChild(printLabel);
+
+  const childContainer = createChildBoxHorizontal(newBlock.id, blockID);
+  newBlock.appendChild(childContainer);
 }
 
 function handleOperatorBlock(block, blockID) {
