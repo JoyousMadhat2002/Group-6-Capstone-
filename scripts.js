@@ -849,8 +849,11 @@ function textToBlock(container) {
   let currDepth = 0;
   let linecount = 0;
   for (let i = 0; i < lines.length; i++) {
+    if(lines[i][lines[i].length -1] == ':'){
+        lines[i] = lines[i].substring(0, lines[i].length -1);
+    }
     for (let j = 0; j < lines[i].length; j++){
-      console.log("line[j]]: " + `${j}`);
+      
       if(lines[i][j] ==  " "){
         linecount++;
       }
@@ -881,10 +884,14 @@ function textToBlock(container) {
 
     // logic to build blocks
     if (tokens != ""){
+      
       if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for"){
         console.log(`${tokens[0]}` + " statement");
         let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
         let nbRef = document.getElementById(nbCons); // created reference to newblock
+        depthBuilder[currDepth] = nbRef; // put block reference into depth array
+        nbRef.dataset.blockDepth = currDepth; // update depth of block
+        console.log(depthBuilder);
 
         // update depth
         if(true){
@@ -892,14 +899,14 @@ function textToBlock(container) {
         }
 
         // checking for comparison block operators
-        if (tokens[2] == "==" || tokens[2] == "!=" || tokens[2] == ">=" || tokens[2] == "<=" || tokens[2] == "<" || tokens[2] == ">"){
+        if (tokens[2] == "==" || tokens[2] == "!=" || tokens[2] == ">=" || tokens[2] == "<=" || tokens[2] == "<" || tokens[2] == ">" ||  tokens[1] == "true" || tokens[1] == "false"){
           let nbComp = newBlock("comparisonBlock");
           let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
-          for (let k = 0; k<3;k++){
-            if(compElems[k].querySelector(".math-comparison-input")){
-              compElems[k].querySelector(".math-comparison-input").value = tokens[k+1];
+          for (let k = 1; k<4;k++){
+            if(compElems[k-1].querySelector(".math-comparison-input")){
+              compElems[k-1].querySelector(".math-comparison-input").value = tokens[k];
             }
-            compElems[k].dataset.blockValue = tokens[k+1];          
+            compElems[k-1].dataset.blockValue = tokens[k];          
           }
           
           let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
@@ -909,7 +916,23 @@ function textToBlock(container) {
           let x = 0;
         }
 
-        
+      
+
+        if(container != "box-container"){
+          // append block to the previous block's child container
+        }
+      }
+
+      // building CONTINUE and BREAK
+      if(tokens[0] == "continue" || tokens[0] == "break"){
+        console.log(tokens[0]);
+        let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+        let nbRef = document.getElementById(nbCons); // created reference to newblock
+        nbRef.dataset.blockDepth = currDepth;
+        depthBuilder[currDepth] = nbRef;
+        console.log(depthBuilder);
+
+
       }
       
 
