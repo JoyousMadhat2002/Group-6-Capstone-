@@ -893,29 +893,61 @@ function textToBlock(container) {
         nbRef.dataset.blockDepth = currDepth; // update depth of block
         console.log(depthBuilder);
 
-        // update depth
-        if(true){
+        
 
-        }
+        for(let j = 1; j < tokens.length; j++){
+          if (tokens[j] == "==" || tokens[j] == "!=" || tokens[j]  == ">=" || tokens[j]  == "<=" || tokens[j]  == "<" || tokens[j]  == ">" ||  tokens[j]  == "true" || tokens[j]  == "false"){
+            let nbComp = newBlock("comparisonBlock");
+            let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
+            compElems[0].querySelector(".math-comparison-input").value = tokens[j-1];
+            
+            let elDrop = compElems[1].querySelector(".block-dropdown");
+            elDrop.value = tokens[j];
 
-        // checking for comparison block operators
-        if (tokens[2] == "==" || tokens[2] == "!=" || tokens[2] == ">=" || tokens[2] == "<=" || tokens[2] == "<" || tokens[2] == ">" ||  tokens[1] == "true" || tokens[1] == "false"){
-          let nbComp = newBlock("comparisonBlock");
-          let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
-          for (let k = 1; k<4;k++){
-            if(compElems[k-1].querySelector(".math-comparison-input")){
-              compElems[k-1].querySelector(".math-comparison-input").value = tokens[k];
+            compElems[2].querySelector(".math-comparison-input").value = tokens[j+1];
+
+            for (let k = 1; k<4;k++){
+              // if(compElems[k-1].querySelector(".math-comparison-input")){
+              //   compElems[k-1].querySelector(".math-comparison-input").value = tokens[k];
+              // }
+              // if(compElems[k-1].querySelector(".block-dropdown")){
+              //   let elDrop = compElems[k-1].querySelector(".block-dropdown");
+              //   elDrop.value = tokens[k];
+              // }
+
             }
-            compElems[k-1].dataset.blockValue = tokens[k];          
+            
+            let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
+            nbHz.appendChild(document.getElementById(nbComp));
           }
-          
-          let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
-          nbHz.appendChild(document.getElementById(nbComp));
-        }
-        else if (tokens[2] == "+"){
-          let x = 0;
-        }
 
+          // constructing and appending text field for range in For loops
+          else if (tokens[j] == "in"){
+            console.log('Token[j] is ' + `${tokens[j]}`);
+
+            let nbComp = newBlock("printText");
+            let elText = document.getElementById(nbComp).querySelector(".text-input");
+            for(let k = 1; k < tokens.length;k++){
+              elText.value += tokens[k] + " ";
+            }
+            elText.value = elText.value.trim();
+
+            let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
+            nbHz.appendChild(document.getElementById(nbComp));
+          }
+
+          //constructing and appending or/and/not logical operators
+          else if (tokens[j] == "or" || tokens[j] == "||" || tokens[j] == "and" || tokens[j] == "&&" || tokens[j] == "not"){
+            console.log('Token[j] is ' + `${tokens[j]}`);
+
+            let nbComp = newBlock("logicalOps");
+            let elDrop = document.getElementById(nbComp).querySelector(".block-dropdown");
+            elDrop.value = tokens[j];
+
+            let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
+            nbHz.appendChild(document.getElementById(nbComp));
+          }
+        }
       
 
         if(container != "box-container"){
