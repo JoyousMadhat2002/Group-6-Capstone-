@@ -6,6 +6,7 @@ let dragged = null;
 let highlightedBlock = null;
 let isPythonView = false;
 let userVariables = [];
+let clickEvent = new Event('click');
 
 // ==========================
 // 3. Block Management Functions
@@ -841,17 +842,11 @@ function textToBlock(container) {
 
   let lines = text.split("\n"); // Separate lines for parsing
  
-  
-
-  
-
   let depthBuilder = ["box-container"]; // counting preceeding zeros for depth
-  let currDepth = 0;
-  let linecount = 0;
+  
   for (let i = 0; i < lines.length; i++) {
-    if(lines[i][lines[i].length -1] == ':'){
-        lines[i] = lines[i].substring(0, lines[i].length -1);
-    }
+    let currDepth = 0;
+    let linecount = 0;
     for (let j = 0; j < lines[i].length; j++){
       
       if(lines[i][j] ==  " "){
@@ -866,36 +861,72 @@ function textToBlock(container) {
     // setting currDepth based on number of indentations
     
     if (linecount < 1){
-      
+      console.log(linecount);
+      console.log(currDepth);
       currDepth = 1;
-      console.log("currDepth: " + `${currDepth}`);
-      console.log("linecount: " + `${linecount}`);
-      console.log("linecount < 1");
+      
+      
     }
     else {
+      console.log(linecount);
+      console.log(currDepth);
       currDepth = (linecount/4) + 1;
-      console.log("currDepth: " + `${currDepth}`);
-      console.log("linecount: " + `${linecount}`);
-      console.log("linecount > 1");
     }
 
+    lines[i] = lines[i].trim(); // trimming text line for whitespace
 
-    let tokens = lines[i].trim().split(" "); // trimming spaces from front and back of string, then splitting into tokens
+    // Line deleting colon for statements
+    if(lines[i][lines[i].length -1] == ':'){
+      lines[i] = lines[i].substring(0, lines[i].length -1);
+    }
+
+    let tokens = lines[i].split(" "); // splitting string into tokens
 
     // logic to build blocks
     if (tokens != ""){
       
-      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for"){
+      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for" || tokens[1] == "if"){
+        
+        
         console.log(`${tokens[0]}` + " statement");
-        let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
-        let nbRef = document.getElementById(nbCons); // created reference to newblock
-        depthBuilder[currDepth] = nbRef; // put block reference into depth array
+        let nbCons;
+        let nbRef;
+        let elseChild;
+        
+        // Logic for else if blocks
+        if(tokens[1] == "if"){
+          let tempIf = document.getElementById(depthBuilder[currDepth]);
+          tempIf.querySelector(".fa-solid").dispatchEvent(clickEvent);
+          let elDrops = tempIf.querySelectorAll(".dropdown-item");
+          elDrops[0].dispatchEvent(clickEvent);
+
+          // let elseRef = document.getElementById(depthBuilder[currDepth]).getAttribute('data-if-elif-else-id');
+          // console.log(elseRef);
+          let elseRef = document.getElementById(depthBuilder[currDepth]).querySelectorAll(".child-box-container");
+          for(let k = 0; k < elseRef.length; k++){
+            if(elseRef[k].getAttribute("data-if-elif-else-id") == "1"){
+              elseChild = elseRef[k];
+            }
+          }
+          let horRef = document.getElementById(depthBuilder[currDepth]).querySelectorAll(".child-box-container-horizontal");
+          console.log(horRef[horRef.length -1]);
+          nbRef = horRef[horRef.length -1];
+        }
+        else{
+        nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+        nbRef = document.getElementById(nbCons); // created reference to newblock
+        depthBuilder[currDepth] = nbRef.id; // put block reference into depth array
         nbRef.dataset.blockDepth = currDepth; // update depth of block
         console.log(depthBuilder);
-
         
 
-        for(let j = 1; j < tokens.length; j++){
+        if(depthBuilder[currDepth-1] != "box-container"){
+          let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
+          parentBlock.append(document.getElementById(nbCons));
+        }
+        }
+        let j = 1
+        for(j; j < tokens.length; j++){
           if (tokens[j] == "==" || tokens[j] == "!=" || tokens[j]  == ">=" || tokens[j]  == "<=" || tokens[j]  == "<" || tokens[j]  == ">" ||  tokens[j]  == "true" || tokens[j]  == "false"){
             let nbComp = newBlock("comparisonBlock");
             let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
@@ -906,19 +937,14 @@ function textToBlock(container) {
 
             compElems[2].querySelector(".math-comparison-input").value = tokens[j+1];
 
-            for (let k = 1; k<4;k++){
-              // if(compElems[k-1].querySelector(".math-comparison-input")){
-              //   compElems[k-1].querySelector(".math-comparison-input").value = tokens[k];
-              // }
-              // if(compElems[k-1].querySelector(".block-dropdown")){
-              //   let elDrop = compElems[k-1].querySelector(".block-dropdown");
-              //   elDrop.value = tokens[k];
-              // }
-
+            if(tokens[1] == "if"){
+              nbRef.appendChild(document.getElementById(nbComp));
             }
-            
-            let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
-            nbHz.appendChild(document.getElementById(nbComp));
+            else{
+              let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
+              nbHz.appendChild(document.getElementById(nbComp));
+            }
+          
           }
 
           // constructing and appending text field for range in For loops
@@ -932,8 +958,13 @@ function textToBlock(container) {
             }
             elText.value = elText.value.trim();
 
+            if(tokens[1] == "if"){
+
+            }
+            else{
             let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
             nbHz.appendChild(document.getElementById(nbComp));
+            }
           }
 
           //constructing and appending or/and/not logical operators
@@ -944,15 +975,31 @@ function textToBlock(container) {
             let elDrop = document.getElementById(nbComp).querySelector(".block-dropdown");
             elDrop.value = tokens[j];
 
+            if(tokens[1] == "if"){
+
+            }
+            else{
             let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
             nbHz.appendChild(document.getElementById(nbComp));
+            }
           }
         }
       
+        
+      
 
-        if(container != "box-container"){
-          // append block to the previous block's child container
-        }
+
+      }
+
+      if(tokens[0] == "else" && tokens.length == 1){
+        let tempIf = document.getElementById(depthBuilder[currDepth]);
+        tempIf.querySelector(".fa-solid").dispatchEvent(clickEvent);
+        let elDrops = tempIf.querySelectorAll(".dropdown-item");
+        console.log(elDrops);
+        elDrops[1].dispatchEvent(clickEvent);
+
+      }
+              
       }
 
       // building CONTINUE and BREAK
@@ -964,16 +1011,17 @@ function textToBlock(container) {
         depthBuilder[currDepth] = nbRef;
         console.log(depthBuilder);
 
-
+        if(depthBuilder[currDepth-1] != "box-container"){
+          let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
+          parentBlock.appendChild(document.getElementById(nbCons));
+        }
       }
-      
 
     }
-    linecount = 0;
     
   }
 
-}
+
 
 function toggleView() {
   var x = document.getElementById("python-code-result");
