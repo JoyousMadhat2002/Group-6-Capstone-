@@ -921,13 +921,20 @@ function textToBlock(container) {
         
 
         if(depthBuilder[currDepth-1] != "box-container"){
+          if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") == "1"){
+            console.log("PARENT IS AN ELSE")
+            let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
+            parentBlock[parentBlock.length-1].append(document.getElementById(nbCons));
+          }
+          else{
           let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
           parentBlock.append(document.getElementById(nbCons));
+          }
         }
         }
         let j = 1
         for(j; j < tokens.length; j++){
-          if (tokens[j] == "==" || tokens[j] == "!=" || tokens[j]  == ">=" || tokens[j]  == "<=" || tokens[j]  == "<" || tokens[j]  == ">" ||  tokens[j]  == "true" || tokens[j]  == "false"){
+          if (tokens[j] == "==" || tokens[j] == "!=" || tokens[j]  == ">=" || tokens[j]  == "<=" || tokens[j]  == "<" || tokens[j]  == ">"){
             let nbComp = newBlock("comparisonBlock");
             let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
             compElems[0].querySelector(".math-comparison-input").value = tokens[j-1];
@@ -1011,10 +1018,19 @@ function textToBlock(container) {
         depthBuilder[currDepth] = nbRef;
         console.log(depthBuilder);
 
-        if(depthBuilder[currDepth-1] != "box-container"){
-          let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
-          parentBlock.appendChild(document.getElementById(nbCons));
+        if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") == "1"){
+          console.log("PARENT IS AN ELSE")
+          let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
+          parentBlock[parentBlock.length-1].append(document.getElementById(nbCons));
         }
+        else{
+        let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
+        parentBlock.append(document.getElementById(nbCons));
+        }
+      }
+
+      if(tokens[2] == "+" || tokens[2] == "-" || tokens[2] == "*" || tokens[2] == "/" || tokens[2] == "%" || tokens[2] == "**" || tokens[2] == "//"){
+        
       }
 
     }
