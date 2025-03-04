@@ -1029,12 +1029,38 @@ function textToBlock(container) {
         }
       }
 
-      if(tokens[2] == "+" || tokens[2] == "-" || tokens[2] == "*" || tokens[2] == "/" || tokens[2] == "%" || tokens[2] == "**" || tokens[2] == "//"){
+      if(tokens[1] == "+" || tokens[1] == "-" || tokens[1] == "*" || tokens[1] == "/" || tokens[1] == "%" || tokens[1] == "**" || tokens[1] == "//"){
         
       }
 
     }
     
+  }
+
+  function blockBuilder(arr, type){
+    let oArray = a;
+    if(type == "comparisonBlock"){
+      let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+      let nbRef = document.getElementById(nbCons); // created reference to newblock
+
+    }
+    else if(type == "mathBlock"){
+      let nbCons = newBlock(type); // newblock construction based on keyword
+      let nbRef = document.getElementById(nbCons); // created reference to newblock
+
+    }
+    else if(type == "variable"){
+      let nbCons = newBlock(type); // newblock construction based on keyword
+      let nbRef = document.getElementById(nbCons); // created reference to newblock
+
+    }
+    else if(type == "logicalOps"){
+      let nbCons = newBlock(type); // newblock construction based on keyword
+      let nbRef = document.getElementById(nbCons); // created reference to newblock
+
+    }
+
+
   }
 
 
