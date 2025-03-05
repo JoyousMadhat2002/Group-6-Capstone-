@@ -651,9 +651,26 @@ function setupDropdownMenu(plusIcon, block, elifElseDiv) {
     });
 }
 
-
+export function toggleView() {
+    var x = document.getElementById("python-code-result");
+    var y = document.getElementById("block-container");
+    var toggleButton = document.getElementById("toggleButton");
+  
+    if (x.classList.contains("hidden")) {
+      x.classList.remove("hidden");
+      y.classList.add("hidden");
+      toggleButton.textContent = "Block";
+      isPythonView = true; // Switch to Python view
+    } else {
+      x.classList.add("hidden");
+      y.classList.remove("hidden");
+      toggleButton.textContent = "Python";
+      isPythonView = false; // Switch to Block view
+    }
+  }
 
 
 export {
-    clearDropHighlights
+    clearDropHighlights,
+    isPythonView
 }

@@ -6,8 +6,10 @@ import { getBlockProperties } from "./scripts/blockProperties.js";
 import { 
   createCategoryButtons, 
   newBlock,
-  clearDropHighlights
+  clearDropHighlights,
+  toggleView
 } from "./scripts/blockCreation.js";
+
 
 // Import Firebase modules correctly
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
@@ -172,24 +174,6 @@ function textToBlock(container) {
 
   }
 
-}
-
-function toggleView() {
-  var x = document.getElementById("python-code-result");
-  var y = document.getElementById("block-container"); // Changed to block-container
-  var toggleButton = document.getElementById("toggleButton");
-
-  if (x.classList.contains("hidden")) {
-    x.classList.remove("hidden");
-    y.classList.add("hidden");
-    toggleButton.textContent = "Block";
-    isPythonView = true; // Switch to Python view
-  } else {
-    x.classList.add("hidden");
-    y.classList.remove("hidden");
-    toggleButton.textContent = "Python";
-    isPythonView = false; // Switch to Block view
-  }
 }
 
 // ==========================

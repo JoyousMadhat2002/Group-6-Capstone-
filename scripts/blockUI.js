@@ -208,4 +208,5 @@ if (codeContainer) {
 
 export function toggleDropdownVisibility(dropdown) {
     dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
-  }
+}
+
