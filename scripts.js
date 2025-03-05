@@ -886,6 +886,7 @@ function textToBlock(container) {
     if (tokens != ""){
       
       if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for" || tokens[1] == "if"){
+        blockBuilder(tokens);
         
         
         console.log(`${tokens[0]}` + " statement");
@@ -1018,7 +1019,7 @@ function textToBlock(container) {
         depthBuilder[currDepth] = nbRef;
         console.log(depthBuilder);
 
-        if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") == "1"){
+        if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") > "0"){
           console.log("PARENT IS AN ELSE")
           let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
           parentBlock[parentBlock.length-1].append(document.getElementById(nbCons));
@@ -1037,29 +1038,53 @@ function textToBlock(container) {
     
   }
 
-  function blockBuilder(arr, type){
-    let oArray = a;
-    if(type == "comparisonBlock"){
-      let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
-      let nbRef = document.getElementById(nbCons); // created reference to newblock
+  function blockBuilder(arr){
+    let oArray = arr;
+    let rmBlock;
+    let rPoint = arr.length;
+    for(let i = oArray.length; i>-1;i--){
+      
+    
+    if(oArray[i] == "==" || oArray[i] == "!=" || oArray[i]  == ">=" || oArray[i]  == "<=" || oArray[i]  == "<" || oArray[i]  == ">"){
+      console.log(oArray[i-1]);
+      console.log(oArray[i]);
+      console.log(oArray[i+1]);
+      let nbComp = newBlock("comparisonBlock");
+      let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
+      compElems[0].querySelector(".math-comparison-input").value = oArray[i-1];
+            
+      let elDrop = compElems[1].querySelector(".block-dropdown");
+      elDrop.value = oArray[i];
+      if(rPoint >= i){
+        com
+      }
+      else{
+        compElems[2].querySelector(".math-comparison-input").value = oArray[i+1];
+      }
+
+      
+
+      rmBlock = document.getElementById(nbComp);
+      console.log(rmBlock);
+      rPoint = i-1;
 
     }
-    else if(type == "mathBlock"){
-      let nbCons = newBlock(type); // newblock construction based on keyword
-      let nbRef = document.getElementById(nbCons); // created reference to newblock
+    // else if(type == "mathBlock"){
+    //   let nbCons = newBlock(mathBlock); // newblock construction based on keyword
+    //   let nbRef = document.getElementById(nbCons); // created reference to newblock
 
+    // }
+    // else if(type == ""){
+    //   let nbCons = newBlock("varOps"); // newblock construction based on keyword
+    //   let nbRef = document.getElementById(nbCons); // created reference to newblock
+
+    // }
+    // else if(arr[1] == "or" || arr[1] == "||" || arr[1] == "and" || arr[1] == "&&" || arr[1] == "not"){
+    //   let nbCons = newBlock(logicalOps); // newblock construction based on keyword
+    //   let nbRef = document.getElementById(nbCons); // created reference to newblock
+
+    // }
     }
-    else if(type == "variable"){
-      let nbCons = newBlock(type); // newblock construction based on keyword
-      let nbRef = document.getElementById(nbCons); // created reference to newblock
-
-    }
-    else if(type == "logicalOps"){
-      let nbCons = newBlock(type); // newblock construction based on keyword
-      let nbRef = document.getElementById(nbCons); // created reference to newblock
-
-    }
-
 
   }
 
