@@ -9,6 +9,33 @@ import {
   clearDropHighlights
 } from "./scripts/blockCreation.js";
 
+// Import Firebase modules correctly
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyCteFAmh1TjbbQB0hsbBwcbqwK8mofMO4Y",
+    authDomain: "b-coders-database.firebaseapp.com",
+    projectId: "b-coders-database",
+    storageBucket: "b-coders-database.appspot.com",
+    messagingSenderId: "268773123996",
+    appId: "1:268773123996:web:fec77ef63557a9c6b50a59",
+    measurementId: "G-92LTT20BXB"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Wait for Firebase authentication state
+onAuthStateChanged(auth, (user) => {
+    updateUIAfterLogin(user);
+});
+
+
 let dragged = null;
 let highlightedBlock = null;
 
@@ -255,19 +282,16 @@ function setupDOMContentLoadedListener() {
   });
 }
 
+// Function to set up the "Log In" button listener
 function setupLoginButtonListener() {
   const loginButton = document.getElementById("loginButton");
-  loginButton.addEventListener("click", function () {
-    const username = prompt("Enter Username:");
-    const password = prompt("Enter Password:");
 
-    if (username === "user" && password === "password") {
-      localStorage.setItem("loggedIn", "true");
-      alert("Login successful!");
-    } else {
-      alert("Invalid credentials");
-    }
-  });
+  if (!loginButton) {
+      console.error("Error: 'Log In' button not found.");
+      return;
+  }
+
+  loginButton.addEventListener("click", openLoginDialog);
 }
 
 function setupSaveButtonListener() {
@@ -291,7 +315,117 @@ function setupButtonFunctionalityListeners() {
 }
 
 // ==========================
-// 12. Additional Features (Resizing Columns, Dragging, etc.)
+// 12. Login and Logout
+// ==========================
+
+// Function to attempt user login
+function attemptLogin() {
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+  const errorMsg = document.getElementById("login-error");
+
+  if (!email || !password) {
+      errorMsg.textContent = "Please enter email and password.";
+      errorMsg.classList.remove("hidden");
+      return;
+  }
+
+  signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+      console.log("User logged in:", userCredential.user);
+      closeLoginDialog(); // Close the login dialog
+      updateUIAfterLogin(userCredential.user); // Update the UI
+  })
+  .catch((error) => {
+      console.error("Login Error:", error.message);
+      errorMsg.textContent = error.message;
+      errorMsg.classList.remove("hidden");
+  });
+}
+
+// Function to open the login dialog
+function openLoginDialog() {
+  if (!document.getElementById("login-dialog")) {
+      createLoginDialog();
+  }
+}
+
+// Function to create the login dialog
+function createLoginDialog() {
+  const loginDialog = document.createElement("div");
+  loginDialog.id = "login-dialog";
+  loginDialog.classList.add("dialog-container");
+
+  // Create the login dialog content (makes HTML file cleaner by not having to include this in the main HTML file)
+  loginDialog.innerHTML = `
+      <div class="dialog-box">
+          <h2>Log In</h2>
+          <label for="login-email">Email:</label>
+          <input type="email" id="login-email" placeholder="Enter your email">
+
+          <label for="login-password">Password:</label>
+          <input type="password" id="login-password" placeholder="Enter your password">
+
+          <p id="login-error" class="error-message hidden"></p>
+
+          <div class="dialog-buttons">
+              <button id="login-submit">Log In</button>
+              <button id="login-cancel">Cancel</button>
+          </div>
+      </div>
+  `;
+
+  document.body.appendChild(loginDialog);
+
+  // Add event listeners
+  document.getElementById("login-submit").addEventListener("click", attemptLogin);
+  document.getElementById("login-cancel").addEventListener("click", closeLoginDialog);
+  loginDialog.addEventListener("click", function (event) {
+      if (event.target === loginDialog) {
+          closeLoginDialog();
+      }
+  });
+}
+
+// Function to close the login dialog
+function closeLoginDialog() {
+  const loginDialog = document.getElementById("login-dialog");
+  if (loginDialog) {
+      loginDialog.remove();
+  }
+}
+
+// Function to update the UI after user login/logout
+function updateUIAfterLogin(user) {
+  const loginButton = document.getElementById("loginButton");
+
+  if (user) {
+      loginButton.textContent = "Log Out";
+      loginButton.removeEventListener("click", openLoginDialog);
+      loginButton.addEventListener("click", logoutUser);
+  } else {
+      loginButton.textContent = "Log In";
+      loginButton.removeEventListener("click", logoutUser);
+      loginButton.addEventListener("click", openLoginDialog);
+  }
+}
+
+// Function to log out the current user
+function logoutUser() {
+  auth.signOut()
+      .then(() => {
+          console.log("User logged out");
+          updateUIAfterLogin(null); // Reset UI
+      })
+      .catch((error) => {
+          console.error("Logout Error:", error.message);
+      });
+}
+
+
+
+// ==========================
+// 13. Additional Features (Resizing Columns, Dragging, etc.)
 // ==========================
 
 function setupColumnResizing() {
@@ -414,7 +548,7 @@ function setupDraggableBlocks() {
 
 
 // ==========================
-// 13. Miscellaneous Code
+// 14. Miscellaneous Code
 // ==========================
 
 /*
@@ -432,6 +566,7 @@ function initializeMiscellaneous() {
 // ==========================
 // Main Initialization Function
 // ==========================
+
 
 document.addEventListener("DOMContentLoaded", function () {
   let tooltip;
@@ -486,7 +621,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-function initializeApp() {
+function setUpApp() {
   setupKeydownListener();
   setupDOMContentLoadedListener();
   setupLoginButtonListener();
@@ -499,7 +634,7 @@ function initializeApp() {
 }
 
 // Call the main initialization function
-initializeApp();
+setUpApp();
 
 /* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
 // Run Code button logic for swapping between Run/Stop
