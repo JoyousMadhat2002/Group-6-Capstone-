@@ -8,6 +8,7 @@ let dragged = null;
 let highlightedBlock = null;
 let isPythonView = false;
 let userVariables = [];
+var pythontext = document.getElementById("pythontext");
 
 // ==========================
 // 3. Block Management Functions
@@ -989,8 +990,9 @@ function toggleView() {
 // ==========================
 
 const editor = new EditorView({
-  parent: document.getElementById("pythontext"),
+  parent: pythontext,
   extensions: [basicSetup, python()],
+  style: "height: 400px; width: 100%;"
 });
 
 function getCode() {

@@ -388,3 +388,17 @@ select.block-dropdown {
 #select-bar-container {
   cursor: pointer;
 }
+
+#pythontext {
+  height: 700px; /* Ensures editor has space */
+  width: 100%;
+  border: 1px solid #ccc; /* Optional: make it visible */
+}
+
+.cm-editor {
+  height: 100%; /* Makes CodeMirror take full height */
+}
+
+.cm-scroller {
+  min-height: 400px; /* Ensures space for multiple lines */
+}
