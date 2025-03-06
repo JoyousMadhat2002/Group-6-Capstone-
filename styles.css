@@ -441,7 +441,7 @@ select.block-dropdown {
   color: white;
 }
 
-#login-cancel {
+#login-cancel, #signup-cancel {
   background: red;
   color: white;
 }
@@ -454,5 +454,20 @@ select.block-dropdown {
 
 .hidden {
   display: none;
+}
+
+.switch-auth {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.auth-link {
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.auth-link:hover {
+  color: darkblue;
 }
 

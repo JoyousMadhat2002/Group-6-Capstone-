@@ -13,7 +13,7 @@ import {
 
 // Import Firebase modules correctly
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
 // Firebase configuration
@@ -317,7 +317,7 @@ function attemptLogin() {
   signInWithEmailAndPassword(auth, email, password)
   .then((userCredential) => {
       console.log("User logged in:", userCredential.user);
-      closeLoginDialog(); // Close the login dialog
+      closeDialogBoxes(); // Close the login dialog
       updateUIAfterLogin(userCredential.user); // Update the UI
   })
   .catch((error) => {
@@ -334,8 +334,36 @@ function openLoginDialog() {
   }
 }
 
+// Function to attempt user signup
+function attemptSignup() {
+  const email = document.getElementById("signup-email").value;
+  const password = document.getElementById("signup-password").value;
+  const errorMsg = document.getElementById("signup-error");
+
+  if (!email || !password) {
+      errorMsg.textContent = "Please enter an email and password.";
+      errorMsg.classList.remove("hidden");
+      return;
+  }
+
+  createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+          console.log("User signed up:", userCredential.user);
+          closeDialogBoxes(); // Close signup dialog
+          updateUIAfterLogin(userCredential.user); // Update UI
+      })
+      .catch((error) => {
+          console.error("Signup Error:", error.message);
+          errorMsg.textContent = error.message;
+          errorMsg.classList.remove("hidden");
+      });
+}
+
+
 // Function to create the login dialog
 function createLoginDialog() {
+  closeDialogBoxes(); // Close any existing login dialog
+  
   const loginDialog = document.createElement("div");
   loginDialog.id = "login-dialog";
   loginDialog.classList.add("dialog-container");
@@ -352,6 +380,11 @@ function createLoginDialog() {
 
           <p id="login-error" class="error-message hidden"></p>
 
+          <p class="switch-auth">
+            <span>Don't have an account?</span><br>
+            <span id="switch-to-signup" class="auth-link">Click here to make an account!</span>
+          </p>
+
           <div class="dialog-buttons">
               <button id="login-submit">Log In</button>
               <button id="login-cancel">Cancel</button>
@@ -363,20 +396,68 @@ function createLoginDialog() {
 
   // Add event listeners
   document.getElementById("login-submit").addEventListener("click", attemptLogin);
-  document.getElementById("login-cancel").addEventListener("click", closeLoginDialog);
+  document.getElementById("login-cancel").addEventListener("click", closeDialogBoxes);
+  document.getElementById("switch-to-signup").addEventListener("click", createSignupDialog);
+
   loginDialog.addEventListener("click", function (event) {
       if (event.target === loginDialog) {
-          closeLoginDialog();
+          closeDialogBoxes();
       }
   });
 }
 
-// Function to close the login dialog
-function closeLoginDialog() {
+// Function to create Signup dialog
+function createSignupDialog() {
+  closeDialogBoxes(); // Close any existing login dialog
+
   const loginDialog = document.getElementById("login-dialog");
-  if (loginDialog) {
-      loginDialog.remove();
-  }
+  if (loginDialog) loginDialog.remove(); // Remove login form
+
+  const signupDialog = document.createElement("div");
+  signupDialog.id = "login-dialog";
+  signupDialog.classList.add("dialog-container");
+
+  signupDialog.innerHTML = `
+      <div class="dialog-box" id="signup-box">
+        <h2>Create an Account</h2>
+        <label for="signup-email">Email:</label>
+        <input type="email" id="signup-email" placeholder="Enter your email">
+
+        <label for="signup-password">Password:</label>
+        <input type="password" id="signup-password" placeholder="Enter your password">
+
+        <p id="signup-error" class="error-message hidden"></p>
+
+        <p class="switch-auth">Already have an account? 
+            <span id="switch-to-login" class="auth-link">Click here to log in</span>
+        </p>
+
+        <div class="dialog-buttons">
+            <button id="signup-submit">Sign Up</button>
+            <button id="signup-cancel">Cancel</button>
+        </div>
+      </div>
+  `;
+
+  document.body.appendChild(signupDialog);
+
+  // Add event listeners
+  document.getElementById("signup-submit").addEventListener("click", attemptSignup);
+  document.getElementById("signup-cancel").addEventListener("click", closeDialogBoxes);
+  document.getElementById("switch-to-login").addEventListener("click", createLoginDialog);
+
+  signupDialog.addEventListener("click", function (event) {
+      if (event.target === signupDialog) {
+          closeDialogBoxes();
+      }
+  });
+}
+
+
+// Function to close the login dialog
+function closeDialogBoxes() {
+  const existingDialogs = document.querySelectorAll(".dialog-container");
+  existingDialogs.forEach(dialog => dialog.remove());
 }
 
 // Function to update the UI after user login/logout
