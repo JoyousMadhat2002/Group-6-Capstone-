@@ -830,7 +830,7 @@ function blockToText(pc) {
       
     }
   }
-}
+} // END OF BBT()
 
 
 // Function to convert text programming to block programming
@@ -886,7 +886,7 @@ function textToBlock(container) {
     if (tokens != ""){
       
       if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for" || tokens[1] == "if"){
-        blockBuilder(tokens);
+        
         
         
         console.log(`${tokens[0]}` + " statement");
@@ -912,6 +912,7 @@ function textToBlock(container) {
           let horRef = document.getElementById(depthBuilder[currDepth]).querySelectorAll(".child-box-container-horizontal");
           console.log(horRef[horRef.length -1]);
           nbRef = horRef[horRef.length -1];
+          blockBuilder(tokens, nbRef);
         }
         else{
         nbCons = newBlock(tokens[0]); // newblock construction based on keyword
@@ -930,72 +931,12 @@ function textToBlock(container) {
           else{
           let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
           parentBlock.append(document.getElementById(nbCons));
-          }
-        }
-        }
-        let j = 1
-        for(j; j < tokens.length; j++){
-          if (tokens[j] == "==" || tokens[j] == "!=" || tokens[j]  == ">=" || tokens[j]  == "<=" || tokens[j]  == "<" || tokens[j]  == ">"){
-            let nbComp = newBlock("comparisonBlock");
-            let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
-            compElems[0].querySelector(".math-comparison-input").value = tokens[j-1];
-            
-            let elDrop = compElems[1].querySelector(".block-dropdown");
-            elDrop.value = tokens[j];
-
-            compElems[2].querySelector(".math-comparison-input").value = tokens[j+1];
-
-            if(tokens[1] == "if"){
-              nbRef.appendChild(document.getElementById(nbComp));
-            }
-            else{
-              let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
-              nbHz.appendChild(document.getElementById(nbComp));
-            }
           
           }
-
-          // constructing and appending text field for range in For loops
-          else if (tokens[j] == "in"){
-            console.log('Token[j] is ' + `${tokens[j]}`);
-
-            let nbComp = newBlock("printText");
-            let elText = document.getElementById(nbComp).querySelector(".text-input");
-            for(let k = 1; k < tokens.length;k++){
-              elText.value += tokens[k] + " ";
-            }
-            elText.value = elText.value.trim();
-
-            if(tokens[1] == "if"){
-
-            }
-            else{
-            let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
-            nbHz.appendChild(document.getElementById(nbComp));
-            }
-          }
-
-          //constructing and appending or/and/not logical operators
-          else if (tokens[j] == "or" || tokens[j] == "||" || tokens[j] == "and" || tokens[j] == "&&" || tokens[j] == "not"){
-            console.log('Token[j] is ' + `${tokens[j]}`);
-
-            let nbComp = newBlock("logicalOps");
-            let elDrop = document.getElementById(nbComp).querySelector(".block-dropdown");
-            elDrop.value = tokens[j];
-
-            if(tokens[1] == "if"){
-
-            }
-            else{
-            let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
-            nbHz.appendChild(document.getElementById(nbComp));
-            }
-          }
         }
-      
-        
-      
-
+        blockBuilder(tokens, nbRef.querySelector(".child-box-container-horizontal"))
+        }
+        let j = 1
 
       }
 
@@ -1030,63 +971,125 @@ function textToBlock(container) {
         }
       }
 
-      if(tokens[1] == "+" || tokens[1] == "-" || tokens[1] == "*" || tokens[1] == "/" || tokens[1] == "%" || tokens[1] == "**" || tokens[1] == "//"){
-        
-      }
-
     }
     
-  }
+  } // END OF TTB()
 
-  function blockBuilder(arr){
+  function blockBuilder(arr, container){
     let oArray = arr;
-    let rmBlock;
-    let rPoint = arr.length;
-    for(let i = oArray.length; i>-1;i--){
+    let rmBlock = [];
+    let retArray = [];
+    let arrCount =0;
+    let block_T;
+    for(let i = 0; i < oArray.length;i++){
       
     
-    if(oArray[i] == "==" || oArray[i] == "!=" || oArray[i]  == ">=" || oArray[i]  == "<=" || oArray[i]  == "<" || oArray[i]  == ">"){
-      console.log(oArray[i-1]);
-      console.log(oArray[i]);
-      console.log(oArray[i+1]);
-      let nbComp = newBlock("comparisonBlock");
+
+      if(oArray[i] == "or" || oArray[i] == "||" || oArray[i] == "and" || oArray[i] == "&&" || oArray[i] == "not"){
+        let nbCons = newBlock("logicalOps"); // newblock construction based on keyword
+        let nbRef = document.getElementById(nbCons); // created reference to newblock
+        rmBlock.push(document.getElementById(nbCons));        
+
+
+        if(oArray[i-1] >= "0" && oArray[i-1] <= "9"){
+          let tempNb = newBlock("mathText");
+          let tempRef = document.getElementById(tempNb);
+          let mathInput = tempRef.querySelector(".math-input") 
+          mathInput.value = oArray[i-1];
+          tempRef.dataset.blockValue = oArray[i-1];
+  
+          retArray[arrCount-1].append(tempRef);
+        }
+        else{
+          let nbComp = newBlock("printText");
+          let elText = document.getElementById(nbComp).querySelector(".text-input");
+          elText.value += oArray[i-1];
+          retArray[arrCount-1].append(tempRef);
+        }
+        
+
+  
+      }
+      else if(i < oArray.length-1){
+      if(oArray[i] == "==" || oArray[i] == "!=" || oArray[i]  == ">=" || oArray[i]  == "<=" || oArray[i]  == "<" || oArray[i]  == ">"){
+        block_T = "comparisonBlock";
+      }
+      else if(oArray[i] == "+" || oArray[i] == "-" || oArray[i]  == "*" || oArray[i]  == "/" || oArray[i]  == "%" || oArray[i]  == "**" || oArray[i]  == "//"){
+        block_T = "mathBlock";
+      }
+      else if(oArray[i] == "="){
+        block_T = "";
+      }
+      else{
+        block_T = "";
+        continue;
+      }
+      let nbComp = newBlock(block_T);
       let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
-      compElems[0].querySelector(".math-comparison-input").value = oArray[i-1];
+
+
+      if(block_T == "comparisonBlock"){
+        console.log("HELLLLLLLOOOOOO");
+        rmBlock.push(document.getElementById(nbComp));
+
+      }
+      if(oArray[i-1] >= "0" && oArray[i-1] <= "9"){
+        let tempNb = newBlock("mathText");
+        let tempRef = document.getElementById(tempNb);
+        let mathInput = tempRef.querySelector(".math-input") 
+        mathInput.value = oArray[i-1];
+        tempRef.dataset.blockValue = oArray[i-1];
+
+        compElems[0].appendChild(tempRef);
+      }
+      else{
+        let nbComp = newBlock("printText");
+        let elText = document.getElementById(nbComp).querySelector(".text-input");
+        elText.value += oArray[i-1];
+        compElems[0].appendChild(elText);
+      }
             
       let elDrop = compElems[1].querySelector(".block-dropdown");
       elDrop.value = oArray[i];
-      if(rPoint >= i){
-        com
-      }
-      else{
-        compElems[2].querySelector(".math-comparison-input").value = oArray[i+1];
+
+      
+      
+      console.log('i: ' + `${i}`);
+
+      retArray[arrCount] = compElems[2];
+      if(retArray.length > 1){
+        retArray[arrCount-1].append(document.getElementById(nbComp));
       }
 
       
-
-      rmBlock = document.getElementById(nbComp);
-      console.log(rmBlock);
-      rPoint = i-1;
+      arrCount++;
+      //rmBlock = document.getElementById(nbComp);
+      console.log(retArray);
+      
 
     }
-    // else if(type == "mathBlock"){
-    //   let nbCons = newBlock(mathBlock); // newblock construction based on keyword
-    //   let nbRef = document.getElementById(nbCons); // created reference to newblock
 
-    // }
-    // else if(type == ""){
-    //   let nbCons = newBlock("varOps"); // newblock construction based on keyword
-    //   let nbRef = document.getElementById(nbCons); // created reference to newblock
+    else if(i==oArray.length-1){
+      if(oArray[i] >= "0" && oArray[i] <= "9"){
+        let nbComp = newBlock("mathText");
+        let nbRef = document.getElementById(nbComp);
+        let mathInput = nbRef.querySelector(".math-input") 
+        mathInput.value = oArray[i];
+        nbRef.dataset.blockValue = oArray[i];
 
-    // }
-    // else if(arr[1] == "or" || arr[1] == "||" || arr[1] == "and" || arr[1] == "&&" || arr[1] == "not"){
-    //   let nbCons = newBlock(logicalOps); // newblock construction based on keyword
-    //   let nbRef = document.getElementById(nbCons); // created reference to newblock
+        retArray[arrCount-1].appendChild(nbRef);
 
-    // }
+      }
     }
 
-  }
+    } // end for loop over array of tokens
+
+    console.log('return array: ');
+    console.log(rmBlock);
+    for(let i = 0; i < rmBlock.length; i++){
+      container.appendChild(rmBlock[i]);
+    }
+  } // end blockBuilder()
 
 
 
