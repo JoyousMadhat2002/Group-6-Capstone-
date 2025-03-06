@@ -798,38 +798,39 @@ function blockToText(pc) {
   let parentContainer = document.getElementById(pc);
   
   
-  let blockChildElements;
+  let blockChildElements = parentContainer.querySelector("*");
+  console.log(blockChildElements);
   // section for top half
 
   // section for bottom half
-  if(pc == "box-container"){
-  blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
-  }
-  else{
-  blockChildElements = parentContainer.querySelector('.child-box-container').children; // Get all children/blocks from the box-container
-  }
-  for (let i = 0; i < blockChildElements.length; i++){
-    let childID = blockChildElements[i].dataset.blockID;
-    console.log(childID);
-    console.log(`cycle: ${i}`);
-    console.log(blockChildElements.length);
+  // if(pc == "box-container"){
+  // blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
+  // }
+  // else{
+  // blockChildElements = parentContainer.querySelector('.child-box-container').children; // Get all children/blocks from the box-container
+  // }
+  // for (let i = 0; i < blockChildElements.length; i++){
+  //   let childID = blockChildElements[i].dataset.blockID;
+  //   console.log(childID);
+  //   console.log(`cycle: ${i}`);
+  //   console.log(blockChildElements.length);
 
-    for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
-      pythontext.value += "    "; // Add spaces for indentation
-    }
+  //   for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
+  //     pythontext.value += "    "; // Add spaces for indentation
+  //   }
 
-    if (childID == "for" ||childID == "if" || childID == "while" ){
+  //   if (childID == "for" ||childID == "if" || childID == "while" ){
       
-      pythontext.value += `${childID} \n`;
-      let cbc = blockChildElements[i].querySelector('.child-box-container');
-      if (cbc.children.length > 0){
-        blockToText(blockChildElements[i].id);
-        console.log(`child elements: ${cbc.children.length} \n`);
-      }
+  //     pythontext.value += `${childID} \n`;
+  //     let cbc = blockChildElements[i].querySelector('.child-box-container');
+  //     if (cbc.children.length > 0){
+  //       blockToText(blockChildElements[i].id);
+  //       console.log(`child elements: ${cbc.children.length} \n`);
+  //     }
       
       
-    }
-  }
+  //   }
+  // }
 } // END OF BBT()
 
 
@@ -940,7 +941,7 @@ function textToBlock(container) {
 
       }
 
-      if(tokens[0] == "else" && tokens.length == 1){
+      else if(tokens[0] == "else" && tokens.length == 1){
         let tempIf = document.getElementById(depthBuilder[currDepth]);
         tempIf.querySelector(".fa-solid").dispatchEvent(clickEvent);
         let elDrops = tempIf.querySelectorAll(".dropdown-item");
@@ -949,10 +950,10 @@ function textToBlock(container) {
 
       }
               
-      }
+      
 
       // building CONTINUE and BREAK
-      if(tokens[0] == "continue" || tokens[0] == "break"){
+      else if(tokens[0] == "continue" || tokens[0] == "break"){
         console.log(tokens[0]);
         let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
         let nbRef = document.getElementById(nbCons); // created reference to newblock
@@ -971,7 +972,25 @@ function textToBlock(container) {
         }
       }
 
+      else{
+        let parentBlock;
+        if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") > "0"){
+          console.log("PARENT IS AN ELSE")
+          let nbRef = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
+          parentBlock = nbRef[nbRef.length-1];
+        }
+        else{
+          parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
+        }
+
+        
+        
+        blockBuilder(tokens, parentBlock);
+        console.log("END OF ALL ELSE");
+      }
+
     }
+  }
     
   } // END OF TTB()
 
@@ -988,7 +1007,8 @@ function textToBlock(container) {
       if(oArray[i] == "or" || oArray[i] == "||" || oArray[i] == "and" || oArray[i] == "&&" || oArray[i] == "not"){
         let nbCons = newBlock("logicalOps"); // newblock construction based on keyword
         let nbRef = document.getElementById(nbCons); // created reference to newblock
-        rmBlock.push(document.getElementById(nbCons));        
+        rmBlock.push(document.getElementById(nbCons));
+        nbRef.querySelector(".block-dropdown").value = oArray[i]  
 
 
         if(oArray[i-1] >= "0" && oArray[i-1] <= "9"){
@@ -1002,13 +1022,41 @@ function textToBlock(container) {
         }
         else{
           let nbComp = newBlock("printText");
-          let elText = document.getElementById(nbComp).querySelector(".text-input");
-          elText.value += oArray[i-1];
-          retArray[arrCount-1].append(tempRef);
+          let elText = document.getElementById(nbComp);
+          elText.querySelector(".text-input").value += oArray[i-1];
+          compElems[0].append(elText);
         }
         
 
   
+      }
+
+      else if(oArray[i] == "="){
+        if(!userVariables.includes(oArray[i-1])){
+          userVariables.push(oArray[i-1]);
+        }
+        
+        console.log("IT EQUALS");
+        let nbComp = newBlock("varOps");
+        let nbRef = document.getElementById(nbComp);
+        let nbHz = nbRef.querySelector(".childBox-Container-Horizontal")
+        console.log('nbHz: ' + `${nbHz}`);
+        console.log('nbHz MCI: ' + `${nbHz.querySelector(".math-comparison-input")}`);
+
+        retArray[arrCount] = nbHz;
+        arrCount++;
+
+        rmBlock.push(nbRef);
+
+      }
+
+      else if(oArray[i] == "in"){
+        let nbComp = newBlock("printText");
+        let elText = document.getElementById(nbComp);
+        elText.querySelector(".text-input").value += oArray[i-1] + " ";
+        elText.querySelector(".text-input").value += oArray[i] + " ";
+        elText.querySelector(".text-input").value += oArray[i+1];
+        rmBlock.push(elText);
       }
       else if(i < oArray.length-1){
       if(oArray[i] == "==" || oArray[i] == "!=" || oArray[i]  == ">=" || oArray[i]  == "<=" || oArray[i]  == "<" || oArray[i]  == ">"){
@@ -1016,9 +1064,6 @@ function textToBlock(container) {
       }
       else if(oArray[i] == "+" || oArray[i] == "-" || oArray[i]  == "*" || oArray[i]  == "/" || oArray[i]  == "%" || oArray[i]  == "**" || oArray[i]  == "//"){
         block_T = "mathBlock";
-      }
-      else if(oArray[i] == "="){
-        block_T = "";
       }
       else{
         block_T = "";
@@ -1044,9 +1089,9 @@ function textToBlock(container) {
       }
       else{
         let nbComp = newBlock("printText");
-        let elText = document.getElementById(nbComp).querySelector(".text-input");
-        elText.value += oArray[i-1];
-        compElems[0].appendChild(elText);
+        let elText = document.getElementById(nbComp);
+        elText.querySelector(".text-input").value += oArray[i-1];
+        compElems[0].append(elText);
       }
             
       let elDrop = compElems[1].querySelector(".block-dropdown");
