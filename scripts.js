@@ -815,8 +815,16 @@ function blockToText(pc) {
       if(curBlock.parentElement.dataset.blockID == "if" || curBlock.parentElement.dataset.blockID == "for" || curBlock.parentElement.dataset.blockID == "when"){
       curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
     }
-    else if(curBlock.parentElement.className == "child-box-container-horizontal" || curBlock.parentElement.className == "child-box-container" || curBlock.parentElement.className == "childBox-Container-Horizontal" || curBlock.parentElement.className == "block-code-result"){
-      curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth) + 1;
+    else if(curBlock.parentElement.className == "child-box-container" || curBlock.parentElement.className == "block-code-result"){
+      if(curBlock.dataset.blockID == "comparisonBlock" || curBlock.className == "block-dropdown" || curBlock.dataset.blockID == "mathText"){
+        curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
+
+      }
+      else{
+        curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth) + 1;
+      }
+      
+      
     }
     else{
       curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
@@ -825,37 +833,72 @@ function blockToText(pc) {
   } // end of depth recalculation
 
   let tDepth = 0;
-  let colonC = 0;
+  // let colonC = 0;
+
   for(let i = 0; i < blockChildElements.length; i++){
     let curBlock = blockChildElements[i];
-    if(tDepth > curBlock.dataset.blockDepth || tDepth < curBlock.dataset.blockDepth && colonC == 1){
-      colonC = 0;
-      pythontext.value += ":\n";
-    }
+    
+    
+    // else{
+    //   tDepth = curBlock.dataset.blockDepth;
+    // }
     
     if(curBlock.dataset.blockID == "if" || curBlock.dataset.blockID == "for" || curBlock.dataset.blockID == "while"){
-      colonC = 1;
+      // colonC = 1;
+      // tDepth += 1;
+      // if(curBlock.dataset.blockDepth != tDepth || curBlock.dataset.blockDepth){
+      //   pythontext.value += ":\n";
+      // }
+      if(tDepth != 0){
+        pythontext.value += ":\n";
+      }
+
       for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
         pythontext.value += "    ";
       }
       pythontext.value += `${curBlock.dataset.blockID}`;
+      tDepth = curBlock.dataset.blockDepth;
     }
     else if(curBlock.innerText == "else if:" || curBlock.innerText == "else:"){
+      pythontext.value += ":\n";
       for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
         pythontext.value += " ";
       }
       if(curBlock.innerText == "else if:"){
         pythontext.value += "else if";
-        colonC = 1;
+        // colonC = 1;
+        tDepth = curBlock.dataset.blockDepth;
       }
       else if( curBlock.innerText == "else:"){
       pythontext.value += `${curBlock.innerText}` + "\n";
     }
    
     }
-  //   if(curBlock.className == "block-dropdown"){
-  //   pythontext.value += `${curBlock.value}`;
-  // }
+  if(curBlock.className == "block-dropdown"){
+    if(curBlock.dataset.blockDepth > tDepth){
+      pythontext.value += ":\n";
+      pythontext.value += "   "
+      tDepth = curBlock.dataset.blockDepth;
+    }
+    pythontext.value += " " + `${curBlock.value}`;
+    
+  }
+
+  if(curBlock.className == "text-input"){
+    if(curBlock.dataset.blockDepth > tDepth){
+      pythontext.value += ":\n";
+      tDepth = curBlock.dataset.blockDepth;
+    }
+    pythontext.value += " " + `${curBlock.value}`;
+  }
+  if(curBlock.className == "math-input"){
+    if(curBlock.dataset.blockDepth > tDepth){
+      pythontext.value += ":\n";
+      tDepth = curBlock.dataset.blockDepth;
+    }
+    pythontext.value += " " + `${curBlock.value}`;
+  }
+  
   
 }
 } // END OF BBT()
@@ -1058,7 +1101,7 @@ function textToBlock(container) {
   
       }
 
-      else if(oArray[i] == "="){
+      else if(oArray[i] == "=" || oArray[i] == "+=" || oArray[i] == "-=" || oArray[i] == "*=" || oArray[i] == "/="){
         if(!userVariables.includes(oArray[i-1])){
           userVariables.push(oArray[i-1]);
         }
@@ -1069,6 +1112,8 @@ function textToBlock(container) {
         let nbHz = nbRef.querySelector(".childBox-Container-Horizontal")
         console.log('nbHz: ' + `${nbHz}`);
         console.log('nbHz MCI: ' + `${nbHz.querySelector(".math-comparison-input")}`);
+        console.log(nbHz.childNodes[1]);
+        nbHz.childNodes[1].value = oArray[i];
 
         retArray[arrCount] = nbHz;
         arrCount++;
