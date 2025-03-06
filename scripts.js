@@ -93,9 +93,9 @@ function blockToText(pc) {
       pythontext.value += `${childID}\n`;
     }
 
-    else {
-      pythontext.value += `${childID}\n`;
-    }
+    // else {
+    //   pythontext.value += `${childID}\n`;
+    // }
     else{
       curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
     }
@@ -175,12 +175,14 @@ function blockToText(pc) {
 
 // Function to convert text programming to block programming
 function textToBlock(container) {
-  let text = pythontext.value;
+  // let text = pythontext.value;
+  let text = editor.state.doc.text;
   if (container == "box-container") {
     document.getElementById(container).innerHTML = ""; // Clear block container
   }
+  console.log(text);
 
-  let lines = text.split("\n"); // Separate lines for parsing
+  let lines = text; // Separate lines for parsing
 
   let depthBuilder = ["box-container"]; // counting preceeding zeros for depth
   
@@ -414,7 +416,6 @@ function textToBlock(container) {
 
 
       if(block_T == "comparisonBlock"){
-        console.log("HELLLLLLLOOOOOO");
         rmBlock.push(document.getElementById(nbComp));
 
       }
@@ -431,10 +432,11 @@ function textToBlock(container) {
         let nbComp = newBlock("printText");
         let elText = document.getElementById(nbComp);
         elText.querySelector(".text-input").value += oArray[i-1];
-        compElems[0].append(elText);
+        console.log("compElems: " + `${compElems}`);
+        //compElems[0].append(elText);
       }
             
-      let elDrop = compElems[1].querySelector(".block-dropdown");
+      let elDrop = compElems[0].querySelector(".block-dropdown");
       elDrop.value = oArray[i];
 
       
@@ -478,15 +480,15 @@ function textToBlock(container) {
 
 
 
-function toggleView() {
-  var x = document.getElementById("python-code-result");
-  var y = document.getElementById("box-container");
-  var toggleButton = document.getElementById("toggleButton");
+// function toggleView() {
+//   var x = document.getElementById("python-code-result");
+//   var y = document.getElementById("box-container");
+//   var toggleButton = document.getElementById("toggleButton");
 
 
-  }
+//   }
 
-}
+
 
 // ==========================
 // 10. Code Execution
