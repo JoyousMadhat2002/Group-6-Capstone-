@@ -851,8 +851,12 @@ function blockToText(pc) {
       else if( curBlock.innerText == "else:"){
       pythontext.value += `${curBlock.innerText}` + "\n";
     }
-    
-  }
+   
+    }
+  //   if(curBlock.className == "block-dropdown"){
+  //   pythontext.value += `${curBlock.value}`;
+  // }
+  
 }
 } // END OF BBT()
 
