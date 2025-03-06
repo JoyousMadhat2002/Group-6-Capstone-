@@ -319,11 +319,13 @@ function attemptLogin() {
       console.log("User logged in:", userCredential.user);
       closeDialogBoxes(); // Close the login dialog
       updateUIAfterLogin(userCredential.user); // Update the UI
+      showNotification("Successfully logged in!", "green");
   })
   .catch((error) => {
       console.error("Login Error:", error.message);
       errorMsg.textContent = error.message;
       errorMsg.classList.remove("hidden");
+      showNotification("Login failed. Please try again.", "red");
   });
 }
 
@@ -347,16 +349,18 @@ function attemptSignup() {
   }
 
   createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-          console.log("User signed up:", userCredential.user);
-          closeDialogBoxes(); // Close signup dialog
-          updateUIAfterLogin(userCredential.user); // Update UI
-      })
-      .catch((error) => {
-          console.error("Signup Error:", error.message);
-          errorMsg.textContent = error.message;
-          errorMsg.classList.remove("hidden");
-      });
+    .then((userCredential) => {
+      console.log("User signed up:", userCredential.user);
+      closeDialogBoxes(); // Close signup dialog
+      updateUIAfterLogin(userCredential.user); // Update UI
+      showNotification("Account created successfully!", "blue");
+    })
+    .catch((error) => {
+      console.error("Signup Error:", error.message);
+      errorMsg.textContent = error.message;
+      errorMsg.classList.remove("hidden");
+      showNotification("Signup failed. Please try again.", "red");
+    });
 }
 
 
@@ -399,10 +403,26 @@ function createLoginDialog() {
   document.getElementById("login-cancel").addEventListener("click", closeDialogBoxes);
   document.getElementById("switch-to-signup").addEventListener("click", createSignupDialog);
 
+  // Add event listeners for pressing "Enter" key
+  document.getElementById("login-email").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      attemptLogin();
+    }
+  });
+
+  document.getElementById("login-password").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      attemptLogin();
+    }
+  });
+
+  // Add event listener to close dialog when clicking outside the dialog box
   loginDialog.addEventListener("click", function (event) {
-      if (event.target === loginDialog) {
-          closeDialogBoxes();
-      }
+    if (event.target === loginDialog) {
+      closeDialogBoxes();
+    }
   });
 }
 
@@ -447,9 +467,9 @@ function createSignupDialog() {
   document.getElementById("switch-to-login").addEventListener("click", createLoginDialog);
 
   signupDialog.addEventListener("click", function (event) {
-      if (event.target === signupDialog) {
-          closeDialogBoxes();
-      }
+    if (event.target === signupDialog) {
+      closeDialogBoxes();
+    }
   });
 }
 
@@ -465,28 +485,75 @@ function updateUIAfterLogin(user) {
   const loginButton = document.getElementById("loginButton");
 
   if (user) {
-      loginButton.textContent = "Log Out";
-      loginButton.removeEventListener("click", openLoginDialog);
-      loginButton.addEventListener("click", logoutUser);
+    loginButton.textContent = "Log Out";
+    loginButton.removeEventListener("click", openLoginDialog);
+    loginButton.addEventListener("click", logoutUser);
   } else {
-      loginButton.textContent = "Log In";
-      loginButton.removeEventListener("click", logoutUser);
-      loginButton.addEventListener("click", openLoginDialog);
+    loginButton.textContent = "Log In";
+    loginButton.removeEventListener("click", logoutUser);
+    loginButton.addEventListener("click", openLoginDialog);
   }
 }
 
 // Function to log out the current user
 function logoutUser() {
   auth.signOut()
-      .then(() => {
-          console.log("User logged out");
-          updateUIAfterLogin(null); // Reset UI
-      })
-      .catch((error) => {
-          console.error("Logout Error:", error.message);
-      });
+    .then(() => {
+      console.log("User logged out");
+      updateUIAfterLogin(null); // Reset UI
+      showNotification("Logged out successfully!", "gray");
+    })
+    .catch((error) => {
+      console.error("Logout Error:", error.message);
+      showNotification("Error logging out. Try again.", "red");
+    });
 }
 
+function showNotification(message, color = "gold") {
+  // Remove existing notification if present
+  const existingNotification = document.getElementById("notification-box");
+  if (existingNotification) existingNotification.remove();
+
+  // Create notification container
+  const notification = document.createElement("div");
+  notification.id = "notification-box";
+  notification.classList.add("notification");
+  notification.style.backgroundColor = color;
+
+  // Create notification text
+  const messageText = document.createElement("span");
+  messageText.textContent = message;
+
+  // Create close button (X)
+  const closeButton = document.createElement("span");
+  closeButton.textContent = "✖";
+  closeButton.classList.add("close-button");
+  closeButton.addEventListener("click", () => fadeOutNotification(notification));
+
+  // Append elements to notification
+  notification.appendChild(messageText);
+  notification.appendChild(closeButton);
+  document.body.appendChild(notification);
+
+  // Timer to fade out and remove notification
+  let removeTimeout = setTimeout(() => {
+    fadeOutNotification(notification);
+  }, 3000); // 3 seconds
+
+  // Pause timer when hovering
+  notification.addEventListener("mouseenter", () => clearTimeout(removeTimeout));
+
+  // Resume timer when mouse leaves
+  notification.addEventListener("mouseleave", () => {
+    removeTimeout = setTimeout(() => fadeOutNotification(notification), 3000);
+  });
+}
+
+// Function to fade out notification before removing it
+function fadeOutNotification(notification) {
+  notification.classList.add("fade-out");
+  setTimeout(() => notification.remove(), 500); // Wait for fade-out transition
+}
 
 
 // ==========================
