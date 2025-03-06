@@ -1,792 +1,49 @@
-import { categoryColors, blockCategory } from "./scripts/blockConfiguration.js";
-import { getBlockDropdownList, getBlockProperties, getCategoryByBlockID, createBlockLabel } from "./scripts/blockProperties.js";
+import { EditorView, basicSetup } from "codemirror";
+import { python } from "@codemirror/lang-python";
 
-let blockCounter = 0;
+import { blockCategory } from "./scripts/blockConfiguration.js";
+import { getBlockProperties } from "./scripts/blockProperties.js";
+import { 
+  createCategoryButtons, 
+  newBlock,
+  clearDropHighlights,
+  toggleView
+} from "./scripts/blockCreation.js";
+
+
+// Import Firebase modules correctly
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyCteFAmh1TjbbQB0hsbBwcbqwK8mofMO4Y",
+    authDomain: "b-coders-database.firebaseapp.com",
+    projectId: "b-coders-database",
+    storageBucket: "b-coders-database.appspot.com",
+    messagingSenderId: "268773123996",
+    appId: "1:268773123996:web:fec77ef63557a9c6b50a59",
+    measurementId: "G-92LTT20BXB"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Wait for Firebase authentication state
+onAuthStateChanged(auth, (user) => {
+    updateUIAfterLogin(user);
+});
+
+
 let dragged = null;
 let highlightedBlock = null;
-let isPythonView = false;
-let userVariables = [];
-let clickEvent = new Event('click');
 
-// ==========================
-// 3. Block Management Functions
-// ==========================
 
-// Function to dynamically create buttons and assign background colors to categories
-function createCategoryButtons(blockCategory) {
-  for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
-    const categoryContainer = document.getElementById(categoryName);
-
-    // Check if the category container exists
-    if (!categoryContainer) {
-      console.warn(`No container found for category: ${categoryName}`);
-      continue;
-    }
-
-    // Apply the background color to the category header
-    const categoryHeader =
-      categoryContainer.parentElement.querySelector(".category-header");
-    const color = categoryColors[categoryName] || "#cccccc";
-
-    // Set default color for Variable Declaration block
-    if (categoryName === "Variable Declaration") {
-      categoryHeader.style.backgroundColor = "#cccccc";
-    } else {
-      categoryHeader.style.backgroundColor = color;
-    }
-
-    // Add the onclick event listener to the category header
-    categoryHeader.addEventListener("click", function () {
-      toggleCategory(categoryName);
-    });
-
-    // Iterate through each element in the category
-    categoryData.elements.forEach((element) => {
-      // Skip creating Variable Operations and Variable Blocks if no variables exist
-      if (
-        (element.blockID === "varOps" || element.blockID === "variableBlock") &&
-        userVariables.length === 0
-      ) {
-        return; // Skip this element
-      }
-
-      const button = document.createElement("button");
-      button.id = `${element.blockID}Button`;
-      button.name = element.name;
-      button.innerText = `${element.name}`;
-
-      // Apply category color to the button
-      // Set default color for Variable Declaration block buttons
-      if (element.blockID === "varDeclOps") {
-        button.style.backgroundColor = "#cccccc";
-      } else {
-        button.style.backgroundColor = color;
-      }
-
-      // Add the description to the button's title attribute
-      button.title = element.description; // Tooltip text showing description
-
-      // Add an onclick handler to call newBlock
-      button.onclick = function () {
-        // Call the newBlock function with the appropriate parameters
-        newBlock(element.blockID);
-      };
-
-      // Append the button to the category container
-      categoryContainer.appendChild(button);
-    });
-  }
-}
 // Call the function to create the buttons
 createCategoryButtons(blockCategory);
-
-function refreshCategoryButtons() {
-  // Clear all category containers
-  for (const categoryName of Object.keys(blockCategory)) {
-    const categoryContainer = document.getElementById(categoryName);
-    if (categoryContainer) {
-      categoryContainer.innerHTML = ""; // Clear the container
-    }
-  }
-
-  // Recreate the buttons
-  createCategoryButtons(blockCategory);
-}
-
-function newBlock(blockID) {
-  if (isPythonView) {
-    console.warn("Cannot create a new block in Python view.");
-    return; // Exit the function early
-  }
-
-  const container = document.getElementById("box-container");
-  const newBlock = document.createElement("div");
-  newBlock.classList.add("box");
-  newBlock.id = "box_" + ++blockCounter; // Increment block counter and set ID
-  newBlock.dataset.blockID = blockID; // Store the blockID in the dataset
-
-  // Calculate and set the depth
-  const parentDepth = Number(container.getAttribute("data-blockDepth")) || 0;
-  newBlock.dataset.blockDepth = parentDepth + 1; // Parent depth + 1 for the new block
-
-  // Set block properties
-  const { blockCategoryColor, childElement } = getBlockProperties(blockID);
-  newBlock.style.backgroundColor = blockCategoryColor; // Apply the category color
-
-  createBlockLabel(newBlock, blockID);
-
-  if (blockID === "mathBlock" || blockID === "comparisonBlock") {
-    handleMathOrComparisonBlock(newBlock, blockID); // Pass blockID here
-  } else if (["if", "while", "for"].includes(blockID)) {
-    handleControlBlock(newBlock, blockID);
-  } else if (blockID === "mathText") {
-    createInputBlock(newBlock, "0", "math-input", "blockValue", blockID);
-  } else if (blockID === "printText") {
-    createInputBlock(
-      newBlock,
-      "Enter Text",
-      "text-input",
-      "blockValue",
-      blockID
-    );
-  } else if (blockID === "varDeclOps") {
-    handleVariableDeclarationBlock(newBlock); // Handle variable declaration block
-  } else if (blockID === "varOps") {
-    handleVariableOperationBlock(newBlock); // Handle variable operation block
-  } else if (blockID === "variableBlock") {
-    handleVariableBlock(newBlock); // Handle variable block
-  } else if (
-    blockID === "arithmeticOps" ||
-    blockID === "comparisonOps" ||
-    blockID === "logicalOps"
-  ) {
-    handleOperatorBlock(newBlock, blockID); // Handle operator blocks
-  } else {
-    handleDefaultBlock(newBlock, blockID); // Handle default block
-  }
-
-  if (blockID !== "varDeclOps") {
-    appendChildElement(newBlock, childElement);
-    container.appendChild(newBlock);
-    addBlockInteractivity(newBlock);
-    updateLineNumbers();
-  }
-  return newBlock.id;
-}
-
-// Function to remove a block by its ID
-function removeBlock(blockId) {
-  const block = document.getElementById(blockId);
-  if (block) {
-    block.remove(); // Remove the block from the DOM
-    updateLineNumbers(); // Update line numbers after removal
-  }
-}
-
-// Function to update the line numbers based on the number of blocks
-function updateLineNumbers() {
-  const codeLinesContainer = document.querySelector(".code-lines");
-  const blocks = document.querySelectorAll("#box-container .box");
-
-  // Clear existing line numbers
-  codeLinesContainer.innerHTML = "";
-
-  // Create new line numbers based on the number of blocks
-  const totalLines = blocks.length + 1; // +1 for the extra empty line at the bottom
-  for (let i = 1; i <= totalLines; i++) {
-    const lineNumber = document.createElement("div");
-    lineNumber.classList.add("code-line");
-    if (i === totalLines) {
-      // This is the extra empty line at the bottom
-      lineNumber.textContent = i;
-    } else {
-      lineNumber.textContent = i; // Line numbers start from 1
-    }
-    codeLinesContainer.appendChild(lineNumber);
-  }
-}
-
-// ==========================
-// 4. Handling Different Block Types
-// ==========================
-
-function handleDefaultBlock(block, blockID) {
-  const blockName = blockCategory[getCategoryByBlockID(blockID)].elements.find(
-    (element) => element.blockID === blockID
-  ).name;
-
-  const blockLabel = document.createElement("span");
-  blockLabel.textContent = `${blockName}`;
-  block.appendChild(blockLabel);
-}
-
-function handleOperatorBlock(block, blockID) {
-  const blockName = blockCategory[getCategoryByBlockID(blockID)].elements.find(
-    (element) => element.blockID === blockID
-  ).name;
-
-  const blockLabel = document.createElement("span");
-  blockLabel.textContent = `${blockName}`;
-  block.appendChild(blockLabel);
-
-  // Create and append the dropdown list
-  const dropdown = createOperatorDropdown(blockID);
-  block.appendChild(dropdown);
-}
-
-function handleMathOrComparisonBlock(block, blockID) {
-  const horizontalContainers = [1, 2, 3].map(() => {
-    const container = document.createElement("div");
-    container.classList.add("childBox-Container-Horizontal");
-    return container;
-  });
-
-  // Input 1
-  const input1 = createInputField(
-    "0",
-    "math-comparison-input",
-    "block-1-value",
-    blockID
-  );
-  horizontalContainers[0].appendChild(input1);
-
-  // Operator Dropdown
-  const operatorDropdown = createOperatorDropdown(blockID); // Pass blockID here
-  operatorDropdown.dataset.dropdownType = "operator";
-  horizontalContainers[1].appendChild(operatorDropdown);
-
-  // Input 2
-  const input2 = createInputField(
-    "0",
-    "math-comparison-input",
-    "block-2-value",
-    blockID
-  );
-  horizontalContainers[2].appendChild(input2);
-
-  // Append containers to the block
-  horizontalContainers.forEach((container) => block.appendChild(container));
-
-  // Update data attributes
-  operatorDropdown.addEventListener("change", function () {
-    block.dataset.blockOperator = operatorDropdown.value;
-  });
-}
-
-function handleControlBlock(block, blockID) {
-  if (blockID === "if") {
-    handleIfBlock(block, blockID);
-  } else if (blockID === "for" || blockID === "while") {
-    handleLoopBlocks(block, blockID);
-  }
-}
-
-function handleIfBlock(block, blockID) {
-  const topChildBox = createChildBoxHorizontal(block.id, blockID);
-  const topLabel = document.createElement("span");
-  topLabel.classList.add("block-top-label");
-  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)}:`;
-  block.appendChild(topLabel);
-  block.appendChild(topChildBox);
-  addBlockInteractivity(block);
-  updateLineNumbers();
-}
-
-function handleLoopBlocks(block, blockID) {
-  const topChildBox = createChildBoxHorizontal(block.id, blockID);
-  const topLabel = document.createElement("span");
-  topLabel.classList.add("block-top-label");
-  topLabel.textContent = `${blockID.charAt(0).toUpperCase() + blockID.slice(1)}:`;
-  block.appendChild(topLabel);
-  block.appendChild(topChildBox);
-
-  if (blockID === "for") {
-    const extraTopChildBox = createChildBoxHorizontal(block.id, blockID);
-    const extraTopLabel = document.createElement("span");
-    extraTopLabel.classList.add("block-top-label");
-    extraTopLabel.textContent = "Range:";
-    block.appendChild(extraTopLabel);
-    block.appendChild(extraTopChildBox);
-  }
-}
-
-function handleVariableOperationBlock(block) {
-  const container = document.createElement("div");
-  container.classList.add("childBox-Container-Horizontal");
-
-  // Variable Dropdown
-  const variableDropdown = document.createElement("select");
-  variableDropdown.classList.add("block-dropdown");
-  variableDropdown.setAttribute("data-type", "variable"); // Add this line
-  userVariables.forEach((varName) => {
-    const option = document.createElement("option");
-    option.value = varName;
-    option.textContent = varName;
-    variableDropdown.appendChild(option);
-  });
-
-  variableDropdown.addEventListener("change", function () {
-    block.dataset.block1Value = variableDropdown.value;
-  });
-
-  container.appendChild(variableDropdown);
-
-  // Operator Dropdown
-  const operatorDropdown = createOperatorDropdown("varOps");
-  operatorDropdown.dataset.dropdownType = "operator";
-  container.appendChild(operatorDropdown);
-
-  // Value Input
-  const valueInput = createInputField(
-    "0",
-    "math-comparison-input",
-    "block2Value",
-    "varOps"
-  );
-  container.appendChild(valueInput);
-
-  block.appendChild(container);
-
-  // Update data attributes
-  operatorDropdown.addEventListener("change", function () {
-    block.dataset.blockOperator = operatorDropdown.value;
-  });
-
-  valueInput.addEventListener("input", function () {
-    block.dataset.block2Value = valueInput.value.trim();
-  });
-}
-
-function handleVariableBlock(block) {
-  const container = document.createElement("div");
-  container.classList.add("childBox-Container-Horizontal");
-
-  // Variable Dropdown
-  const variableDropdown = document.createElement("select");
-  variableDropdown.classList.add("block-dropdown");
-  variableDropdown.setAttribute("data-type", "variable"); // Add this line
-  userVariables.forEach((varName) => {
-    const option = document.createElement("option");
-    option.value = varName;
-    option.textContent = varName;
-    variableDropdown.appendChild(option);
-  });
-
-  variableDropdown.value = "---"; // Default value
-  variableDropdown.addEventListener("change", function () {
-    block.dataset.blockValue = variableDropdown.value;
-  });
-
-  container.appendChild(variableDropdown);
-  block.appendChild(container);
-}
-
-// ==========================
-// 5. Create Functions
-// ==========================
-
-function createInputField(placeholder, className, dataKey, blockID) {
-  const input = document.createElement("input");
-  input.type = "text";
-  input.placeholder = placeholder;
-  input.classList.add(className);
-
-  input.addEventListener("input", function () {
-    const block = input.closest(".box");
-    const value = input.value.trim();
-
-    // Validate input based on block type
-    if (blockID === "mathText" || blockID === "mathBlock") {
-      // Only allow numbers for Math blocks
-      if (/^-?\d*\.?\d*$/.test(value)) {
-        block.dataset[dataKey] = value;
-      } else {
-        input.value = block.dataset[dataKey] || "";
-      }
-    } else {
-      // Allow any input for non-Math blocks
-      block.dataset[dataKey] = value;
-    }
-  });
-
-  return input;
-}
-
-function createOperatorDropdown(blockID) {
-  const dropdown = document.createElement("select");
-  dropdown.classList.add("block-dropdown");
-
-  const operatorOptions = getBlockDropdownList(blockID); // Fetch operators based on blockID
-  operatorOptions.forEach((op) => {
-    const option = document.createElement("option");
-    option.value = op;
-    option.textContent = op;
-    dropdown.appendChild(option);
-  });
-
-  dropdown.value = "---"; // Default value
-  dropdown.addEventListener("change", function () {
-    const block = dropdown.closest(".box");
-    block.dataset.blockOperator = dropdown.value;
-  });
-
-  return dropdown;
-}
-
-function createBlockTypeDropdown(blockTypes) {
-  const dropdown = document.createElement("select");
-  dropdown.classList.add("block-dropdown");
-
-  blockTypes.forEach((type) => {
-    const option = document.createElement("option");
-    option.value = type;
-    option.textContent = type;
-    dropdown.appendChild(option);
-  });
-
-  dropdown.value = blockTypes[0];
-  dropdown.addEventListener("change", function () {
-    const block = dropdown.closest(".box");
-    block.dataset.selected = dropdown.value; // Add data-selected attribute
-  });
-
-  return dropdown;
-}
-
-function createChildBoxHorizontal(parentID, parentBlockID) {
-  const childBox = document.createElement("div");
-  childBox.classList.add("child-box-container-horizontal");
-  childBox.dataset.parentID = parentID;
-  childBox.dataset.parentBlockID = parentBlockID;
-  return childBox;
-}
-
-function createInputBlock(block, placeholder, className, dataKey, blockID) {
-  const inputField = createInputField(placeholder, className, dataKey, blockID);
-  block.appendChild(inputField);
-}
-
-// ==========================
-// 6. Child Block Functions
-// ==========================
-
-function addDepthInfo(block) {
-  const depthInfo = document.createElement("span");
-  depthInfo.classList.add("block-depth-info");
-  depthInfo.textContent = ` Depth: ${block.dataset.blockDepth}`;
-  block.appendChild(depthInfo);
-}
-
-function appendChildElement(block, childElement) {
-  if (childElement === "block") {
-    const childBox = document.createElement("div");
-    childBox.classList.add("child-box-container");
-    childBox.dataset.parentID = block.id;
-    childBox.dataset.parentBlockID = block.dataset.blockID;
-
-
-    childBox.dataset.blockDepth = parseInt(block.dataset.blockDepth) + 1;
-
-    // Set initial if-elif-else-id to 0 for the first block
-    if (!block.dataset.ifElifElseId) {
-      block.dataset.ifElifElseId = 0;
-    }
-
-    childBox.dataset.ifElifElseId = block.dataset.ifElifElseId;
-
-    block.appendChild(childBox);
-
-    if (block.dataset.blockID === "if") {
-      // Add the elif-else section with the plusIcon
-      const elifElseDiv = document.createElement("div");
-      elifElseDiv.classList.add("elif-else");
-      const plusIcon = document.createElement("i");
-      plusIcon.classList.add("fa-solid", "fa-plus");
-      elifElseDiv.appendChild(plusIcon);
-      block.appendChild(elifElseDiv);
-
-      // Call the function to set up the dropdown menu and its functionality
-      setupDropdownMenu(plusIcon, block, elifElseDiv);
-    }
-  }
-}
-
-function setupDropdownMenu(plusIcon, block, elifElseDiv) {
-  // Create the dropdown menu
-  const dropdown = document.createElement("div");
-  dropdown.classList.add("dropdown-menu");
-  dropdown.style.display = "none"; // Hide the dropdown by default
-
-  // Create the menu items
-  const elseIfOption = document.createElement("div");
-  elseIfOption.textContent = "else if";
-  elseIfOption.classList.add("dropdown-item");
-  dropdown.appendChild(elseIfOption);
-
-  const elseOption = document.createElement("div");
-  elseOption.textContent = "else";
-  elseOption.classList.add("dropdown-item");
-  dropdown.appendChild(elseOption);
-
-  // Add dropdown to the block
-  block.appendChild(dropdown);
-
-  // Toggle dropdown visibility when the plus icon is clicked
-  plusIcon.addEventListener("click", function () {
-    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
-  });
-
-  // Add click events to the options
-  elseIfOption.addEventListener("click", function () {
-    // Insert the text 'else if:' in a span
-    const elseIfSpan = document.createElement("span");
-    elseIfSpan.textContent = "else if:";
-    block.appendChild(elseIfSpan);
-
-    // Remove the previous plus sign before adding a new child block
-    elifElseDiv.removeChild(plusIcon); // Remove the plus sign
-
-    // Increment the if-elif-else-id and create the horizontal child box
-    block.dataset.ifElifElseId = parseInt(block.dataset.ifElifElseId) + 1;
-
-    // Call createChildBoxHorizontal before the normal child box
-    const horizontalChildBox = createChildBoxHorizontal(block.id, block.dataset.blockID);
-    block.appendChild(horizontalChildBox);
-
-    // Call appendChildElement again to add a child block
-    appendChildElement(block, "block");
-
-    // Close dropdown
-    dropdown.style.display = "none";
-  });
-
-  elseOption.addEventListener("click", function () {
-    // Insert the text 'else:' in a span
-    const elseSpan = document.createElement("span");
-    elseSpan.textContent = "else:";
-    block.appendChild(elseSpan);
-
-    // Remove the previous plus sign before adding a new child block
-    elifElseDiv.removeChild(plusIcon); // Remove the plus sign
-
-    // Increment the if-elif-else-id for else block
-    block.dataset.ifElifElseId = parseInt(block.dataset.ifElifElseId) + 1;
-
-    // Call appendChildElement again to add a child block
-    appendChildElement(block, "block");
-
-    // Close dropdown
-    dropdown.style.display = "none";
-  });
-}
-
-
-
-
-
-// ==========================
-// 7. Update Functions
-// ==========================
-
-function updateVariableAttributes(block, selectedVariable) {
-  const existingAttributes = block.querySelectorAll(".variable-attribute");
-  existingAttributes.forEach((attr) => attr.remove());
-
-  updateVariableValueInBlock(block, selectedVariable);
-}
-
-function updateOperatorAttributes(block, selectedOperator) {
-  const operatorLabel = document.createElement("span");
-  operatorLabel.classList.add("operator-attribute");
-  operatorLabel.textContent = `Operator: ${selectedOperator}`;
-
-  const existingOperatorLabel = block.querySelector(".operator-attribute");
-  if (existingOperatorLabel) {
-    existingOperatorLabel.remove();
-  }
-
-  block.appendChild(operatorLabel);
-}
-
-// May not be needed anymore (look at calculateDepth() function)
-function updateDepth(block, targetBlock, depthChange) {
-  const currentDepth = parseInt(block.dataset.blockDepth) || 0;
-  const newDepth = currentDepth + depthChange;
-  block.dataset.blockDepth = newDepth; // Update depth attribute
-
-  // Update depth display in the block's label
-  const depthInfo = block.querySelector(".block-depth-info");
-  if (depthInfo) {
-    depthInfo.textContent = ` Depth: ${newDepth}`;
-  }
-}
-
-// ==========================
-// 8. UI and Interactivity
-// ==========================
-
-// Function to toggle between showing and hiding block categories
-function toggleCategory(categoryId) {
-  const allCategories = document.querySelectorAll(".category-blocks");
-  allCategories.forEach((category) => {
-    if (category.id === categoryId) {
-      category.classList.toggle("hidden"); // Toggle visibility of the clicked category
-    } else {
-      category.classList.add("hidden"); // Hide all other categories
-    }
-  });
-}
-
-// Function to add interactivity to blocks
-function addBlockInteractivity(block) {
-  block.draggable = true;
-  block.addEventListener("dragstart", dragStart);
-  block.addEventListener("dragover", dragOver);
-  block.addEventListener("drop", drop);
-  block.addEventListener("click", selectBlock);
-}
-
-// Event handler for starting a drag event on a block
-function dragStart(event) {
-  dragged = event.target.closest(".box");
-  console.log("dragStart: ", dragged);
-  if (dragged) {
-    event.dataTransfer.effectAllowed = "move"; // Allow movement
-  }
-}
-
-// Event handler for dragging over a block
-function dragOver(event) {
-  event.preventDefault();
-
-  const targetBlock = event.target.closest(".box");
-  if (!targetBlock || targetBlock === dragged) return;
-
-  clearDropHighlights(); // Clear previous highlights
-
-  const childContainers = targetBlock.querySelectorAll(
-      ".child-box-container, .child-box-container-horizontal"
-  );
-
-  let closestContainer = null;
-  let smallestDistance = Infinity;
-
-  childContainers.forEach((container) => {
-      if (dragged.contains(container)) return; // Prevent dragging into its own child container
-
-      const containerRect = container.getBoundingClientRect();
-      const distance = Math.abs(event.clientY - containerRect.top);
-
-      // Find the closest container based on distance (even if it's not empty)
-      if (distance < smallestDistance) {
-          smallestDistance = distance;
-          closestContainer = container;
-      }
-  });
-
-  if (closestContainer) {
-      closestContainer.classList.add("highlight-inside");
-  }
-}
-
-
-
-// Event handler for handling the drop action
-function drop(event) {
-  event.preventDefault();
-
-  if (!dragged) return;
-
-  const highlightedContainer = document.querySelector(".highlight-inside");
-  if (highlightedContainer) {
-      highlightedContainer.appendChild(dragged); // Drop into the highlighted container
-  } else {
-      const targetBlock = event.target.closest(".box");
-      if (!targetBlock || targetBlock === dragged) return;
-
-      if (targetBlock.classList.contains("drop-above")) {
-          targetBlock.parentNode.insertBefore(dragged, targetBlock);
-      } else if (targetBlock.classList.contains("drop-below")) {
-          targetBlock.parentNode.insertBefore(dragged, targetBlock.nextSibling);
-      }
-  }
-
-  // Recalculate and update the block's depth
-  const newDepth = calculateDepth(dragged);
-  dragged.dataset.blockDepth = newDepth;
-
-  // Update the depth for all nested blocks
-  updateNestedDepths(dragged);
-
-  //test function to show depth (remove later)
-  //showDepth(dragged);
-
-  clearDropHighlights();
-  dragged = null;
-}
-
-
-//test function to show depth
-function showDepth(block) {
-  const depthLabel = block.querySelector(".block-depth-info");
-  if (!depthLabel) {
-      const label = document.createElement("span");
-      label.classList.add("block-depth-info");
-      block.appendChild(label);
-  }
-  block.querySelector(".block-depth-info").textContent = `Depth: ${block.dataset.blockDepth}`;
-}
-
-// Function to update the depth of all nested blocks
-function updateNestedDepths(block) {
-  const newDepth = calculateDepth(block);
-  block.dataset.blockDepth = newDepth;
-
-  const childBlocks = block.querySelectorAll(".box");
-  childBlocks.forEach((childBlock) => {
-      updateNestedDepths(childBlock);  // Recursively update depth for each child block
-  });
-}
-
-// Event handler for ending a drag event
-function dragEnd() {
-  clearDropHighlights(); // Clear all highlights
-  dragged = null; // Reset dragged block
-}
-
-// Function to clear all drop highlights
-function clearDropHighlights() {
-  document.querySelectorAll(".drop-above, .drop-below, .highlight-inside")
-      .forEach((block) => {
-          block.classList.remove("drop-above", "drop-below", "highlight-inside");
-      });
-}
-
-// Function to calculate the depth of a block
-function calculateDepth(block) {
-  let depth = 0;
-  let parent = block.closest(".child-box-container, .child-box-container-horizontal");
-
-  while (parent) {
-      depth++;
-      parent = parent.parentElement.closest(".child-box-container, .child-box-container-horizontal");
-  }
-
-  return depth;
-}
-
-// Event handler for selecting a block when clicked
-function selectBlock(event) {
-  const targetBlock = event.target.closest(".box");
-
-  if (!targetBlock) return; // Exit if no block is found
-
-  // Clear previous selection if any
-  if (highlightedBlock) {
-    highlightedBlock.classList.remove("selected");
-  }
-
-  // Highlight the clicked block
-  highlightedBlock = targetBlock;
-  highlightedBlock.classList.add("selected");
-
-  event.stopPropagation(); // Prevent click event from propagating
-}
-
-function updateUserVariableDropdowns() {
-  const dropdowns = document.querySelectorAll(
-    ".block-dropdown[data-type='variable']"
-  );
-  dropdowns.forEach((dropdown) => {
-    dropdown.innerHTML = ""; // Clear existing options
-    userVariables.forEach((varName) => {
-      const option = document.createElement("option");
-      option.value = varName;
-      option.textContent = varName;
-      dropdown.appendChild(option);
-    });
-  });
-}
 
 // ==========================
 // 9. Python Code Conversion
@@ -794,8 +51,9 @@ function updateUserVariableDropdowns() {
 
 function blockToText(pc) {
   //pythontext.value = ""; // Clear the text area
-  
+
   let parentContainer = document.getElementById(pc);
+
   
   
   let blockChildElements = parentContainer.querySelectorAll("*");
@@ -814,17 +72,29 @@ function blockToText(pc) {
     
       if(curBlock.parentElement.dataset.blockID == "if" || curBlock.parentElement.dataset.blockID == "for" || curBlock.parentElement.dataset.blockID == "when"){
       curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
+
     }
     else if(curBlock.parentElement.className == "child-box-container" || curBlock.parentElement.className == "block-code-result"){
       if(curBlock.dataset.blockID == "comparisonBlock" || curBlock.className == "block-dropdown" || curBlock.dataset.blockID == "mathText"){
         curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
 
+
       }
       else{
         curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth) + 1;
+
       }
-      
-      
+
+
+    }
+
+    //logic for adding continue and break to text block
+    else if (childID == "continue" || childID == "break") {
+      pythontext.value += `${childID}\n`;
+    }
+
+    else {
+      pythontext.value += `${childID}\n`;
     }
     else{
       curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
@@ -903,16 +173,15 @@ function blockToText(pc) {
 }
 } // END OF BBT()
 
-
 // Function to convert text programming to block programming
 function textToBlock(container) {
   let text = pythontext.value;
-  if(container == "box-container"){
+  if (container == "box-container") {
     document.getElementById(container).innerHTML = ""; // Clear block container
   }
 
   let lines = text.split("\n"); // Separate lines for parsing
- 
+
   let depthBuilder = ["box-container"]; // counting preceeding zeros for depth
   
   for (let i = 0; i < lines.length; i++) {
@@ -923,17 +192,17 @@ function textToBlock(container) {
       if(lines[i][j] ==  " "){
         linecount++;
       }
-      else{
+      else {
         break;
       }
     }
-  
+
 
     // setting currDepth based on number of indentations
-    
     if (linecount < 1){
       console.log(linecount);
       console.log(currDepth);
+
       currDepth = 1;
       
       
@@ -958,8 +227,7 @@ function textToBlock(container) {
       
       if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for" || tokens[1] == "if"){
         
-        
-        
+
         console.log(`${tokens[0]}` + " statement");
         let nbCons;
         let nbRef;
@@ -1215,27 +483,30 @@ function toggleView() {
   var y = document.getElementById("box-container");
   var toggleButton = document.getElementById("toggleButton");
 
-  if (x.style.display === "block") {
-    x.style.display = "none";
-    y.style.display = "block";
-    toggleButton.textContent = "Python";
-    isPythonView = false; // Switch to Block view
-  } else {
-    x.style.display = "block";
-    y.style.display = "none";
-    toggleButton.textContent = "Block";
-    isPythonView = true; // Switch to Python view
+
   }
+
 }
 
 // ==========================
 // 10. Code Execution
 // ==========================
 
+const editor = new EditorView({
+  parent: document.getElementById("pythontext"),
+  extensions: [basicSetup, python()],
+});
+
+function getCode() {
+  return editor.state.doc.toString();
+}
+
+document.getElementById("run-code-btn").addEventListener("click", runCode);
+
 // Function to run the Python code
 function runCode() {
   console.log("test: code running");
-  var prog = document.getElementById("pythontext").value; // Python code input
+  var prog = getCode();
   var mypre = document.getElementById("output"); // Output area
   mypre.innerHTML = ""; // Clear previous output
 
@@ -1251,7 +522,7 @@ t = turtle.Turtle()
 t.shape("turtle")
 t.color("green")
 t.setheading(90)
-  `;
+`;
 
   var cleanedProg = prog.trimStart();
   console.log("user code:", prog);
@@ -1261,14 +532,9 @@ t.setheading(90)
   var myPromise = Sk.misceval.asyncToPromise(function () {
     return Sk.importMainWithBody("<stdin>", false, fullProg, true);
   });
-  myPromise.then(
-    function (mod) {
-      console.log("success");
-    },
-    function (err) {
-      console.log(err.toString());
-    });
 }
+
+window.runCode = runCode;
 
 // Function to handle the output of the Python code
 function outf(text) {
@@ -1286,16 +552,6 @@ function builtinRead(x) {
   return Sk.builtinFiles["files"][x];
 }
 
-function updateVariableValueInBlock(block, selectedVariable) {
-  const existingValueAttribute = block.querySelector(
-    ".variable-value-attribute"
-  );
-  if (existingValueAttribute) {
-    existingValueAttribute.remove();
-  }
-}
-
-
 // ==========================
 // 11. Event Listeners
 // ==========================
@@ -1307,7 +563,6 @@ function setupKeydownListener() {
     }
   });
 }
-
 
 function setupClearHighlightsOnClickListener() {
   // event listener for clearing highlights when clicking 
@@ -1323,19 +578,16 @@ function setupDOMContentLoadedListener() {
   });
 }
 
+// Function to set up the "Log In" button listener
 function setupLoginButtonListener() {
   const loginButton = document.getElementById("loginButton");
-  loginButton.addEventListener("click", function () {
-    const username = prompt("Enter Username:");
-    const password = prompt("Enter Password:");
 
-    if (username === "user" && password === "password") {
-      localStorage.setItem("loggedIn", "true");
-      alert("Login successful!");
-    } else {
-      alert("Invalid credentials");
-    }
-  });
+  if (!loginButton) {
+      console.error("Error: 'Log In' button not found.");
+      return;
+  }
+
+  loginButton.addEventListener("click", openLoginDialog);
 }
 
 function setupSaveButtonListener() {
@@ -1348,18 +600,276 @@ function setupSaveButtonListener() {
 }
 
 function setupButtonFunctionalityListeners() {
-  document.querySelector('[name="btt"]').addEventListener("click", function(){
+  document.querySelector('[name="btt"]').addEventListener("click", function () {
     pythontext.value = ""; // Clear the text area
     blockToText("box-container");
   });
-  document.querySelector('[name="ttb"]').addEventListener("click", function(){
+  document.querySelector('[name="ttb"]').addEventListener("click", function () {
     textToBlock("box-container");
   });
   document.getElementById("toggleButton").addEventListener("click", toggleView);
 }
 
 // ==========================
-// 12. Additional Features (Resizing Columns, Dragging, etc.)
+// 12. Login and Logout
+// ==========================
+
+// Function to attempt user login
+function attemptLogin() {
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+  const errorMsg = document.getElementById("login-error");
+
+  if (!email || !password) {
+      errorMsg.textContent = "Please enter email and password.";
+      errorMsg.classList.remove("hidden");
+      return;
+  }
+
+  signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+      console.log("User logged in:", userCredential.user);
+      closeDialogBoxes(); // Close the login dialog
+      updateUIAfterLogin(userCredential.user); // Update the UI
+      showNotification("Successfully logged in!", "green");
+  })
+  .catch((error) => {
+      console.error("Login Error:", error.message);
+      errorMsg.textContent = error.message;
+      errorMsg.classList.remove("hidden");
+      showNotification("Login failed. Please try again.", "red");
+  });
+}
+
+// Function to open the login dialog
+function openLoginDialog() {
+  if (!document.getElementById("login-dialog")) {
+      createLoginDialog();
+  }
+}
+
+// Function to attempt user signup
+function attemptSignup() {
+  const email = document.getElementById("signup-email").value;
+  const password = document.getElementById("signup-password").value;
+  const errorMsg = document.getElementById("signup-error");
+
+  if (!email || !password) {
+      errorMsg.textContent = "Please enter an email and password.";
+      errorMsg.classList.remove("hidden");
+      return;
+  }
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      console.log("User signed up:", userCredential.user);
+      closeDialogBoxes(); // Close signup dialog
+      updateUIAfterLogin(userCredential.user); // Update UI
+      showNotification("Account created successfully!", "blue");
+    })
+    .catch((error) => {
+      console.error("Signup Error:", error.message);
+      errorMsg.textContent = error.message;
+      errorMsg.classList.remove("hidden");
+      showNotification("Signup failed. Please try again.", "red");
+    });
+}
+
+
+// Function to create the login dialog
+function createLoginDialog() {
+  closeDialogBoxes(); // Close any existing login dialog
+  
+  const loginDialog = document.createElement("div");
+  loginDialog.id = "login-dialog";
+  loginDialog.classList.add("dialog-container");
+
+  // Create the login dialog content (makes HTML file cleaner by not having to include this in the main HTML file)
+  loginDialog.innerHTML = `
+      <div class="dialog-box">
+          <h2>Log In</h2>
+          <label for="login-email">Email:</label>
+          <input type="email" id="login-email" placeholder="Enter your email">
+
+          <label for="login-password">Password:</label>
+          <input type="password" id="login-password" placeholder="Enter your password">
+
+          <p id="login-error" class="error-message hidden"></p>
+
+          <p class="switch-auth">
+            <span>Don't have an account?</span><br>
+            <span id="switch-to-signup" class="auth-link">Click here to make an account!</span>
+          </p>
+
+          <div class="dialog-buttons">
+              <button id="login-submit">Log In</button>
+              <button id="login-cancel">Cancel</button>
+          </div>
+      </div>
+  `;
+
+  document.body.appendChild(loginDialog);
+
+  // Add event listeners
+  document.getElementById("login-submit").addEventListener("click", attemptLogin);
+  document.getElementById("login-cancel").addEventListener("click", closeDialogBoxes);
+  document.getElementById("switch-to-signup").addEventListener("click", createSignupDialog);
+
+  // Add event listeners for pressing "Enter" key
+  document.getElementById("login-email").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      attemptLogin();
+    }
+  });
+
+  document.getElementById("login-password").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      attemptLogin();
+    }
+  });
+
+  // Add event listener to close dialog when clicking outside the dialog box
+  loginDialog.addEventListener("click", function (event) {
+    if (event.target === loginDialog) {
+      closeDialogBoxes();
+    }
+  });
+}
+
+// Function to create Signup dialog
+function createSignupDialog() {
+  closeDialogBoxes(); // Close any existing login dialog
+
+  const loginDialog = document.getElementById("login-dialog");
+  if (loginDialog) loginDialog.remove(); // Remove login form
+
+  const signupDialog = document.createElement("div");
+  signupDialog.id = "login-dialog";
+  signupDialog.classList.add("dialog-container");
+
+  signupDialog.innerHTML = `
+      <div class="dialog-box" id="signup-box">
+        <h2>Create an Account</h2>
+        <label for="signup-email">Email:</label>
+        <input type="email" id="signup-email" placeholder="Enter your email">
+
+        <label for="signup-password">Password:</label>
+        <input type="password" id="signup-password" placeholder="Enter your password">
+
+        <p id="signup-error" class="error-message hidden"></p>
+
+        <p class="switch-auth">Already have an account? 
+            <span id="switch-to-login" class="auth-link">Click here to log in</span>
+        </p>
+
+        <div class="dialog-buttons">
+            <button id="signup-submit">Sign Up</button>
+            <button id="signup-cancel">Cancel</button>
+        </div>
+      </div>
+  `;
+
+  document.body.appendChild(signupDialog);
+
+  // Add event listeners
+  document.getElementById("signup-submit").addEventListener("click", attemptSignup);
+  document.getElementById("signup-cancel").addEventListener("click", closeDialogBoxes);
+  document.getElementById("switch-to-login").addEventListener("click", createLoginDialog);
+
+  signupDialog.addEventListener("click", function (event) {
+    if (event.target === signupDialog) {
+      closeDialogBoxes();
+    }
+  });
+}
+
+
+// Function to close the login dialog
+function closeDialogBoxes() {
+  const existingDialogs = document.querySelectorAll(".dialog-container");
+  existingDialogs.forEach(dialog => dialog.remove());
+}
+
+// Function to update the UI after user login/logout
+function updateUIAfterLogin(user) {
+  const loginButton = document.getElementById("loginButton");
+
+  if (user) {
+    loginButton.textContent = "Log Out";
+    loginButton.removeEventListener("click", openLoginDialog);
+    loginButton.addEventListener("click", logoutUser);
+  } else {
+    loginButton.textContent = "Log In";
+    loginButton.removeEventListener("click", logoutUser);
+    loginButton.addEventListener("click", openLoginDialog);
+  }
+}
+
+// Function to log out the current user
+function logoutUser() {
+  auth.signOut()
+    .then(() => {
+      console.log("User logged out");
+      updateUIAfterLogin(null); // Reset UI
+      showNotification("Logged out successfully!", "gray");
+    })
+    .catch((error) => {
+      console.error("Logout Error:", error.message);
+      showNotification("Error logging out. Try again.", "red");
+    });
+}
+
+function showNotification(message, color = "gold") {
+  // Remove existing notification if present
+  const existingNotification = document.getElementById("notification-box");
+  if (existingNotification) existingNotification.remove();
+
+  // Create notification container
+  const notification = document.createElement("div");
+  notification.id = "notification-box";
+  notification.classList.add("notification");
+  notification.style.backgroundColor = color;
+
+  // Create notification text
+  const messageText = document.createElement("span");
+  messageText.textContent = message;
+
+  // Create close button (X)
+  const closeButton = document.createElement("span");
+  closeButton.textContent = "✖";
+  closeButton.classList.add("close-button");
+  closeButton.addEventListener("click", () => fadeOutNotification(notification));
+
+  // Append elements to notification
+  notification.appendChild(messageText);
+  notification.appendChild(closeButton);
+  document.body.appendChild(notification);
+
+  // Timer to fade out and remove notification
+  let removeTimeout = setTimeout(() => {
+    fadeOutNotification(notification);
+  }, 3000); // 3 seconds
+
+  // Pause timer when hovering
+  notification.addEventListener("mouseenter", () => clearTimeout(removeTimeout));
+
+  // Resume timer when mouse leaves
+  notification.addEventListener("mouseleave", () => {
+    removeTimeout = setTimeout(() => fadeOutNotification(notification), 3000);
+  });
+}
+
+// Function to fade out notification before removing it
+function fadeOutNotification(notification) {
+  notification.classList.add("fade-out");
+  setTimeout(() => notification.remove(), 500); // Wait for fade-out transition
+}
+
+
+// ==========================
+// 13. Additional Features (Resizing Columns, Dragging, etc.)
 // ==========================
 
 function setupColumnResizing() {
@@ -1427,63 +937,62 @@ function setupColumnResizing() {
 
 function setupDraggableBlocks() {
   document.querySelectorAll(".box").forEach((box) => {
-    box.draggable = true;
-    box.addEventListener("dragstart", dragStart);
-    box.addEventListener("dragover", dragOver);
-    box.addEventListener("drop", drop);
-    box.addEventListener("dragend", dragEnd);
+      box.draggable = true;
+      box.addEventListener("dragstart", dragStart);
+      box.addEventListener("dragover", dragOver);
+      box.addEventListener("drop", drop);
+      box.addEventListener("dragend", dragEnd);
   });
 
   // Prevent category buttons from closing the menu
   document.querySelectorAll(".category-blocks button").forEach((button) => {
-    button.addEventListener("click", (event) => {
-      event.stopPropagation();
-    });
+      button.addEventListener("click", (event) => {
+          event.stopPropagation();
+      });
   });
 
   // Handle block deletion when dragging over the left-side container
   const codeContainer = document.querySelector(".code-container");
   codeContainer.addEventListener("dragover", function (event) {
-    event.preventDefault();
+      event.preventDefault();
   });
 
   codeContainer.addEventListener("drop", function (event) {
-    event.preventDefault();
-    if (dragged) {
-      dragged.remove();
-      dragged = null;
-      updateLineNumbers();
-    }
+      event.preventDefault();
+      if (dragged) {
+          removeBlock(dragged.id); // Use removeBlock to delete the block
+          dragged = null;
+      }
   });
 
   // Remove drop target highlight when dragging leaves a block
   document.addEventListener("dragleave", function (event) {
-    const targetBlock = event.target.closest(".box");
-    if (targetBlock) {
-      targetBlock.classList.remove("drop-target");
-    }
+      const targetBlock = event.target.closest(".box");
+      if (targetBlock) {
+          targetBlock.classList.remove("drop-target");
+      }
   });
 
   // Deselect block when clicking outside
   document.addEventListener("click", function (event) {
-    if (highlightedBlock && !highlightedBlock.contains(event.target)) {
-      highlightedBlock.classList.remove("selected");
-      highlightedBlock = null;
-    }
+      if (highlightedBlock && !highlightedBlock.contains(event.target)) {
+          highlightedBlock.classList.remove("selected");
+          highlightedBlock = null;
+      }
   });
 
   // Delete highlighted block with "Delete" key
   document.addEventListener("keydown", function (event) {
-    if (event.key === "Delete" && highlightedBlock) {
-      highlightedBlock.remove();
-      highlightedBlock = null;
-      updateLineNumbers();
-    }
+      if (event.key === "Delete" && highlightedBlock) {
+          removeBlock(highlightedBlock.id); // Use removeBlock to delete the block
+          highlightedBlock = null;
+      }
   });
 }
 
+
 // ==========================
-// 13. Miscellaneous Code
+// 14. Miscellaneous Code
 // ==========================
 
 /*
@@ -1502,7 +1011,61 @@ function initializeMiscellaneous() {
 // Main Initialization Function
 // ==========================
 
-function initializeApp() {
+
+document.addEventListener("DOMContentLoaded", function () {
+  let tooltip;
+
+  function createTooltip() {
+    tooltip = document.createElement("div");
+    tooltip.id = "tooltip";
+    Object.assign(tooltip.style, {
+      position: "absolute",
+      backgroundColor: "#333",
+      color: "#fff",
+      padding: "5px",
+      borderRadius: "5px",
+      fontSize: "12px",
+      pointerEvents: "none",
+      zIndex: "1000",
+      display: "none"
+    });
+    document.body.appendChild(tooltip);
+  }
+
+  function showTooltip(event, text) {
+    if (!tooltip) createTooltip();
+    tooltip.innerText = text;
+    tooltip.style.left = `${event.pageX + 10}px`;
+    tooltip.style.top = `${event.pageY + 10}px`;
+    tooltip.style.display = "block";
+  }
+
+  function hideTooltip() {
+    if (tooltip) tooltip.style.display = "none";
+  }
+
+  function handleHover(event) {
+    let target = event.target;
+    if (target.closest(".category-blocks button")) {
+      showTooltip(event, target.getAttribute("title") || "No description available");
+    } else if (target.closest(".box")) {
+      let block = target.closest(".box");
+      let blockID = block.dataset.blockID;
+      let description = blockID ? getBlockProperties(blockID)?.description || "No description available." : "Block ID not found.";
+      showTooltip(event, description);
+    }
+  }
+
+  document.body.addEventListener("mouseover", handleHover);
+  document.body.addEventListener("mouseout", (event) => {
+    if (event.target.closest(".category-blocks button") || event.target.closest(".box")) {
+      hideTooltip();
+    }
+  });
+});
+
+
+function setUpApp() {
   setupKeydownListener();
   setupDOMContentLoadedListener();
   setupLoginButtonListener();
@@ -1515,7 +1078,7 @@ function initializeApp() {
 }
 
 // Call the main initialization function
-initializeApp();
+setUpApp();
 
 /* NOT CURRENTLY NEEDED, COMMENTED OUT FOR POTENTIAL FUTURE USE
 // Run Code button logic for swapping between Run/Stop

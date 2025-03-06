@@ -56,14 +56,6 @@ body {
   margin-right: 10px;
 }
 
-.code-result {
-  display: flex;
-  flex-direction: column;
-}
-
-.block-code-result {
-  border: #000000 1px solid;
-}
 
 .result-container {
   display: flex;
@@ -98,17 +90,31 @@ body {
   gap: 10px;
 }
 
-.toggle-button {
-  display: block;
-  margin-bottom: 10px;
+.code-result{
+  width: 100%;
+  height: 100%;
 }
 
-.block-code,
-.python-code,
-.block-code-result,
-.python-code-result {
+.toggle-button {
+  display: block;
+}
+
+#python-code-result.hidden,
+#block-container.hidden {
   display: none;
 }
+
+.python-code-result {
+  display: flex;
+}
+
+
+.results{
+  display: flex;
+  flex-direction: row;
+}
+
+
 
 button {
   cursor: pointer;
@@ -145,14 +151,12 @@ button:hover {
 }
 
 /*Code for the containers*/
-.codes {
-  display: grid;
-  grid-template-columns: 20px calc(100% - 20px);
-  align-items: left;
-  padding: none;
-  height: 100%;
-  overflow-y: auto;
-  gap: 30px;
+
+.block-code-result-container {
+  display: flex;
+  flex-direction: row;
+  width: auto;
+  height: 100vh;
 }
 
 .code-lines {
@@ -160,8 +164,6 @@ button:hover {
   flex-direction: column;
   border: #000000 1px solid;
   padding: 15px;
-  align-items: left;
-  width: 20px;
 }
 
 .code-line {
@@ -181,6 +183,11 @@ button:hover {
   overflow-x: auto;
 }
 
+.block-code-result {
+  border: #000000 1px solid;
+  width: 100%;
+}
+
 select.block-dropdown {
   width: auto;
   white-space: nowrap;
@@ -188,7 +195,7 @@ select.block-dropdown {
 
 .box {
   width: fit-content;
-  height: auto;
+  height: fit-content;
   min-height: 25px;
   background-color: transparent;
   border: none;
@@ -198,26 +205,43 @@ select.block-dropdown {
   border: 2px solid transparent;
   position: relative;
   border: #000000 1px solid;
+  margin-bottom: 5px;
 }
 
 .elif-else{
-  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  float: left;
+}
+
+.dropdown-menu {
+  background-color: #f1f1f1;
 }
 
 .child-box-container {
   width: fit-content;
   height: auto;
   margin-left: 10px;
+  margin-bottom: 10px;
   border: #000000 1px solid;
   background-color: #f1f1f1;
   min-width: 25px;
+  min-height: 25px;
 }
 
 .child-box-container-horizontal {
+  display: flex;
+  flex-direction: row;
   border: #000000 1px solid;
-  min-width: auto;
+  min-width: 25px;
   min-height: 25px;
   background-color: #f1f1f1;
+  margin-bottom: 10px;
+}
+
+.childBox-Container-Horizontal{
+  display: flex;
+  flex-direction: row;
 }
 
 .block-x, .block-y, .block-op {
@@ -364,3 +388,123 @@ select.block-dropdown {
 #select-bar-container {
   cursor: pointer;
 }
+
+/* Login Dialog */
+.dialog-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dialog-box {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  text-align: center;
+}
+
+.dialog-box h2 {
+  margin-bottom: 15px;
+}
+
+.dialog-box input {
+  width: 80%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.dialog-buttons {
+  margin-top: 15px;
+}
+
+.dialog-buttons button {
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+
+#login-submit {
+  background: green;
+  color: white;
+}
+
+#login-cancel, #signup-cancel {
+  background: red;
+  color: white;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.hidden {
+  display: none;
+}
+
+.switch-auth {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.auth-link {
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.auth-link:hover {
+  color: darkblue;
+}
+
+/* Notification Box */
+.notification {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background-color: gold;
+  color: black;
+  padding: 15px 20px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 250px;
+  max-width: 300px;
+  opacity: 0.95;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.notification.fade-out {
+  opacity: 0;
+}
+
+.notification:hover {
+  opacity: 1;
+}
+
+.close-button {
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
