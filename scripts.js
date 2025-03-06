@@ -41,6 +41,7 @@ onAuthStateChanged(auth, (user) => {
 let dragged = null;
 let highlightedBlock = null;
 
+
 // Call the function to create the buttons
 createCategoryButtons(blockCategory);
 
@@ -53,30 +54,35 @@ function blockToText(pc) {
 
   let parentContainer = document.getElementById(pc);
 
+  
+  
+  let blockChildElements = parentContainer.querySelectorAll("*");
 
-  let blockChildElements;
-  // section for top half
-
-  // section for bottom half
-  if (pc == "box-container") {
-    blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
+  // set all depth to 0
+  for(let i = 0; i < blockChildElements.length; i++){
+    blockChildElements[i].dataset.blockDepth = 0;
   }
-  else {
-    blockChildElements = parentContainer.querySelector('.child-box-container').children; // Get all children/blocks from the box-container
-  }
-  for (let i = 0; i < blockChildElements.length; i++) {
-    let childID = blockChildElements[i].dataset.blockID;
 
-    for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
-      pythontext.value += "    "; // Add spaces for indentation
+
+  // iterate through every element and recalculate depth
+  for(let i = 0; i < blockChildElements.length; i++){
+    let curBlock = blockChildElements[i];
+
+    
+    
+      if(curBlock.parentElement.dataset.blockID == "if" || curBlock.parentElement.dataset.blockID == "for" || curBlock.parentElement.dataset.blockID == "when"){
+      curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
+
     }
+    else if(curBlock.parentElement.className == "child-box-container" || curBlock.parentElement.className == "block-code-result"){
+      if(curBlock.dataset.blockID == "comparisonBlock" || curBlock.className == "block-dropdown" || curBlock.dataset.blockID == "mathText"){
+        curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
 
-    if (childID == "for" || childID == "if" || childID == "while") {
 
-      pythontext.value += `${childID}\n`;
-      let cbc = blockChildElements[i].querySelector('.child-box-container');
-      if (cbc.children.length > 0) {
-        blockToText(blockChildElements[i].id);
+      }
+      else{
+        curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth) + 1;
+
       }
 
 
@@ -90,8 +96,82 @@ function blockToText(pc) {
     else {
       pythontext.value += `${childID}\n`;
     }
+    else{
+      curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
+    }
+
+  } // end of depth recalculation
+
+  let tDepth = 0;
+  // let colonC = 0;
+
+  for(let i = 0; i < blockChildElements.length; i++){
+    let curBlock = blockChildElements[i];
+    
+    
+    // else{
+    //   tDepth = curBlock.dataset.blockDepth;
+    // }
+    
+    if(curBlock.dataset.blockID == "if" || curBlock.dataset.blockID == "for" || curBlock.dataset.blockID == "while"){
+      // colonC = 1;
+      // tDepth += 1;
+      // if(curBlock.dataset.blockDepth != tDepth || curBlock.dataset.blockDepth){
+      //   pythontext.value += ":\n";
+      // }
+      if(tDepth != 0){
+        pythontext.value += ":\n";
+      }
+
+      for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
+        pythontext.value += "    ";
+      }
+      pythontext.value += `${curBlock.dataset.blockID}`;
+      tDepth = curBlock.dataset.blockDepth;
+    }
+    else if(curBlock.innerText == "else if:" || curBlock.innerText == "else:"){
+      pythontext.value += ":\n";
+      for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
+        pythontext.value += " ";
+      }
+      if(curBlock.innerText == "else if:"){
+        pythontext.value += "else if";
+        // colonC = 1;
+        tDepth = curBlock.dataset.blockDepth;
+      }
+      else if( curBlock.innerText == "else:"){
+      pythontext.value += `${curBlock.innerText}` + "\n";
+    }
+   
+    }
+  if(curBlock.className == "block-dropdown"){
+    if(curBlock.dataset.blockDepth > tDepth){
+      pythontext.value += ":\n";
+      pythontext.value += "   "
+      tDepth = curBlock.dataset.blockDepth;
+    }
+    pythontext.value += " " + `${curBlock.value}`;
+    
   }
+
+  if(curBlock.className == "text-input"){
+    if(curBlock.dataset.blockDepth > tDepth){
+      pythontext.value += ":\n";
+      tDepth = curBlock.dataset.blockDepth;
+    }
+    pythontext.value += " " + `${curBlock.value}`;
+  }
+  if(curBlock.className == "math-input"){
+    if(curBlock.dataset.blockDepth > tDepth){
+      pythontext.value += ":\n";
+      tDepth = curBlock.dataset.blockDepth;
+    }
+    pythontext.value += " " + `${curBlock.value}`;
+  }
+  
+  
 }
+} // END OF BBT()
 
 // Function to convert text programming to block programming
 function textToBlock(container) {
@@ -101,13 +181,15 @@ function textToBlock(container) {
   }
 
   let lines = text.split("\n"); // Separate lines for parsing
+
   let depthBuilder = ["box-container"]; // counting preceeding zeros for depth
-  let currDepth = 0;
-  let linecount = 0;
+  
   for (let i = 0; i < lines.length; i++) {
-    for (let j = 0; j < lines[i].length; j++) {
-      console.log("line[j]]: " + `${j}`);
-      if (lines[i][j] == " ") {
+    let currDepth = 0;
+    let linecount = 0;
+    for (let j = 0; j < lines[i].length; j++){
+      
+      if(lines[i][j] ==  " "){
         linecount++;
       }
       else {
@@ -117,60 +199,290 @@ function textToBlock(container) {
 
 
     // setting currDepth based on number of indentations
-
-    if (linecount < 1) {
+    if (linecount < 1){
+      console.log(linecount);
+      console.log(currDepth);
 
       currDepth = 1;
-      console.log("currDepth: " + `${currDepth}`);
-      console.log("linecount: " + `${linecount}`);
-      console.log("linecount < 1");
+      
+      
     }
     else {
-      currDepth = (linecount / 4) + 1;
-      console.log("currDepth: " + `${currDepth}`);
-      console.log("linecount: " + `${linecount}`);
-      console.log("linecount > 1");
+      console.log(linecount);
+      console.log(currDepth);
+      currDepth = (linecount/4) + 1;
     }
 
+    lines[i] = lines[i].trim(); // trimming text line for whitespace
 
-    let tokens = lines[i].trim().split(" "); // trimming spaces from front and back of string, then splitting into tokens
+    // Line deleting colon for statements
+    if(lines[i][lines[i].length -1] == ':'){
+      lines[i] = lines[i].substring(0, lines[i].length -1);
+    }
+
+    let tokens = lines[i].split(" "); // splitting string into tokens
 
     // logic to build blocks
-    if (tokens != "") {
-      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for") {
+    if (tokens != ""){
+      
+      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for" || tokens[1] == "if"){
+        
+
         console.log(`${tokens[0]}` + " statement");
-        let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
-        let nbRef = document.getElementById(nbCons); // created reference to newblock
+        let nbCons;
+        let nbRef;
+        let elseChild;
+        
+        // Logic for else if blocks
+        if(tokens[1] == "if"){
+          let tempIf = document.getElementById(depthBuilder[currDepth]);
+          tempIf.querySelector(".fa-solid").dispatchEvent(clickEvent);
+          let elDrops = tempIf.querySelectorAll(".dropdown-item");
+          elDrops[0].dispatchEvent(clickEvent);
 
-        // update depth
-        if (true) {
-
-        }
-
-        // checking for comparison block operators
-        if (tokens[2] == "==" || tokens[2] == "!=" || tokens[2] == ">=" || tokens[2] == "<=" || tokens[2] == "<" || tokens[2] == ">") {
-          let nbComp = newBlock("comparisonBlock");
-          let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
-          for (let k = 0; k < 3; k++) {
-            if (compElems[k].querySelector(".math-comparison-input")) {
-              compElems[k].querySelector(".math-comparison-input").value = tokens[k + 1];
+          // let elseRef = document.getElementById(depthBuilder[currDepth]).getAttribute('data-if-elif-else-id');
+          // console.log(elseRef);
+          let elseRef = document.getElementById(depthBuilder[currDepth]).querySelectorAll(".child-box-container");
+          for(let k = 0; k < elseRef.length; k++){
+            if(elseRef[k].getAttribute("data-if-elif-else-id") == "1"){
+              elseChild = elseRef[k];
             }
-            compElems[k].dataset.blockValue = tokens[k + 1];
           }
-
-          let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
-          nbHz.appendChild(document.getElementById(nbComp));
+          let horRef = document.getElementById(depthBuilder[currDepth]).querySelectorAll(".child-box-container-horizontal");
+          console.log(horRef[horRef.length -1]);
+          nbRef = horRef[horRef.length -1];
+          blockBuilder(tokens, nbRef);
         }
-        else if (tokens[2] == "+") {
-          let x = 0;
-        }
+        else{
+        nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+        nbRef = document.getElementById(nbCons); // created reference to newblock
+        depthBuilder[currDepth] = nbRef.id; // put block reference into depth array
+        nbRef.dataset.blockDepth = currDepth; // update depth of block
+        console.log(depthBuilder);
+        
 
+        if(depthBuilder[currDepth-1] != "box-container"){
+          if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") == "1"){
+            console.log("PARENT IS AN ELSE")
+            let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
+            parentBlock[parentBlock.length-1].append(document.getElementById(nbCons));
+          }
+          else{
+          let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
+          parentBlock.append(document.getElementById(nbCons));
+          
+          }
+        }
+        blockBuilder(tokens, nbRef.querySelector(".child-box-container-horizontal"))
+        }
+        let j = 1
 
       }
 
+      else if(tokens[0] == "else" && tokens.length == 1){
+        let tempIf = document.getElementById(depthBuilder[currDepth]);
+        tempIf.querySelector(".fa-solid").dispatchEvent(clickEvent);
+        let elDrops = tempIf.querySelectorAll(".dropdown-item");
+        console.log(elDrops);
+        elDrops[1].dispatchEvent(clickEvent);
+
+      }
+              
+      
+
+      // building CONTINUE and BREAK
+      else if(tokens[0] == "continue" || tokens[0] == "break"){
+        console.log(tokens[0]);
+        let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+        let nbRef = document.getElementById(nbCons); // created reference to newblock
+        nbRef.dataset.blockDepth = currDepth;
+        depthBuilder[currDepth] = nbRef;
+        console.log(depthBuilder);
+
+        if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") > "0"){
+          console.log("PARENT IS AN ELSE")
+          let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
+          parentBlock[parentBlock.length-1].append(document.getElementById(nbCons));
+        }
+        else{
+        let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
+        parentBlock.append(document.getElementById(nbCons));
+        }
+      }
+
+      else{
+        let parentBlock;
+        if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") > "0"){
+          console.log("PARENT IS AN ELSE")
+          let nbRef = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
+          parentBlock = nbRef[nbRef.length-1];
+        }
+        else{
+          parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
+        }
+
+        
+        
+        blockBuilder(tokens, parentBlock);
+        console.log("END OF ALL ELSE");
+      }
 
     }
-    linecount = 0;
+  }
+    
+  } // END OF TTB()
+
+  function blockBuilder(arr, container){
+    let oArray = arr;
+    let rmBlock = [];
+    let retArray = [];
+    let arrCount =0;
+    let block_T;
+    for(let i = 0; i < oArray.length;i++){
+      
+    
+
+      if(oArray[i] == "or" || oArray[i] == "||" || oArray[i] == "and" || oArray[i] == "&&" || oArray[i] == "not"){
+        let nbCons = newBlock("logicalOps"); // newblock construction based on keyword
+        let nbRef = document.getElementById(nbCons); // created reference to newblock
+        rmBlock.push(document.getElementById(nbCons));
+        nbRef.querySelector(".block-dropdown").value = oArray[i]  
+
+
+        if(oArray[i-1] >= "0" && oArray[i-1] <= "9"){
+          let tempNb = newBlock("mathText");
+          let tempRef = document.getElementById(tempNb);
+          let mathInput = tempRef.querySelector(".math-input") 
+          mathInput.value = oArray[i-1];
+          tempRef.dataset.blockValue = oArray[i-1];
+  
+          retArray[arrCount-1].append(tempRef);
+        }
+        else{
+          let nbComp = newBlock("printText");
+          let elText = document.getElementById(nbComp);
+          elText.querySelector(".text-input").value += oArray[i-1];
+          compElems[0].append(elText);
+        }
+        
+
+  
+      }
+
+      else if(oArray[i] == "=" || oArray[i] == "+=" || oArray[i] == "-=" || oArray[i] == "*=" || oArray[i] == "/="){
+        if(!userVariables.includes(oArray[i-1])){
+          userVariables.push(oArray[i-1]);
+        }
+        
+        console.log("IT EQUALS");
+        let nbComp = newBlock("varOps");
+        let nbRef = document.getElementById(nbComp);
+        let nbHz = nbRef.querySelector(".childBox-Container-Horizontal")
+        console.log('nbHz: ' + `${nbHz}`);
+        console.log('nbHz MCI: ' + `${nbHz.querySelector(".math-comparison-input")}`);
+        console.log(nbHz.childNodes[1]);
+        nbHz.childNodes[1].value = oArray[i];
+
+        retArray[arrCount] = nbHz;
+        arrCount++;
+
+        rmBlock.push(nbRef);
+
+      }
+
+      else if(oArray[i] == "in"){
+        let nbComp = newBlock("printText");
+        let elText = document.getElementById(nbComp);
+        elText.querySelector(".text-input").value += oArray[i-1] + " ";
+        elText.querySelector(".text-input").value += oArray[i] + " ";
+        elText.querySelector(".text-input").value += oArray[i+1];
+        rmBlock.push(elText);
+      }
+      else if(i < oArray.length-1){
+      if(oArray[i] == "==" || oArray[i] == "!=" || oArray[i]  == ">=" || oArray[i]  == "<=" || oArray[i]  == "<" || oArray[i]  == ">"){
+        block_T = "comparisonBlock";
+      }
+      else if(oArray[i] == "+" || oArray[i] == "-" || oArray[i]  == "*" || oArray[i]  == "/" || oArray[i]  == "%" || oArray[i]  == "**" || oArray[i]  == "//"){
+        block_T = "mathBlock";
+      }
+      else{
+        block_T = "";
+        continue;
+      }
+      let nbComp = newBlock(block_T);
+      let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
+
+
+      if(block_T == "comparisonBlock"){
+        console.log("HELLLLLLLOOOOOO");
+        rmBlock.push(document.getElementById(nbComp));
+
+      }
+      if(oArray[i-1] >= "0" && oArray[i-1] <= "9"){
+        let tempNb = newBlock("mathText");
+        let tempRef = document.getElementById(tempNb);
+        let mathInput = tempRef.querySelector(".math-input") 
+        mathInput.value = oArray[i-1];
+        tempRef.dataset.blockValue = oArray[i-1];
+
+        compElems[0].appendChild(tempRef);
+      }
+      else{
+        let nbComp = newBlock("printText");
+        let elText = document.getElementById(nbComp);
+        elText.querySelector(".text-input").value += oArray[i-1];
+        compElems[0].append(elText);
+      }
+            
+      let elDrop = compElems[1].querySelector(".block-dropdown");
+      elDrop.value = oArray[i];
+
+      
+      
+      console.log('i: ' + `${i}`);
+
+      retArray[arrCount] = compElems[2];
+      if(retArray.length > 1){
+        retArray[arrCount-1].append(document.getElementById(nbComp));
+      }
+
+      
+      arrCount++;
+      //rmBlock = document.getElementById(nbComp);
+      console.log(retArray);
+      
+
+    }
+
+    else if(i==oArray.length-1){
+      if(oArray[i] >= "0" && oArray[i] <= "9"){
+        let nbComp = newBlock("mathText");
+        let nbRef = document.getElementById(nbComp);
+        let mathInput = nbRef.querySelector(".math-input") 
+        mathInput.value = oArray[i];
+        nbRef.dataset.blockValue = oArray[i];
+
+        retArray[arrCount-1].appendChild(nbRef);
+
+      }
+    }
+
+    } // end for loop over array of tokens
+
+    console.log('return array: ');
+    console.log(rmBlock);
+    for(let i = 0; i < rmBlock.length; i++){
+      container.appendChild(rmBlock[i]);
+    }
+  } // end blockBuilder()
+
+
+
+function toggleView() {
+  var x = document.getElementById("python-code-result");
+  var y = document.getElementById("box-container");
+  var toggleButton = document.getElementById("toggleButton");
+
 
   }
 
