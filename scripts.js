@@ -798,39 +798,62 @@ function blockToText(pc) {
   let parentContainer = document.getElementById(pc);
   
   
-  let blockChildElements = parentContainer.querySelector("*");
-  console.log(blockChildElements);
-  // section for top half
+  let blockChildElements = parentContainer.querySelectorAll("*");
 
-  // section for bottom half
-  // if(pc == "box-container"){
-  // blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
-  // }
-  // else{
-  // blockChildElements = parentContainer.querySelector('.child-box-container').children; // Get all children/blocks from the box-container
-  // }
-  // for (let i = 0; i < blockChildElements.length; i++){
-  //   let childID = blockChildElements[i].dataset.blockID;
-  //   console.log(childID);
-  //   console.log(`cycle: ${i}`);
-  //   console.log(blockChildElements.length);
+  // set all depth to 0
+  for(let i = 0; i < blockChildElements.length; i++){
+    blockChildElements[i].dataset.blockDepth = 0;
+  }
 
-  //   for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
-  //     pythontext.value += "    "; // Add spaces for indentation
-  //   }
 
-  //   if (childID == "for" ||childID == "if" || childID == "while" ){
-      
-  //     pythontext.value += `${childID} \n`;
-  //     let cbc = blockChildElements[i].querySelector('.child-box-container');
-  //     if (cbc.children.length > 0){
-  //       blockToText(blockChildElements[i].id);
-  //       console.log(`child elements: ${cbc.children.length} \n`);
-  //     }
-      
-      
-  //   }
-  // }
+  // iterate through every element and recalculate depth
+  for(let i = 0; i < blockChildElements.length; i++){
+    let curBlock = blockChildElements[i];
+
+    
+    
+      if(curBlock.parentElement.dataset.blockID == "if" || curBlock.parentElement.dataset.blockID == "for" || curBlock.parentElement.dataset.blockID == "when"){
+      curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
+    }
+    else if(curBlock.parentElement.className == "child-box-container-horizontal" || curBlock.parentElement.className == "child-box-container" || curBlock.parentElement.className == "childBox-Container-Horizontal" || curBlock.parentElement.className == "block-code-result"){
+      curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth) + 1;
+    }
+    else{
+      curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
+    }
+
+  } // end of depth recalculation
+
+  let tDepth = 0;
+  let colonC = 0;
+  for(let i = 0; i < blockChildElements.length; i++){
+    let curBlock = blockChildElements[i];
+    if(tDepth > curBlock.dataset.blockDepth || tDepth < curBlock.dataset.blockDepth && colonC == 1){
+      colonC = 0;
+      pythontext.value += ":\n";
+    }
+    
+    if(curBlock.dataset.blockID == "if" || curBlock.dataset.blockID == "for" || curBlock.dataset.blockID == "while"){
+      colonC = 1;
+      for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
+        pythontext.value += "    ";
+      }
+      pythontext.value += `${curBlock.dataset.blockID}`;
+    }
+    else if(curBlock.innerText == "else if:" || curBlock.innerText == "else:"){
+      for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
+        pythontext.value += " ";
+      }
+      if(curBlock.innerText == "else if:"){
+        pythontext.value += "else if";
+        colonC = 1;
+      }
+      else if( curBlock.innerText == "else:"){
+      pythontext.value += `${curBlock.innerText}` + "\n";
+    }
+    
+  }
+}
 } // END OF BBT()
 
 
