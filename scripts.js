@@ -40,6 +40,7 @@ onAuthStateChanged(auth, (user) => {
 
 let dragged = null;
 let highlightedBlock = null;
+var pythontext = document.getElementById("pythontext");
 
 
 // Call the function to create the buttons
@@ -495,7 +496,7 @@ function textToBlock(container) {
 // ==========================
 
 const editor = new EditorView({
-  parent: document.getElementById("pythontext"),
+  parent: pythontext,
   extensions: [basicSetup, python()],
 });
 
