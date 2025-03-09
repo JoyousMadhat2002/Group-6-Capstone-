@@ -3,8 +3,9 @@ import { getBlockDropdownList, getBlockProperties, getCategoryByBlockID, createB
 import { toggleCategory, addBlockInteractivity, clearDropHighlights, toggleDropdownVisibility } from "./blockUI.js";
 
 let blockCounter = 0;
-let userVariables = [];
+export let userVariables = [];
 let isPythonView = false;
+
 
 
 // ==========================
