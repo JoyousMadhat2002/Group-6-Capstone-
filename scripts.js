@@ -132,9 +132,9 @@ function blockToText(pc) {
       tDepth = curBlock.dataset.blockDepth;
     }
     else if(curBlock.innerText == "else if:" || curBlock.innerText == "else:"){
-      textBuilder += ":\n";
+      textBuilder += "\n";
       for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
-        textBuilder += " ";
+        textBuilder += "  ";
       }
       if(curBlock.innerText == "else if:"){
         textBuilder += "else if";
@@ -149,11 +149,15 @@ function blockToText(pc) {
   if(curBlock.className == "block-dropdown"){
     if(curBlock.dataset.blockDepth > tDepth){
       textBuilder += ":\n";
-      textBuilder += "  ";
+      for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
+        textBuilder += "  ";
+      }
+      textBuilder += `${curBlock.value}`
       tDepth = curBlock.dataset.blockDepth;
     }
-    textBuilder += " " + `${curBlock.value}`;
-    
+    else{
+      textBuilder += " " + `${curBlock.value}`;
+    }
   }
 
   if(curBlock.className == "text-input"){
