@@ -441,7 +441,7 @@ select.block-dropdown {
   color: white;
 }
 
-#login-cancel {
+#login-cancel, #signup-cancel {
   background: red;
   color: white;
 }
@@ -456,3 +456,68 @@ select.block-dropdown {
   display: none;
 }
 
+.switch-auth {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.auth-link {
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.auth-link:hover {
+  color: darkblue;
+}
+
+/* Notification Box */
+.notification {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background-color: gold;
+  color: black;
+  padding: 15px 20px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 250px;
+  max-width: 300px;
+  opacity: 0.95;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.notification.fade-out {
+  opacity: 0;
+}
+
+.notification:hover {
+  opacity: 1;
+}
+
+.close-button {
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+#pythontext {
+  height: 700px; /* Ensures editor has space */
+  width: 100%;
+  border: 1px solid #ccc; /* Optional: make it visible */
+}
+
+.cm-editor {
+  height: 100%; /* Makes CodeMirror take full height */
+}
+
+.cm-scroller {
+  min-height: 400px; /* Ensures space for multiple lines */
+}

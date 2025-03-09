@@ -6,12 +6,14 @@ import { getBlockProperties } from "./scripts/blockProperties.js";
 import { 
   createCategoryButtons, 
   newBlock,
-  clearDropHighlights
+  clearDropHighlights,
+  toggleView
 } from "./scripts/blockCreation.js";
+
 
 // Import Firebase modules correctly
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
 // Firebase configuration
@@ -38,6 +40,8 @@ onAuthStateChanged(auth, (user) => {
 
 let dragged = null;
 let highlightedBlock = null;
+var pythontext = document.getElementById("pythontext");
+
 
 // Call the function to create the buttons
 createCategoryButtons(blockCategory);
@@ -51,30 +55,35 @@ function blockToText(pc) {
 
   let parentContainer = document.getElementById(pc);
 
+  
+  
+  let blockChildElements = parentContainer.querySelectorAll("*");
 
-  let blockChildElements;
-  // section for top half
-
-  // section for bottom half
-  if (pc == "box-container") {
-    blockChildElements = parentContainer.children; // Get all children/blocks from the box-container
+  // set all depth to 0
+  for(let i = 0; i < blockChildElements.length; i++){
+    blockChildElements[i].dataset.blockDepth = 0;
   }
-  else {
-    blockChildElements = parentContainer.querySelector('.child-box-container').children; // Get all children/blocks from the box-container
-  }
-  for (let i = 0; i < blockChildElements.length; i++) {
-    let childID = blockChildElements[i].dataset.blockID;
 
-    for (let j = 0; j < Number(blockChildElements[i].dataset.blockDepth); j++) {
-      pythontext.value += "    "; // Add spaces for indentation
+
+  // iterate through every element and recalculate depth
+  for(let i = 0; i < blockChildElements.length; i++){
+    let curBlock = blockChildElements[i];
+
+    
+    
+      if(curBlock.parentElement.dataset.blockID == "if" || curBlock.parentElement.dataset.blockID == "for" || curBlock.parentElement.dataset.blockID == "when"){
+      curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
+
     }
+    else if(curBlock.parentElement.className == "child-box-container" || curBlock.parentElement.className == "block-code-result"){
+      if(curBlock.dataset.blockID == "comparisonBlock" || curBlock.className == "block-dropdown" || curBlock.dataset.blockID == "mathText"){
+        curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
 
-    if (childID == "for" || childID == "if" || childID == "while") {
 
-      pythontext.value += `${childID}\n`;
-      let cbc = blockChildElements[i].querySelector('.child-box-container');
-      if (cbc.children.length > 0) {
-        blockToText(blockChildElements[i].id);
+      }
+      else{
+        curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth) + 1;
+
       }
 
 
@@ -85,27 +94,105 @@ function blockToText(pc) {
       pythontext.value += `${childID}\n`;
     }
 
-    else {
-      pythontext.value += `${childID}\n`;
+    // else {
+    //   pythontext.value += `${childID}\n`;
+    // }
+    else{
+      curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
     }
+
+  } // end of depth recalculation
+
+  let tDepth = 0;
+  // let colonC = 0;
+
+  for(let i = 0; i < blockChildElements.length; i++){
+    let curBlock = blockChildElements[i];
+    
+    
+    // else{
+    //   tDepth = curBlock.dataset.blockDepth;
+    // }
+    
+    if(curBlock.dataset.blockID == "if" || curBlock.dataset.blockID == "for" || curBlock.dataset.blockID == "while"){
+      // colonC = 1;
+      // tDepth += 1;
+      // if(curBlock.dataset.blockDepth != tDepth || curBlock.dataset.blockDepth){
+      //   pythontext.value += ":\n";
+      // }
+      if(tDepth != 0){
+        pythontext.value += ":\n";
+      }
+
+      for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
+        pythontext.value += "    ";
+      }
+      pythontext.value += `${curBlock.dataset.blockID}`;
+      tDepth = curBlock.dataset.blockDepth;
+    }
+    else if(curBlock.innerText == "else if:" || curBlock.innerText == "else:"){
+      pythontext.value += ":\n";
+      for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
+        pythontext.value += " ";
+      }
+      if(curBlock.innerText == "else if:"){
+        pythontext.value += "else if";
+        // colonC = 1;
+        tDepth = curBlock.dataset.blockDepth;
+      }
+      else if( curBlock.innerText == "else:"){
+      pythontext.value += `${curBlock.innerText}` + "\n";
+    }
+   
+    }
+  if(curBlock.className == "block-dropdown"){
+    if(curBlock.dataset.blockDepth > tDepth){
+      pythontext.value += ":\n";
+      pythontext.value += "   "
+      tDepth = curBlock.dataset.blockDepth;
+    }
+    pythontext.value += " " + `${curBlock.value}`;
+    
   }
+
+  if(curBlock.className == "text-input"){
+    if(curBlock.dataset.blockDepth > tDepth){
+      pythontext.value += ":\n";
+      tDepth = curBlock.dataset.blockDepth;
+    }
+    pythontext.value += " " + `${curBlock.value}`;
+  }
+  if(curBlock.className == "math-input"){
+    if(curBlock.dataset.blockDepth > tDepth){
+      pythontext.value += ":\n";
+      tDepth = curBlock.dataset.blockDepth;
+    }
+    pythontext.value += " " + `${curBlock.value}`;
+  }
+  
+  
 }
+} // END OF BBT()
 
 // Function to convert text programming to block programming
 function textToBlock(container) {
-  let text = pythontext.value;
+  // let text = pythontext.value;
+  let text = editor.state.doc.text;
   if (container == "box-container") {
     document.getElementById(container).innerHTML = ""; // Clear block container
   }
+  console.log(text);
 
-  let lines = text.split("\n"); // Separate lines for parsing
+  let lines = text; // Separate lines for parsing
+
   let depthBuilder = ["box-container"]; // counting preceeding zeros for depth
-  let currDepth = 0;
-  let linecount = 0;
+  
   for (let i = 0; i < lines.length; i++) {
-    for (let j = 0; j < lines[i].length; j++) {
-      console.log("line[j]]: " + `${j}`);
-      if (lines[i][j] == " ") {
+    let currDepth = 0;
+    let linecount = 0;
+    for (let j = 0; j < lines[i].length; j++){
+      
+      if(lines[i][j] ==  " "){
         linecount++;
       }
       else {
@@ -115,89 +202,301 @@ function textToBlock(container) {
 
 
     // setting currDepth based on number of indentations
-
-    if (linecount < 1) {
+    if (linecount < 1){
+      console.log(linecount);
+      console.log(currDepth);
 
       currDepth = 1;
-      console.log("currDepth: " + `${currDepth}`);
-      console.log("linecount: " + `${linecount}`);
-      console.log("linecount < 1");
+      
+      
     }
     else {
-      currDepth = (linecount / 4) + 1;
-      console.log("currDepth: " + `${currDepth}`);
-      console.log("linecount: " + `${linecount}`);
-      console.log("linecount > 1");
+      console.log(linecount);
+      console.log(currDepth);
+      currDepth = (linecount/4) + 1;
     }
 
+    lines[i] = lines[i].trim(); // trimming text line for whitespace
 
-    let tokens = lines[i].trim().split(" "); // trimming spaces from front and back of string, then splitting into tokens
+    // Line deleting colon for statements
+    if(lines[i][lines[i].length -1] == ':'){
+      lines[i] = lines[i].substring(0, lines[i].length -1);
+    }
+
+    let tokens = lines[i].split(" "); // splitting string into tokens
 
     // logic to build blocks
-    if (tokens != "") {
-      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for") {
+    if (tokens != ""){
+      
+      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for" || tokens[1] == "if"){
+        
+
         console.log(`${tokens[0]}` + " statement");
-        let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
-        let nbRef = document.getElementById(nbCons); // created reference to newblock
+        let nbCons;
+        let nbRef;
+        let elseChild;
+        
+        // Logic for else if blocks
+        if(tokens[1] == "if"){
+          let tempIf = document.getElementById(depthBuilder[currDepth]);
+          tempIf.querySelector(".fa-solid").dispatchEvent(clickEvent);
+          let elDrops = tempIf.querySelectorAll(".dropdown-item");
+          elDrops[0].dispatchEvent(clickEvent);
 
-        // update depth
-        if (true) {
-
-        }
-
-        // checking for comparison block operators
-        if (tokens[2] == "==" || tokens[2] == "!=" || tokens[2] == ">=" || tokens[2] == "<=" || tokens[2] == "<" || tokens[2] == ">") {
-          let nbComp = newBlock("comparisonBlock");
-          let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
-          for (let k = 0; k < 3; k++) {
-            if (compElems[k].querySelector(".math-comparison-input")) {
-              compElems[k].querySelector(".math-comparison-input").value = tokens[k + 1];
+          // let elseRef = document.getElementById(depthBuilder[currDepth]).getAttribute('data-if-elif-else-id');
+          // console.log(elseRef);
+          let elseRef = document.getElementById(depthBuilder[currDepth]).querySelectorAll(".child-box-container");
+          for(let k = 0; k < elseRef.length; k++){
+            if(elseRef[k].getAttribute("data-if-elif-else-id") == "1"){
+              elseChild = elseRef[k];
             }
-            compElems[k].dataset.blockValue = tokens[k + 1];
           }
-
-          let nbHz = nbRef.querySelector(" .child-box-container-horizontal");
-          nbHz.appendChild(document.getElementById(nbComp));
+          let horRef = document.getElementById(depthBuilder[currDepth]).querySelectorAll(".child-box-container-horizontal");
+          console.log(horRef[horRef.length -1]);
+          nbRef = horRef[horRef.length -1];
+          blockBuilder(tokens, nbRef);
         }
-        else if (tokens[2] == "+") {
-          let x = 0;
-        }
+        else{
+        nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+        nbRef = document.getElementById(nbCons); // created reference to newblock
+        depthBuilder[currDepth] = nbRef.id; // put block reference into depth array
+        nbRef.dataset.blockDepth = currDepth; // update depth of block
+        console.log(depthBuilder);
+        
 
+        if(depthBuilder[currDepth-1] != "box-container"){
+          if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") == "1"){
+            console.log("PARENT IS AN ELSE")
+            let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
+            parentBlock[parentBlock.length-1].append(document.getElementById(nbCons));
+          }
+          else{
+          let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
+          parentBlock.append(document.getElementById(nbCons));
+          
+          }
+        }
+        blockBuilder(tokens, nbRef.querySelector(".child-box-container-horizontal"))
+        }
+        let j = 1
 
       }
 
+      else if(tokens[0] == "else" && tokens.length == 1){
+        let tempIf = document.getElementById(depthBuilder[currDepth]);
+        tempIf.querySelector(".fa-solid").dispatchEvent(clickEvent);
+        let elDrops = tempIf.querySelectorAll(".dropdown-item");
+        console.log(elDrops);
+        elDrops[1].dispatchEvent(clickEvent);
+
+      }
+              
+      
+
+      // building CONTINUE and BREAK
+      else if(tokens[0] == "continue" || tokens[0] == "break"){
+        console.log(tokens[0]);
+        let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+        let nbRef = document.getElementById(nbCons); // created reference to newblock
+        nbRef.dataset.blockDepth = currDepth;
+        depthBuilder[currDepth] = nbRef;
+        console.log(depthBuilder);
+
+        if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") > "0"){
+          console.log("PARENT IS AN ELSE")
+          let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
+          parentBlock[parentBlock.length-1].append(document.getElementById(nbCons));
+        }
+        else{
+        let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
+        parentBlock.append(document.getElementById(nbCons));
+        }
+      }
+
+      else{
+        let parentBlock;
+        if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") > "0"){
+          console.log("PARENT IS AN ELSE")
+          let nbRef = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
+          parentBlock = nbRef[nbRef.length-1];
+        }
+        else{
+          parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
+        }
+
+        
+        
+        blockBuilder(tokens, parentBlock);
+        console.log("END OF ALL ELSE");
+      }
 
     }
-    linecount = 0;
-
   }
+    
+  } // END OF TTB()
 
-}
+  function blockBuilder(arr, container){
+    let oArray = arr;
+    let rmBlock = [];
+    let retArray = [];
+    let arrCount =0;
+    let block_T;
+    for(let i = 0; i < oArray.length;i++){
+      
+    
 
-function toggleView() {
-  var x = document.getElementById("python-code-result");
-  var y = document.getElementById("block-container"); // Changed to block-container
-  var toggleButton = document.getElementById("toggleButton");
+      if(oArray[i] == "or" || oArray[i] == "||" || oArray[i] == "and" || oArray[i] == "&&" || oArray[i] == "not"){
+        let nbCons = newBlock("logicalOps"); // newblock construction based on keyword
+        let nbRef = document.getElementById(nbCons); // created reference to newblock
+        rmBlock.push(document.getElementById(nbCons));
+        nbRef.querySelector(".block-dropdown").value = oArray[i]  
 
-  if (x.classList.contains("hidden")) {
-    x.classList.remove("hidden");
-    y.classList.add("hidden");
-    toggleButton.textContent = "Block";
-    isPythonView = true; // Switch to Python view
-  } else {
-    x.classList.add("hidden");
-    y.classList.remove("hidden");
-    toggleButton.textContent = "Python";
-    isPythonView = false; // Switch to Block view
-  }
-}
+
+        if(oArray[i-1] >= "0" && oArray[i-1] <= "9"){
+          let tempNb = newBlock("mathText");
+          let tempRef = document.getElementById(tempNb);
+          let mathInput = tempRef.querySelector(".math-input") 
+          mathInput.value = oArray[i-1];
+          tempRef.dataset.blockValue = oArray[i-1];
+  
+          retArray[arrCount-1].append(tempRef);
+        }
+        else{
+          let nbComp = newBlock("printText");
+          let elText = document.getElementById(nbComp);
+          elText.querySelector(".text-input").value += oArray[i-1];
+          compElems[0].append(elText);
+        }
+        
+
+  
+      }
+
+      else if(oArray[i] == "=" || oArray[i] == "+=" || oArray[i] == "-=" || oArray[i] == "*=" || oArray[i] == "/="){
+        if(!userVariables.includes(oArray[i-1])){
+          userVariables.push(oArray[i-1]);
+        }
+        
+        console.log("IT EQUALS");
+        let nbComp = newBlock("varOps");
+        let nbRef = document.getElementById(nbComp);
+        let nbHz = nbRef.querySelector(".childBox-Container-Horizontal")
+        console.log('nbHz: ' + `${nbHz}`);
+        console.log('nbHz MCI: ' + `${nbHz.querySelector(".math-comparison-input")}`);
+        console.log(nbHz.childNodes[1]);
+        nbHz.childNodes[1].value = oArray[i];
+
+        retArray[arrCount] = nbHz;
+        arrCount++;
+
+        rmBlock.push(nbRef);
+
+      }
+
+      else if(oArray[i] == "in"){
+        let nbComp = newBlock("printText");
+        let elText = document.getElementById(nbComp);
+        elText.querySelector(".text-input").value += oArray[i-1] + " ";
+        elText.querySelector(".text-input").value += oArray[i] + " ";
+        elText.querySelector(".text-input").value += oArray[i+1];
+        rmBlock.push(elText);
+      }
+      else if(i < oArray.length-1){
+      if(oArray[i] == "==" || oArray[i] == "!=" || oArray[i]  == ">=" || oArray[i]  == "<=" || oArray[i]  == "<" || oArray[i]  == ">"){
+        block_T = "comparisonBlock";
+      }
+      else if(oArray[i] == "+" || oArray[i] == "-" || oArray[i]  == "*" || oArray[i]  == "/" || oArray[i]  == "%" || oArray[i]  == "**" || oArray[i]  == "//"){
+        block_T = "mathBlock";
+      }
+      else{
+        block_T = "";
+        continue;
+      }
+      let nbComp = newBlock(block_T);
+      let compElems = document.getElementById(nbComp).querySelectorAll(".childBox-Container-Horizontal");
+
+
+      if(block_T == "comparisonBlock"){
+        rmBlock.push(document.getElementById(nbComp));
+
+      }
+      if(oArray[i-1] >= "0" && oArray[i-1] <= "9"){
+        let tempNb = newBlock("mathText");
+        let tempRef = document.getElementById(tempNb);
+        let mathInput = tempRef.querySelector(".math-input") 
+        mathInput.value = oArray[i-1];
+        tempRef.dataset.blockValue = oArray[i-1];
+
+        compElems[0].appendChild(tempRef);
+      }
+      else{
+        let nbComp = newBlock("printText");
+        let elText = document.getElementById(nbComp);
+        elText.querySelector(".text-input").value += oArray[i-1];
+        console.log("compElems: " + `${compElems}`);
+        //compElems[0].append(elText);
+      }
+            
+      let elDrop = compElems[0].querySelector(".block-dropdown");
+      elDrop.value = oArray[i];
+
+      
+      
+      console.log('i: ' + `${i}`);
+
+      retArray[arrCount] = compElems[2];
+      if(retArray.length > 1){
+        retArray[arrCount-1].append(document.getElementById(nbComp));
+      }
+
+      
+      arrCount++;
+      //rmBlock = document.getElementById(nbComp);
+      console.log(retArray);
+      
+
+    }
+
+    else if(i==oArray.length-1){
+      if(oArray[i] >= "0" && oArray[i] <= "9"){
+        let nbComp = newBlock("mathText");
+        let nbRef = document.getElementById(nbComp);
+        let mathInput = nbRef.querySelector(".math-input") 
+        mathInput.value = oArray[i];
+        nbRef.dataset.blockValue = oArray[i];
+
+        retArray[arrCount-1].appendChild(nbRef);
+
+      }
+    }
+
+    } // end for loop over array of tokens
+
+    console.log('return array: ');
+    console.log(rmBlock);
+    for(let i = 0; i < rmBlock.length; i++){
+      container.appendChild(rmBlock[i]);
+    }
+  } // end blockBuilder()
+
+
+
+// function toggleView() {
+//   var x = document.getElementById("python-code-result");
+//   var y = document.getElementById("box-container");
+//   var toggleButton = document.getElementById("toggleButton");
+
+
+//   }
+
+
 
 // ==========================
 // 10. Code Execution
 // ==========================
 
 const editor = new EditorView({
-  parent: document.getElementById("pythontext"),
+  parent: pythontext,
   extensions: [basicSetup, python()],
 });
 
@@ -333,13 +632,15 @@ function attemptLogin() {
   signInWithEmailAndPassword(auth, email, password)
   .then((userCredential) => {
       console.log("User logged in:", userCredential.user);
-      closeLoginDialog(); // Close the login dialog
+      closeDialogBoxes(); // Close the login dialog
       updateUIAfterLogin(userCredential.user); // Update the UI
+      showNotification("Successfully logged in!", "green");
   })
   .catch((error) => {
       console.error("Login Error:", error.message);
       errorMsg.textContent = error.message;
       errorMsg.classList.remove("hidden");
+      showNotification("Login failed. Please try again.", "red");
   });
 }
 
@@ -350,8 +651,38 @@ function openLoginDialog() {
   }
 }
 
+// Function to attempt user signup
+function attemptSignup() {
+  const email = document.getElementById("signup-email").value;
+  const password = document.getElementById("signup-password").value;
+  const errorMsg = document.getElementById("signup-error");
+
+  if (!email || !password) {
+      errorMsg.textContent = "Please enter an email and password.";
+      errorMsg.classList.remove("hidden");
+      return;
+  }
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      console.log("User signed up:", userCredential.user);
+      closeDialogBoxes(); // Close signup dialog
+      updateUIAfterLogin(userCredential.user); // Update UI
+      showNotification("Account created successfully!", "blue");
+    })
+    .catch((error) => {
+      console.error("Signup Error:", error.message);
+      errorMsg.textContent = error.message;
+      errorMsg.classList.remove("hidden");
+      showNotification("Signup failed. Please try again.", "red");
+    });
+}
+
+
 // Function to create the login dialog
 function createLoginDialog() {
+  closeDialogBoxes(); // Close any existing login dialog
+  
   const loginDialog = document.createElement("div");
   loginDialog.id = "login-dialog";
   loginDialog.classList.add("dialog-container");
@@ -368,6 +699,11 @@ function createLoginDialog() {
 
           <p id="login-error" class="error-message hidden"></p>
 
+          <p class="switch-auth">
+            <span>Don't have an account?</span><br>
+            <span id="switch-to-signup" class="auth-link">Click here to make an account!</span>
+          </p>
+
           <div class="dialog-buttons">
               <button id="login-submit">Log In</button>
               <button id="login-cancel">Cancel</button>
@@ -379,20 +715,84 @@ function createLoginDialog() {
 
   // Add event listeners
   document.getElementById("login-submit").addEventListener("click", attemptLogin);
-  document.getElementById("login-cancel").addEventListener("click", closeLoginDialog);
+  document.getElementById("login-cancel").addEventListener("click", closeDialogBoxes);
+  document.getElementById("switch-to-signup").addEventListener("click", createSignupDialog);
+
+  // Add event listeners for pressing "Enter" key
+  document.getElementById("login-email").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      attemptLogin();
+    }
+  });
+
+  document.getElementById("login-password").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      attemptLogin();
+    }
+  });
+
+  // Add event listener to close dialog when clicking outside the dialog box
   loginDialog.addEventListener("click", function (event) {
-      if (event.target === loginDialog) {
-          closeLoginDialog();
-      }
+    if (event.target === loginDialog) {
+      closeDialogBoxes();
+    }
   });
 }
 
-// Function to close the login dialog
-function closeLoginDialog() {
+// Function to create Signup dialog
+function createSignupDialog() {
+  closeDialogBoxes(); // Close any existing login dialog
+
   const loginDialog = document.getElementById("login-dialog");
-  if (loginDialog) {
-      loginDialog.remove();
-  }
+  if (loginDialog) loginDialog.remove(); // Remove login form
+
+  const signupDialog = document.createElement("div");
+  signupDialog.id = "login-dialog";
+  signupDialog.classList.add("dialog-container");
+
+  signupDialog.innerHTML = `
+      <div class="dialog-box" id="signup-box">
+        <h2>Create an Account</h2>
+        <label for="signup-email">Email:</label>
+        <input type="email" id="signup-email" placeholder="Enter your email">
+
+        <label for="signup-password">Password:</label>
+        <input type="password" id="signup-password" placeholder="Enter your password">
+
+        <p id="signup-error" class="error-message hidden"></p>
+
+        <p class="switch-auth">Already have an account? 
+            <span id="switch-to-login" class="auth-link">Click here to log in</span>
+        </p>
+
+        <div class="dialog-buttons">
+            <button id="signup-submit">Sign Up</button>
+            <button id="signup-cancel">Cancel</button>
+        </div>
+      </div>
+  `;
+
+  document.body.appendChild(signupDialog);
+
+  // Add event listeners
+  document.getElementById("signup-submit").addEventListener("click", attemptSignup);
+  document.getElementById("signup-cancel").addEventListener("click", closeDialogBoxes);
+  document.getElementById("switch-to-login").addEventListener("click", createLoginDialog);
+
+  signupDialog.addEventListener("click", function (event) {
+    if (event.target === signupDialog) {
+      closeDialogBoxes();
+    }
+  });
+}
+
+
+// Function to close the login dialog
+function closeDialogBoxes() {
+  const existingDialogs = document.querySelectorAll(".dialog-container");
+  existingDialogs.forEach(dialog => dialog.remove());
 }
 
 // Function to update the UI after user login/logout
@@ -400,28 +800,75 @@ function updateUIAfterLogin(user) {
   const loginButton = document.getElementById("loginButton");
 
   if (user) {
-      loginButton.textContent = "Log Out";
-      loginButton.removeEventListener("click", openLoginDialog);
-      loginButton.addEventListener("click", logoutUser);
+    loginButton.textContent = "Log Out";
+    loginButton.removeEventListener("click", openLoginDialog);
+    loginButton.addEventListener("click", logoutUser);
   } else {
-      loginButton.textContent = "Log In";
-      loginButton.removeEventListener("click", logoutUser);
-      loginButton.addEventListener("click", openLoginDialog);
+    loginButton.textContent = "Log In";
+    loginButton.removeEventListener("click", logoutUser);
+    loginButton.addEventListener("click", openLoginDialog);
   }
 }
 
 // Function to log out the current user
 function logoutUser() {
   auth.signOut()
-      .then(() => {
-          console.log("User logged out");
-          updateUIAfterLogin(null); // Reset UI
-      })
-      .catch((error) => {
-          console.error("Logout Error:", error.message);
-      });
+    .then(() => {
+      console.log("User logged out");
+      updateUIAfterLogin(null); // Reset UI
+      showNotification("Logged out successfully!", "gray");
+    })
+    .catch((error) => {
+      console.error("Logout Error:", error.message);
+      showNotification("Error logging out. Try again.", "red");
+    });
 }
 
+function showNotification(message, color = "gold") {
+  // Remove existing notification if present
+  const existingNotification = document.getElementById("notification-box");
+  if (existingNotification) existingNotification.remove();
+
+  // Create notification container
+  const notification = document.createElement("div");
+  notification.id = "notification-box";
+  notification.classList.add("notification");
+  notification.style.backgroundColor = color;
+
+  // Create notification text
+  const messageText = document.createElement("span");
+  messageText.textContent = message;
+
+  // Create close button (X)
+  const closeButton = document.createElement("span");
+  closeButton.textContent = "✖";
+  closeButton.classList.add("close-button");
+  closeButton.addEventListener("click", () => fadeOutNotification(notification));
+
+  // Append elements to notification
+  notification.appendChild(messageText);
+  notification.appendChild(closeButton);
+  document.body.appendChild(notification);
+
+  // Timer to fade out and remove notification
+  let removeTimeout = setTimeout(() => {
+    fadeOutNotification(notification);
+  }, 3000); // 3 seconds
+
+  // Pause timer when hovering
+  notification.addEventListener("mouseenter", () => clearTimeout(removeTimeout));
+
+  // Resume timer when mouse leaves
+  notification.addEventListener("mouseleave", () => {
+    removeTimeout = setTimeout(() => fadeOutNotification(notification), 3000);
+  });
+}
+
+// Function to fade out notification before removing it
+function fadeOutNotification(notification) {
+  notification.classList.add("fade-out");
+  setTimeout(() => notification.remove(), 500); // Wait for fade-out transition
+}
 
 
 // ==========================
