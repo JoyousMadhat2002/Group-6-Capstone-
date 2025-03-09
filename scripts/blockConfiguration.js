@@ -46,7 +46,6 @@ const blockCategory = {
       },
       {
         name: "for",
-        name: "for",
         blockID: "for",
         description: "For loop",
         type: "loop",
@@ -117,6 +116,14 @@ const blockCategory = {
         type: "comparison",
         parentElement: "block",
         childElement: ["block", "operator", "operand1", "operand2"],
+      },
+      {
+        name: "Range",
+        blockID: "range",
+        description: "Range function for loops",
+        type: "loop",
+        parentElement: "block",
+        childElement: ["start", "end", "step"],
       },
     ],
   },
