@@ -56,7 +56,6 @@ export function createCategoryButtons(blockCategory) {
             button.innerText = `${element.name}`;
 
             // Apply category color to the button
-            // Set default color for Variable Declaration block buttons
             if (element.blockID === "varDeclOps") {
                 button.style.backgroundColor = "#cccccc";
             } else {
@@ -158,6 +157,8 @@ export function newBlock(blockID) {
         blockID === "specialFunctions"
     ) {
         handleMathFunctionBlock(newBlock, blockID);
+    } else if (blockID === "range") {
+        handleRangeBlock(newBlock);
     } else {
         handleDefaultBlock(newBlock, blockID);
     }
@@ -448,6 +449,27 @@ function handleElseOption(block, elifElseDiv, dropdown, plusIcon) {
     dropdown.style.display = "none";
 }
 
+function handleRangeBlock(block) {
+    const container = document.createElement("div");
+    container.classList.add("childBox-Container-Horizontal");
+
+    // Create the left-hand side container for the range block
+    const leftContainer = createChildBoxHorizontal(block.id, block.dataset.blockID);
+    container.appendChild(leftContainer);
+
+    // text
+    const inRangeText = document.createElement("span");
+    inRangeText.textContent = "in range";
+    container.appendChild(inRangeText);
+
+    // Create the right-hand side container for the value block
+    const rightContainer = createChildBoxHorizontal(block.id, block.dataset.blockID);
+    container.appendChild(rightContainer);
+
+    block.appendChild(container);
+
+}
+
 // ==========================
 // 5. Create Functions
 // ==========================
@@ -604,11 +626,17 @@ function resetAndUpdateElifElseIds(block) {
 }
 
 function updateUserVariableDropdowns() {
-    const dropdowns = document.querySelectorAll(
-        ".block-dropdown[data-type='variable']"
-    );
+    const dropdowns = document.querySelectorAll(".block-dropdown[data-type='variable']");
     dropdowns.forEach((dropdown) => {
         dropdown.innerHTML = ""; // Clear existing options
+
+        // Add the default option
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "---";
+        defaultOption.textContent = "---";
+        dropdown.appendChild(defaultOption);
+
+        // Add options for each variable
         userVariables.forEach((varName) => {
             const option = document.createElement("option");
             option.value = varName;
