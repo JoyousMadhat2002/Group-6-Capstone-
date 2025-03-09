@@ -56,10 +56,9 @@ function blockToText(pc) {
   //pythontext.value = ""; // Clear the text area
 
   let parentContainer = document.getElementById(pc);
-
-  
-  
   let blockChildElements = parentContainer.querySelectorAll("*");
+
+  let textBuilder = "";
 
   // set all depth to 0
   for(let i = 0; i < blockChildElements.length; i++){
@@ -123,60 +122,69 @@ function blockToText(pc) {
       //   pythontext.value += ":\n";
       // }
       if(tDepth != 0){
-        editor.state.doc.text += ":\n";
+        textBuilder += ":\n";
       }
 
       for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
-        editor.state.doc.text += "    ";
+        textBuilder += "  ";
       }
-      pythontext.value += `${curBlock.dataset.blockID}`;
+      textBuilder += `${curBlock.dataset.blockID}`;
       tDepth = curBlock.dataset.blockDepth;
     }
     else if(curBlock.innerText == "else if:" || curBlock.innerText == "else:"){
-      editor.state.doc.text += ":\n";
+      textBuilder += ":\n";
       for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
-        editor.state.doc.text += " ";
+        textBuilder += " ";
       }
       if(curBlock.innerText == "else if:"){
-        editor.state.doc.text += "else if";
+        textBuilder += "else if";
         // colonC = 1;
         tDepth = curBlock.dataset.blockDepth;
       }
       else if( curBlock.innerText == "else:"){
-        editor.state.doc.text += `${curBlock.innerText}` + "\n";
+        textBuilder += `${curBlock.innerText}` + "\n"};
     }
    
-    }
+    
   if(curBlock.className == "block-dropdown"){
     if(curBlock.dataset.blockDepth > tDepth){
-      editor.state.doc.text += ":\n";
-      editor.state.doc.text += "   "
+      textBuilder += ":\n";
+      textBuilder += "  ";
       tDepth = curBlock.dataset.blockDepth;
     }
-    editor.state.doc.text += " " + `${curBlock.value}`;
+    textBuilder += " " + `${curBlock.value}`;
     
   }
 
   if(curBlock.className == "text-input"){
     if(curBlock.dataset.blockDepth > tDepth){
-      editor.state.doc.text += ":\n";
+      textBuilder += ":\n";
       tDepth = curBlock.dataset.blockDepth;
     }
-    editor.state.doc.text += " " + `${curBlock.value}`;
+    textBuilder += " " + `${curBlock.value}`;
   }
   if(curBlock.className == "math-input"){
     if(curBlock.dataset.blockDepth > tDepth){
-      editor.state.doc.text += ":\n";
+      textBuilder += ":\n";
       tDepth = curBlock.dataset.blockDepth;
     }
-    editor.state.doc.text += " " + `${curBlock.value}`;
+    textBuilder += " " + `${curBlock.value}`;
   }
   
   
 }
+let yyyyy = "THIS IS TEXT";
 
-console.log(editor.state.doc.text);
-} // END OF BBT()
+
+editor.dispatch({
+  changes: {
+      from: 0,
+      to: editor.state.doc.length,
+      insert: textBuilder
+  }
+})
+
+} // END OF BTT()
 
 // Function to convert text programming to block programming
 function textToBlock(container) {
@@ -516,7 +524,7 @@ function textToBlock(container) {
 // 10. Code Execution
 // ==========================
 
-const editor = new EditorView({
+let editor = new EditorView({
   parent: pythontext,
   extensions: [basicSetup, python()],
 });
