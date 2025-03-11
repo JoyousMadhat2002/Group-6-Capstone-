@@ -684,19 +684,31 @@ export function toggleView() {
     var x = document.getElementById("python-code-result");
     var y = document.getElementById("block-container");
     var toggleButton = document.getElementById("toggleButton");
-  
+    var codeContainer = document.querySelector(".code-container");
+    var handle1 = document.querySelector(".handle1");
+
     if (x.classList.contains("hidden")) {
-      x.classList.remove("hidden");
-      y.classList.add("hidden");
-      toggleButton.textContent = "Block";
-      isPythonView = true; // Switch to Python view
+        // Switch to Python view
+        x.classList.remove("hidden");
+        y.classList.add("hidden");
+        toggleButton.textContent = "Block";
+        isPythonView = true;
+
+        // Hide the code container and handle1
+        if (codeContainer) codeContainer.style.display = "none";
+        if (handle1) handle1.style.display = "none";
     } else {
-      x.classList.add("hidden");
-      y.classList.remove("hidden");
-      toggleButton.textContent = "Python";
-      isPythonView = false; // Switch to Block view
+        // Switch to Block view
+        x.classList.add("hidden");
+        y.classList.remove("hidden");
+        toggleButton.textContent = "Python";
+        isPythonView = false;
+
+        // Show the code container and handle1
+        if (codeContainer) codeContainer.style.display = "flex";
+        if (handle1) handle1.style.display = "block";
     }
-  }
+}
 
 
 export {
