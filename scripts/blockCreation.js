@@ -90,10 +90,6 @@ export function refreshCategoryButtons() {
 }
 
 export function newBlock(blockID) {
-    if (isPythonView) {
-        console.warn("Cannot create a new block in Python view.");
-        return; // Exit the function early
-    }
 
     const container = document.getElementById("box-container");
     const newBlock = document.createElement("div");
