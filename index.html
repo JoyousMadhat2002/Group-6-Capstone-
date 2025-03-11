@@ -21,11 +21,10 @@
         <div class="nav-left">
             <span class="logo">Pencil-PythonCode</span>
         </div>
-
-        <!-- Run Code Button -->
         <button id="run-code-btn" class="run-code-btn" onclick="runCode()" data-tooltip="Run Program (Ctrl+Enter)">
-            <i class="icon-play"></i> <!-- Icon for play -->
+            <i class="icon-play"></i>
         </button>
+        
         <div class="nav-right">
             <button id="saveButton">Save</button>
             <button id="shareButton">Share</button>
@@ -96,21 +95,16 @@
 
                 <div class="codes">
 
+                    <div class="block-code-result-container" id="block-container" data-blockDepth=0>
+                        <!-- Block code input area -->
+                        <div class="code-lines"></div>
+
+                        <div class="block-code-result" id="box-container" data-block-depth=0></div>
+                    </div>
+
                     <div class="python-code-result hidden" id="python-code-result">
                         <!-- Python text input area -->
                         <div id="pythontext"></div>
-                    </div>
-
-                    <div class="block-code-result-container" id="block-container" data-blockDepth=0>
-                        <!-- Block code input area -->
-                        <div class="code-lines">
-
-                        </div>
-
-                        <div class="block-code-result" id="box-container" data-block-depth=0>
-
-
-                        </div>
                     </div>
                 </div>
             </div>
