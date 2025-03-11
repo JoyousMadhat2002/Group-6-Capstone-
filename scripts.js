@@ -65,13 +65,10 @@ function blockToText(pc) {
     blockChildElements[i].dataset.blockDepth = 0;
   }
 
-
   // iterate through every element and recalculate depth
   for(let i = 0; i < blockChildElements.length; i++){
     let curBlock = blockChildElements[i];
 
-    
-    
       if(curBlock.parentElement.dataset.blockID == "if" || curBlock.parentElement.dataset.blockID == "for" || curBlock.parentElement.dataset.blockID == "when"){
       curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
 
@@ -912,11 +909,10 @@ function setupColumnResizing() {
   let isDragging = false;
   let currentSpacer = null;
   let startX = 0;
-  let startWidthCol1 = 0;
   let startWidthCol2 = 0;
   let startWidthCol3 = 0;
 
-  const MIN_WIDTH1 = 100;
+  const MIN_WIDTH1 = 100; 
   const MIN_WIDTH2 = 200;
 
   const spacer1 = document.querySelector(".handle1");
@@ -925,34 +921,36 @@ function setupColumnResizing() {
   const col2 = document.querySelector(".result-container");
   const col3 = document.querySelector(".output-graph");
 
+  // Toggle collapse states
+  let isCol1Collapsed = false;
+  let isCol3Collapsed = false;
+
   function startDrag(event, spacer) {
-    isDragging = true;
+    isDragging = false;
     currentSpacer = spacer;
     startX = event.clientX;
-    startWidthCol1 = col1.offsetWidth;
     startWidthCol2 = col2.offsetWidth;
     startWidthCol3 = col3.offsetWidth;
+
     document.addEventListener("mousemove", onDrag);
     document.addEventListener("mouseup", stopDrag);
   }
 
   function onDrag(event) {
-    if (!isDragging || !currentSpacer) return;
+    if (!currentSpacer) return;
 
     const deltaX = event.clientX - startX;
 
-    if (currentSpacer === spacer1) {
-      const newWidthCol1 = startWidthCol1 + deltaX;
-      const newWidthCol2 = startWidthCol2 - deltaX;
+    // If the mouse has moved significantly, consider it a drag
+    if (Math.abs(deltaX) > 5) {
+      isDragging = true;
+    }
 
-      if (newWidthCol1 < MIN_WIDTH1 || newWidthCol2 < MIN_WIDTH2) return;
-
-      col1.style.flexBasis = `${newWidthCol1}px`;
-      col2.style.flexBasis = `${newWidthCol2}px`;
-    } else if (currentSpacer === spacer2) {
+    if (currentSpacer === spacer2) {
       const newWidthCol2 = startWidthCol2 + deltaX;
       const newWidthCol3 = startWidthCol3 - deltaX;
 
+      // Ensure columns don't go below minimum width
       if (newWidthCol2 < MIN_WIDTH2 || newWidthCol3 < MIN_WIDTH1) return;
 
       col2.style.flexBasis = `${newWidthCol2}px`;
@@ -960,16 +958,31 @@ function setupColumnResizing() {
     }
   }
 
-  function stopDrag() {
+  function stopDrag(event) {
+    if (!isDragging && currentSpacer === spacer1) {
+      // Toggle collapse for col1 if it's a click (not a drag)
+      isCol1Collapsed = !isCol1Collapsed;
+      col1.classList.toggle("collapsed", isCol1Collapsed);
+    } else if (!isDragging && currentSpacer === spacer2) {
+      // Toggle collapse for col3 if it's a click (not a drag)
+      isCol3Collapsed = !isCol3Collapsed;
+      col3.classList.toggle("collapsed", isCol3Collapsed);
+    }
+
+    // Reset dragging state
     isDragging = false;
     currentSpacer = null;
+
     document.removeEventListener("mousemove", onDrag);
     document.removeEventListener("mouseup", stopDrag);
   }
 
+  // Add event listeners for dragging and clicking
   spacer1.addEventListener("mousedown", (e) => startDrag(e, spacer1));
   spacer2.addEventListener("mousedown", (e) => startDrag(e, spacer2));
 }
+
+
 
 function setupDraggableBlocks() {
   document.querySelectorAll(".box").forEach((box) => {
@@ -1098,6 +1111,11 @@ document.addEventListener("DOMContentLoaded", function () {
       hideTooltip();
     }
   });
+
+  function addCodeContainer(){
+    //future implementation of the categories
+  }
+
 });
 
 
