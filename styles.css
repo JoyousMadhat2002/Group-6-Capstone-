@@ -13,7 +13,36 @@ body {
   align-items: center;
   background-color: #343a40;
   color: white;
-  padding: 15px 20px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 10px;
+  padding-right: 20px;
+}
+/*
+.nav-left .burger-menu {
+  display: none;
+}
+*/
+
+.nav-left .burgerbtn{
+  color: white;
+  text-decoration: none;
+  border: none;
+  background: none;
+  font-size: 20px;
+  display: block;
+}
+
+.nav-left .burgerbtn:hover {
+  color: black;
+}
+
+.code-container{
+  background-color: #FFFFFF;
+}
+
+.result-container{
+  background-color: #E0E0E0;
 }
 
 .top-bar .nav-left {
@@ -25,6 +54,12 @@ body {
   background-color: #fff;
   color: #000000;
   padding: 5px 10px;
+}
+
+.nav-center, .nav-left{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
 /* Body Container and Resizers */
@@ -75,13 +110,6 @@ body {
 .result-container,
 .output-graph {
   flex: 0 0 41.5%;
-}
-
-.toggle-buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 10px;
 }
 
 .result-container {
@@ -148,7 +176,6 @@ button {
   cursor: pointer;
 }
 
-.toggle-buttons button,
 .category button {
   padding: 10px 15px;
   color: black;
@@ -332,7 +359,6 @@ select.block-dropdown {
 */
 
 .run-code-btn {
-  position: sticky;
   top: 10px;
   left: 10px;
   background-color: green;
@@ -385,6 +411,54 @@ select.block-dropdown {
 }
 
 .run-code-btn:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.saveButton {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s, transform 0.2s ease;
+  z-index: 10;
+  width: auto;
+  min-width: 120px;
+}
+
+.saveButton:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.saveButton::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 110%;
+  left: 60%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+  font-size: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.saveButton:hover::after {
   opacity: 1;
   visibility: visible;
 }

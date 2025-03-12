@@ -1118,6 +1118,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+function myFunction() {
+  const burgerMenu = document.getElementById("burgerMenu");
+  if (burgerMenu.style.display === "none" || burgerMenu.style.display === "") {
+      burgerMenu.style.display = "flex";
+  } else {
+      burgerMenu.style.display = "none";
+  }
+}
 
 function setUpApp() {
   setupKeydownListener();

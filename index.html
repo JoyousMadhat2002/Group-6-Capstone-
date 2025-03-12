@@ -19,26 +19,37 @@
 <body>
     <div class="header">
         <div class="nav-left">
+            <button class="burgerbtn"><i class="fa fa-bars"></i></button>
+            <div class="burger-menu" id="burgerMenu">
+                <button id="shareButton">Share</button>
+                <button id="guideButton">Guide</button>
+                <button id="loginButton">Log in</button>
+            </div>
+
+
             <span class="logo">Pencil-PythonCode</span>
+
         </div>
-        <button id="run-code-btn" class="run-code-btn" onclick="runCode()" data-tooltip="Run Program (Ctrl+Enter)">
-            <i class="icon-play"></i>
-        </button>
-        
-        <div class="nav-right">
-            <button id="saveButton">Save</button>
-            <button id="shareButton">Share</button>
-            <button id="loginButton">Log in</button>
-            <button id="guideButton">Guide</button>
+        <div class="nav-center">
+
+            <button class="Button" name="btt">btt</button>
+            <button class="Button" name="ttb">ttb</button>
+            <button id="toggleButton" class="Button" name="toggleView">Python</button>
+
+            <button id="run-code-btn" class="run-code-btn" onclick="runCode()" data-tooltip="Run Program (Ctrl+Enter)">
+                <i class="icon-play"></i>
+            </button>
+
+            <button id="saveButton" class="saveButton run-code-btn" onclick="saveCode()"
+                data-tooltip="Save Program (Ctrl+S)">
+                <i class="fas fa-save"></i>
+            </button>
+
         </div>
+
     </div>
 
-    <div class="toggle-buttons">
 
-        <p><button class="Button" name="btt">btt</button></p>
-        <p><button class="Button" name="ttb">ttb</button></p>
-        <p><button id="toggleButton" class="Button" name="toggleView">Python</button></p>
-    </div>
 
     <div class="body-container">
         <div class="code-container">
