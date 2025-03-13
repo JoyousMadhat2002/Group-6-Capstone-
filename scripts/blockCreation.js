@@ -325,14 +325,47 @@ function handleLoopBlocks(block, blockID) {
 }
 
 function handleVariableDeclarationBlock(block) {
-    const variableName = prompt("Enter a new variable name:");
-    if (!variableName) return;
+    // Get the modal and input elements
+    const modal = document.getElementById("variableModal");
+    const variableNameInput = document.getElementById("variableNameInput");
+    const submitButton = document.getElementById("submitVariable");
+    const cancelButton = document.getElementById("cancelVariable");
+    const closeButton = document.querySelector(".close");
 
-    if (!userVariables.includes(variableName)) {
-        userVariables.push(variableName);
-        updateUserVariableDropdowns();
-        refreshCategoryButtons();
-    }
+    // Show the modal
+    modal.style.display = "block";
+
+    // Function to close the modal
+    const closeModal = () => {
+        modal.style.display = "none";
+        variableNameInput.value = ""; // Clear the input field
+    };
+
+    // Handle the submit button click
+    submitButton.onclick = () => {
+        const variableName = variableNameInput.value.trim();
+        if (variableName) {
+            if (!userVariables.includes(variableName)) {
+                userVariables.push(variableName);
+                updateUserVariableDropdowns();
+                refreshCategoryButtons();
+            }
+            closeModal();
+        }
+    };
+
+    // Handle the cancel button click
+    cancelButton.onclick = closeModal;
+
+    // Handle the close button click
+    closeButton.onclick = closeModal;
+
+    // Close the modal if the user clicks outside of it
+    window.onclick = (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
 }
 
 function handleVariableBlock(block) {
