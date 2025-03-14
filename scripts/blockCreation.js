@@ -14,33 +14,45 @@ let isPythonView = false;
 
 // Function to dynamically create buttons and assign background colors to categories
 export function createCategoryButtons(blockCategory) {
+    // Clear all existing category buttons and their event listeners
+    for (const categoryName of Object.keys(blockCategory)) {
+        const categoryContainer = document.getElementById(categoryName);
+        if (categoryContainer) {
+            // Remove all child elements (buttons) from the category container
+            categoryContainer.innerHTML = "";
+
+            // Remove event listeners from the category header
+            const categoryHeader = categoryContainer.parentElement.querySelector(".category-header");
+            if (categoryHeader) {
+                // Clone the category header to remove all event listeners
+                const newHeader = categoryHeader.cloneNode(true);
+                categoryHeader.replaceWith(newHeader);
+            }
+        }
+    }
+
+    // Create new category buttons
     for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
         const categoryContainer = document.getElementById(categoryName);
 
-        // Check if the category container exists
         if (!categoryContainer) {
             console.warn(`No container found for category: ${categoryName}`);
             continue;
         }
 
-        // Apply the background color to the category header
-        const categoryHeader =
-            categoryContainer.parentElement.querySelector(".category-header");
+        const categoryHeader = categoryContainer.parentElement.querySelector(".category-header");
         const color = categoryColors[categoryName] || "#cccccc";
 
-        // Set default color for Variable Declaration block
-        if (categoryName === "Variable Declaration") {
-            categoryHeader.style.backgroundColor = "#cccccc";
-        } else {
-            categoryHeader.style.backgroundColor = color;
-        }
+        // Apply the background color to the category header
+        categoryHeader.style.backgroundColor = color;
 
         // Add the onclick event listener to the category header
-        categoryHeader.addEventListener("click", function () {
+        categoryHeader.addEventListener("click", function (event) {
+            event.stopPropagation(); // Stop event propagation
             toggleCategory(categoryName);
         });
 
-        // Iterate through each element in the category
+        // Iterate through each element in the category and create buttons
         categoryData.elements.forEach((element) => {
             // Skip creating Variable Operations and Variable Blocks if no variables exist
             if (
@@ -85,12 +97,13 @@ export function refreshCategoryButtons() {
         }
     }
 
+    console.log("Refreshing category buttons...");
+
     // Recreate the buttons
     createCategoryButtons(blockCategory);
 }
 
 export function newBlock(blockID) {
-
     const container = document.getElementById("box-container");
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
@@ -168,6 +181,7 @@ export function newBlock(blockID) {
     return newBlock.id;
 }
 
+
 // Function to update the line numbers based on the number of blocks
 export function updateLineNumbers() {
     const codeLinesContainer = document.querySelector(".code-lines");
@@ -177,17 +191,31 @@ export function updateLineNumbers() {
     codeLinesContainer.innerHTML = "";
 
     // Create new line numbers based on the number of blocks
-    const totalLines = blocks.length + 1; // +1 for the extra empty line at the bottom
-    for (let i = 1; i <= totalLines; i++) {
+    let lineNumberCounter = 1;
+
+    blocks.forEach((block, index) => {
         const lineNumber = document.createElement("div");
         lineNumber.classList.add("code-line");
-        if (i === totalLines) {
-            lineNumber.textContent = i;
-        } else {
-            lineNumber.textContent = i; // Line numbers start from 1
+
+        // Check if the block is inside another block and not inside a child-box-container-horizontal
+        const parentBlock = block.parentElement.closest(".box");
+        const isInsideHorizontal = block.parentElement.classList.contains("child-box-container-horizontal");
+        const isInsideVertical = block.parentElement.classList.contains("child-box-container");
+
+        if (parentBlock && (!isInsideHorizontal || !isInsideVertical) ) {
+            // Skip adding a line number for this block
+            return;
         }
+
+        // Regular line
+        const blockHeight = block.offsetHeight; 
+
+        // Set the height of the code line to match the block's height
+        lineNumber.style.height = `${blockHeight}px`;
+        lineNumber.textContent = lineNumberCounter++;
+
         codeLinesContainer.appendChild(lineNumber);
-    }
+    });
 }
 
 // ==========================
@@ -348,7 +376,7 @@ function handleVariableDeclarationBlock(block) {
             if (!userVariables.includes(variableName)) {
                 userVariables.push(variableName);
                 updateUserVariableDropdowns();
-                refreshCategoryButtons();
+                    refreshCategoryButtons();
             }
             closeModal();
         }
@@ -431,6 +459,7 @@ function handleElseIfOption(block, elifElseDiv, dropdown, plusIcon) {
 
     // Reset and update the IDs for all elif-else blocks
     resetAndUpdateElifElseIds(block);
+    updateLineNumbers();
 
     // Increment the "else if" counter
     block.dataset.elseIfCount = parseInt(block.dataset.elseIfCount || 0) + 1;
