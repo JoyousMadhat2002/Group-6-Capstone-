@@ -4,7 +4,7 @@ import { updateLineNumbers } from "./blockCreation.js";
 let highlightedBlock = null;
 let dragged = null;
 
-const logicBlocks = ["if", "while", "for", "break", "continue"];
+const logicBlocks = ["if", "while", "for"];
 
 // ==========================
 // 8. UI and Interactivity
@@ -15,9 +15,9 @@ export function toggleCategory(categoryId) {
     const allCategories = document.querySelectorAll(".category-blocks");
     allCategories.forEach((category) => {
         if (category.id === categoryId) {
-            category.classList.toggle("hidden"); // Toggle visibility of the clicked category
+            category.classList.toggle("hidden");
         } else {
-            category.classList.add("hidden"); // Hide all other categories
+            category.classList.add("hidden"); 
         }
     });
 
@@ -56,10 +56,10 @@ function dragOver(event) {
 
     // Check if the dragged block is a logic block and the target is a horizontal container
     if (
-        logicBlocks.includes(dragged.dataset.blockID) &&
+        (dragged.dataset.blockID === "if" || dragged.dataset.blockID === "while" || dragged.dataset.blockID === "for") &&
         targetBlock.classList.contains("child-box-container-horizontal")
     ) {
-        // Add visual feedback for invalid drop target
+        console.log("Invalid drop: Logic block cannot be placed inside a horizontal container.");
         targetBlock.classList.add("invalid-drop-target");
         return; // Prevent dropping logic blocks inside horizontal containers
     } else {
@@ -109,13 +109,16 @@ function drop(event) {
 
     if (!targetBlock || targetBlock === dragged) return;
 
-    // Check if the dragged block is a logic block and the target is a horizontal container
+    // Get the parent container of the target block
+    const parentContainer = targetBlock.parentElement;
+
+    // Check if the dragged block is a logic block and the parent container is a horizontal container
     if (
-        logicBlocks.includes(dragged.dataset.blockID) &&
-        targetBlock.classList.contains("child-box-container-horizontal")
+        (dragged.dataset.blockID === "if" || dragged.dataset.blockID === "while" || dragged.dataset.blockID === "for") &&
+        parentContainer.classList.contains("child-box-container-horizontal")
     ) {
-        // Prevent dropping logic blocks inside horizontal containers
-        return;
+        console.log("Invalid drop: Logic block cannot be placed inside a horizontal container.");
+        return; // Prevent dropping logic blocks inside horizontal containers
     }
 
     if (targetBlock.classList.contains("block-code-result")) {
@@ -151,6 +154,7 @@ function drop(event) {
 
     console.log("Dragged Block ID:", dragged.dataset.blockID);
     console.log("Target Block Class:", targetBlock.classList);
+    console.log("Parent Container Class:", parentContainer.classList);
 
     clearDropHighlights();
     dragged = null;

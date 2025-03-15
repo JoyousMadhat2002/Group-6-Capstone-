@@ -202,13 +202,13 @@ export function updateLineNumbers() {
         const isInsideHorizontal = block.parentElement.classList.contains("child-box-container-horizontal");
         const isInsideVertical = block.parentElement.classList.contains("child-box-container");
 
-        if (parentBlock && (!isInsideHorizontal || !isInsideVertical) ) {
+        if (parentBlock && (!isInsideHorizontal || !isInsideVertical)) {
             // Skip adding a line number for this block
             return;
         }
 
         // Regular line
-        const blockHeight = block.offsetHeight; 
+        const blockHeight = block.offsetHeight;
 
         // Set the height of the code line to match the block's height
         lineNumber.style.height = `${blockHeight}px`;
@@ -376,7 +376,7 @@ function handleVariableDeclarationBlock(block) {
             if (!userVariables.includes(variableName)) {
                 userVariables.push(variableName);
                 updateUserVariableDropdowns();
-                    refreshCategoryButtons();
+                refreshCategoryButtons();
             }
             closeModal();
         }
@@ -533,29 +533,69 @@ function handleRangeBlock(block) {
 // ==========================
 
 function createInputField(placeholder, className, dataKey, blockID) {
-    const input = document.createElement("input");
-    input.type = "text";
-    input.placeholder = placeholder;
-    input.classList.add(className);
+    let input;
 
-    input.addEventListener("input", function () {
-        const block = input.closest(".box");
-        const value = input.value.trim();
+    if (blockID === "printText") {
+        // Use a textarea for text blocks to allow newlines
+        input = document.createElement("textarea");
+        input.rows = 1; // Start with one row
+        input.placeholder = placeholder;
+        input.addEventListener("input", () => {
+            // Adjust the number of rows based on the content
+            input.style.height = "auto";
+            input.style.height = `${input.scrollHeight}px`;
 
-        // Validate input based on block type
-        if (blockID === "mathText" || blockID === "mathBlock") {
-            // Only allow numbers for Math blocks
-            if (/^-?\d*\.?\d*$/.test(value)) {
-                block.dataset[dataKey] = value;
+            // Update the data-block-value with newlines
+            const block = input.closest(".box");
+            block.dataset[dataKey] = input.value.replace(/\n/g, "\\n");
+        });
+    } else {
+        // Use an input for other blocks (e.g., math blocks)
+        input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = placeholder;
+
+        // Function to adjust the width of the input field (for non-textarea inputs)
+        const adjustInputWidth = () => {
+            const tempSpan = document.createElement("span");
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.whiteSpace = "pre";
+            tempSpan.style.fontFamily = getComputedStyle(input).fontFamily;
+            tempSpan.style.fontSize = getComputedStyle(input).fontSize;
+            tempSpan.textContent = input.value || input.placeholder;
+            document.body.appendChild(tempSpan);
+            const width = tempSpan.offsetWidth + 10; // Add some padding
+            document.body.removeChild(tempSpan);
+            input.style.width = `${width}px`;
+        };
+
+        // Adjust width on input (for non-textarea inputs)
+        input.addEventListener("input", () => {
+            const block = input.closest(".box");
+            const value = input.value.trim();
+
+            // Validate input based on block type
+            if (blockID === "mathText" || blockID === "mathBlock") {
+                // Only allow numbers for Math blocks
+                if (/^-?\d*\.?\d*$/.test(value)) {
+                    block.dataset[dataKey] = value;
+                } else {
+                    input.value = block.dataset[dataKey] || "";
+                }
             } else {
-                input.value = block.dataset[dataKey] || "";
+                // Allow any input for non-Math blocks
+                block.dataset[dataKey] = value;
             }
-        } else {
-            // Allow any input for non-Math blocks
-            block.dataset[dataKey] = value;
-        }
-    });
 
+            // Adjust the input width dynamically (for non-textarea inputs)
+            adjustInputWidth();
+        });
+
+        // Adjust width initially (for non-textarea inputs)
+        adjustInputWidth();
+    }
+
+    input.classList.add(className);
     return input;
 }
 

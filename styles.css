@@ -383,10 +383,8 @@ select.block-dropdown {
   min-width: 25px;
   padding-right: 5px;
   padding-left: 5px;
-  background-color: transparent;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
   position: relative;
   border: #000000 1px solid;
 
@@ -394,9 +392,23 @@ select.block-dropdown {
   width: fit-content;
 }
 
-.box input{
-  width: fit-content;
-  padding: 5px;
+.box input,
+.box textarea {
+    width: 100%;
+    resize: none;
+    overflow: hidden;
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    outline: none;
+    padding: 5px;
+    box-sizing: border-box;
+    user-select: text;
+    pointer-events: auto;
+}
+
+.box textarea {
+    white-space: pre-wrap; /* Allow wrapping of text */
 }
 
 .elif-else{
