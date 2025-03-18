@@ -7,7 +7,9 @@ import {
   createCategoryButtons,
   newBlock,
   clearDropHighlights,
-  toggleView
+  toggleView,
+  refreshCategoryButtons,
+  updateLineNumbers,
 } from "./scripts/blockCreation.js";
 import { userVariables } from "./scripts/blockCreation.js";
 
@@ -347,7 +349,11 @@ function textToBlock(container) {
         console.log("END OF ALL ELSE");
       }
 
+      updateLineNumbers();
+      refreshCategoryButtons();
+
     }
+    
     // console.log('depthBuilder: ' + `${depthBuilder}`);
   }
 
@@ -511,17 +517,6 @@ function blockBuilder(arr, container) {
     container.appendChild(rmBlock[i]);
   }
 } // end blockBuilder()
-
-
-
-// function toggleView() {
-//   var x = document.getElementById("python-code-result");
-//   var y = document.getElementById("box-container");
-//   var toggleButton = document.getElementById("toggleButton");
-
-
-//   }
-
 
 
 // ==========================

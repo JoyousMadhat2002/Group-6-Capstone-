@@ -1,6 +1,7 @@
-*{
+* {
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -27,7 +28,7 @@ body {
   padding: 10px;
 }
 
-.burgerbtn{
+.burgerbtn {
   color: white;
   text-decoration: none;
   border: none;
@@ -35,22 +36,21 @@ body {
   font-size: 20px;
 }
 
-.nav-left{
+.nav-left {
   display: inline-block;
   position: relative;
-
 }
 
 .nav-left .burgerbtn:hover {
   color: black;
 }
 
-.burger-menu{
+.burger-menu {
   display: none;
   position: absolute;
   background-color: #343a40;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
 
@@ -65,8 +65,11 @@ body {
   text-align: center;
 }
 
-.burger-menu a:hover {background-color: #333;}
-.burger-menu a{
+.burger-menu a:hover {
+  background-color: #333;
+}
+
+.burger-menu a {
   color: white;
   padding: 12px 16px;
   text-decoration: none;
@@ -77,10 +80,17 @@ body {
   text-align: center;
 }
 
-.burger-menu button:hover {background-color: #333;}
+.burger-menu button:hover {
+  background-color: #333;
+}
 
-.nav-left:hover .burger-menu {display: block;}
-.nav-left:hover .burgerbtn {color: black;}
+.nav-left:hover .burger-menu {
+  display: block;
+}
+
+.nav-left:hover .burgerbtn {
+  color: black;
+}
 
 .dashboard-container {
   display: flex;
@@ -113,13 +123,11 @@ body {
   cursor: pointer;
 }
 
-
-
-.code-container{
+.code-container {
   background-color: #FFFFFF;
 }
 
-.result-container{
+.result-container {
   background-color: #E0E0E0;
 }
 
@@ -128,7 +136,8 @@ body {
   gap: 10px;
 }
 
-.nav-right, .nav-left{
+.nav-right,
+.nav-left {
   display: flex;
   flex-direction: row;
   gap: 10px;
@@ -141,7 +150,6 @@ body {
   min-height: 100vh;
   border-top: #000000 1px solid;
 }
-
 
 .code-container.collapsed,
 .output-graph.collapsed {
@@ -173,7 +181,8 @@ body {
   background-color: #999999;
 }
 
-.code-container, .handle1{
+.code-container,
+.handle1 {
   display: flex;
   flex-direction: column;
   transition: display 0.3s ease;
@@ -192,18 +201,21 @@ body {
 }
 
 .output-graph {
-  flex: 1;
-  height: 100%;
-  position: relative;
-  display: block;
+  height: 100vh;
   width: 100%;
-  background: linear-gradient(to right, #e0e0e0 1px, transparent 1px),
-    linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
+  display: flex;
+  flex-direction: column;
+}
+
+#mycanvas {
+  background-image:
+    linear-gradient(to right, grey 1px, transparent 1px),
+    linear-gradient(to bottom, grey 1px, transparent 1px);
   background-size: 25px 25px;
   overflow: hidden;
   border-right: #000000 1px solid;
   margin-right: 1%;
-  height: 100vh;
+  height: 100%;
 }
 
 /* Styling for block categories */
@@ -220,10 +232,9 @@ body {
   gap: 10px;
 }
 
-.code-result{
+.code-result {
   width: 100%;
 }
-
 
 #python-code-result.hidden,
 #block-container.hidden,
@@ -236,10 +247,10 @@ body {
 
 .python-code-result {
   display: flex;
+  flex-direction: column;
 }
 
-
-.results{
+.results {
   display: flex;
   flex-direction: row;
 }
@@ -279,24 +290,24 @@ button:hover {
 
 /* Modal Styles */
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1000; /* Sit on top */
+  display: none;
+  position: fixed;
+  z-index: 1000;
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
+  margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
   border-radius: 8px;
-  width: 300px; /* Could be more or less, depending on screen size */
+  width: 300px;
   text-align: center;
 }
 
@@ -322,7 +333,8 @@ button:hover {
   border-radius: 4px;
 }
 
-#submitVariable, #cancelVariable {
+#submitVariable,
+#cancelVariable {
   padding: 10px 20px;
   margin: 5px;
   border: none;
@@ -359,7 +371,7 @@ button:hover {
 }
 
 .block-code-result,
-.child-box-container{
+.child-box-container {
   width: auto;
   padding-left: 10px;
   font-family: monospace;
@@ -385,33 +397,33 @@ select.block-dropdown {
   padding-left: 5px;
   cursor: pointer;
   display: flex;
+  flex-direction: column;
   position: relative;
   border: #000000 1px solid;
-
   height: fit-content;
   width: fit-content;
 }
 
 .box input,
 .box textarea {
-    width: 100%;
-    resize: none;
-    overflow: hidden;
-    font-family: inherit;
-    font-size: inherit;
-    border: none;
-    outline: none;
-    padding: 5px;
-    box-sizing: border-box;
-    user-select: text;
-    pointer-events: auto;
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  outline: none;
+  padding: 5px;
+  box-sizing: border-box;
+  user-select: text;
+  pointer-events: auto;
 }
 
 .box textarea {
-    white-space: pre-wrap; /* Allow wrapping of text */
+  white-space: pre-wrap;
 }
 
-.elif-else{
+.elif-else {
   display: flex;
   flex-direction: column;
   float: left;
@@ -442,13 +454,15 @@ select.block-dropdown {
   margin-bottom: 10px;
 }
 
-.childBox-Container-Horizontal{
+.childBox-Container-Horizontal {
   display: flex;
   flex-direction: row;
   padding: 5px;
 }
 
-.block-x, .block-y, .block-op {
+.block-x,
+.block-y,
+.block-op {
   min-width: 50px;
   min-height: 25px;
   border: #000000 1px dotted;
@@ -456,14 +470,15 @@ select.block-dropdown {
 
 /* Drop snap guide */
 .box.drop-above {
-  border-top: 6px solid yellow; /* Increase thickness for better visibility */
+  border-top: 6px solid yellow;
 }
 
 .box.drop-below {
   border-bottom: 6px solid yellow;
 }
 
-.box.drop-inside, .child-box-container.highlight-inside,
+.box.drop-inside,
+.child-box-container.highlight-inside,
 .child-box-container-horizontal.highlight-inside {
   border: 6px solid yellow;
 }
@@ -488,35 +503,16 @@ select.block-dropdown {
   border: 2px solid red;
 }
 
-.box.joined{
-    display: flex;
-    flex-direction: row;
+.box.joined {
+  display: flex;
+  flex-direction: row;
 }
 
 .textarea {
   resize: none;
-  /*  No resizing */
   width: calc((100vw / 3) - 35px);
-  /* Width is 1/3rd of total viewport width minus 35 pixels */
   height: calc(100vh - 90px);
-  /* Height is viewport height minus 90 pixels */
 }
-
-/*
-.console-output {
-    position: absolute; /* Align console box with bottom of container */ /*
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #f8f5f5;
-    border-top: 1px solid #ccc;
-    padding: 10px;
-    height: 50px;
-    overflow-y: scroll;
-    font-family: monospace;
-    color: #333;
-}
-*/
 
 .run-code-btn {
   top: 10px;
@@ -538,12 +534,10 @@ select.block-dropdown {
 
 .run-code-btn .icon-play::before {
   content: "\25BA";
-  /* Unicode for play icon */
 }
 
 .run-code-btn .icon-stop::before {
   content: "\25A0";
-  /* Unicode for stop icon */
 }
 
 .run-code-btn.stop {
@@ -554,7 +548,6 @@ select.block-dropdown {
   content: attr(data-tooltip);
   position: absolute;
   top: 110%;
-  /* Slightly below the button */
   left: 60%;
   transform: translateX(-50%);
   background-color: #333;
@@ -700,7 +693,8 @@ select.block-dropdown {
   color: white;
 }
 
-#login-cancel, #signup-cancel {
+#login-cancel,
+#signup-cancel {
   background: red;
   color: white;
 }
@@ -767,16 +761,58 @@ select.block-dropdown {
   font-weight: bold;
 }
 
-#pythontext {
-  height: 700px; /* Ensures editor has space */
+#pythontext,
+#output {
+  height: 50vh;
   width: 100%;
-  border: 1px solid #ccc; /* Optional: make it visible */
+  border: 1px solid #ccc;
+  overflow: auto;
 }
 
 .cm-editor {
-  height: 100%; /* Makes CodeMirror take full height */
+  height: 100%;
 }
 
 .cm-scroller {
-  min-height: 400px; /* Ensures space for multiple lines */
+  height: 100%;
+}
+
+/* Block View Layout */
+.block-view .output-graph {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.block-view .output-graph #output {
+  flex: 1;
+  height: 50%;
+  overflow: auto;
+}
+
+.block-view .output-graph #mycanvas {
+  flex: 1;
+  height: 50%;
+}
+
+/* Python View Layout */
+.python-view .output-graph {
+  display: none; /* Hide the graph in Python view */
+}
+
+.python-view .python-code-result {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.python-view .python-code-result #pythontext {
+  flex: 1;
+  height: 50%;
+}
+
+.python-view .python-code-result #output {
+  flex: 1;
+  height: 50%;
+  overflow: auto;
 }
