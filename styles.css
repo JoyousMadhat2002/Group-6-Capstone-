@@ -164,7 +164,7 @@ body {
   border-left: #000000 1px solid;
   border-right: #000000 1px solid;
   background-color: #ADADAD;
-  width: 10px;
+  width: 20px;
   transition: background-color 0.3s ease;
 }
 
@@ -179,6 +179,7 @@ body {
 .handle1:hover,
 .handle2:hover {
   background-color: #999999;
+  width: 25px;
 }
 
 .code-container,
@@ -388,6 +389,24 @@ button:hover {
 select.block-dropdown {
   width: auto;
   white-space: nowrap;
+}
+
+.Button {
+  background-color: #FFFFFF;
+  border: none;
+  color: black;
+  padding: 10px 30px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.Button:hover {
+  background-color: #f1f1f1;
 }
 
 .box {
@@ -761,12 +780,22 @@ select.block-dropdown {
   font-weight: bold;
 }
 
-#pythontext,
-#output {
-  height: 50vh;
+#pythontext {
+  height: 100vh;
   width: 100%;
   border: 1px solid #ccc;
   overflow: auto;
+}
+
+#output {
+  height: 100%;
+  width: 100%;
+  border: 1px solid #ccc;
+  background-color: #343330;
+  overflow: auto;
+  color: white;
+  padding: 10px;
+  font-family: monospace;
 }
 
 .cm-editor {
@@ -806,13 +835,8 @@ select.block-dropdown {
   height: 100vh;
 }
 
-.python-view .python-code-result #pythontext {
+.python-view .python-code-result #pythontext, .python-code-result #output {
   flex: 1;
-  height: 50%;
-}
-
-.python-view .python-code-result #output {
-  flex: 1;
-  height: 50%;
+  height: 100%;
   overflow: auto;
 }

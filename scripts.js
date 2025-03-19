@@ -349,12 +349,11 @@ function textToBlock(container) {
         console.log("END OF ALL ELSE");
       }
 
-      updateLineNumbers();
-      refreshCategoryButtons();
-
     }
-    
+
     // console.log('depthBuilder: ' + `${depthBuilder}`);
+    updateLineNumbers();
+    refreshCategoryButtons();
   }
 
 } // END OF TTB()
