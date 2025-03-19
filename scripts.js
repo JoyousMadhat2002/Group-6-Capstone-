@@ -535,7 +535,6 @@ document.getElementById("run-code-btn").addEventListener("click", runCode);
 
 // Function to run the Python code
 function runCode() {
-  console.log("test: code running");
   var prog = getCode();
   var mypre = document.getElementById("output"); // Output area
   mypre.innerHTML = ""; // Clear previous output
@@ -906,17 +905,24 @@ function setupColumnResizing() {
   let isDragging = false;
   let currentSpacer = null;
   let startX = 0;
+  let startY = 0;
   let startWidthCol2 = 0;
   let startWidthCol3 = 0;
+  let startHeightRow1 = 0;
+  let startHeightRow2 = 0;
 
   const MIN_WIDTH1 = 100;
   const MIN_WIDTH2 = 200;
+  const MIN_HEIGHT = 100;
 
   const spacer1 = document.querySelector(".handle1");
   const spacer2 = document.querySelector(".handle2");
+  const spacer3 = document.querySelector(".handle3");
   const col1 = document.querySelector(".code-container");
   const col2 = document.querySelector(".result-container");
   const col3 = document.querySelector(".output-graph");
+  const row1 = document.querySelector("#mycanvas");
+  const row2 = document.querySelector("#output");
 
   // Toggle collapse states
   let isCol1Collapsed = false;
@@ -926,8 +932,11 @@ function setupColumnResizing() {
     isDragging = false;
     currentSpacer = spacer;
     startX = event.clientX;
+    startY = event.clientY;
     startWidthCol2 = col2.offsetWidth;
     startWidthCol3 = col3.offsetWidth;
+    startHeightRow1 = row1.offsetHeight;
+    startHeightRow2 = row2.offsetHeight;
 
     document.addEventListener("mousemove", onDrag);
     document.addEventListener("mouseup", stopDrag);
@@ -937,9 +946,10 @@ function setupColumnResizing() {
     if (!currentSpacer) return;
 
     const deltaX = event.clientX - startX;
+    const deltaY = event.clientY - startY;
 
     // If the mouse has moved significantly, consider it a drag
-    if (Math.abs(deltaX) > 5) {
+    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
       isDragging = true;
     }
 
@@ -953,15 +963,24 @@ function setupColumnResizing() {
       col2.style.flexBasis = `${newWidthCol2}px`;
       col3.style.flexBasis = `${newWidthCol3}px`;
     }
+
+    if (currentSpacer === spacer3) {
+      const newHeightRow1 = startHeightRow1 + deltaY;
+      const newHeightRow2 = startHeightRow2 - deltaY;
+
+      // Ensure rows don't go below minimum height
+      if (newHeightRow1 < MIN_HEIGHT || newHeightRow2 < MIN_HEIGHT) return;
+
+      row1.style.flexBasis = `${newHeightRow1}px`;
+      row2.style.flexBasis = `${newHeightRow2}px`;
+    }
   }
 
   function stopDrag(event) {
     if (!isDragging && currentSpacer === spacer1) {
-      // Toggle collapse for col1 if it's a click (not a drag)
       isCol1Collapsed = !isCol1Collapsed;
       col1.classList.toggle("collapsed", isCol1Collapsed);
     } else if (!isDragging && currentSpacer === spacer2) {
-      // Toggle collapse for col3 if it's a click (not a drag)
       isCol3Collapsed = !isCol3Collapsed;
       col3.classList.toggle("collapsed", isCol3Collapsed);
     }
@@ -977,6 +996,7 @@ function setupColumnResizing() {
   // Add event listeners for dragging and clicking
   spacer1.addEventListener("mousedown", (e) => startDrag(e, spacer1));
   spacer2.addEventListener("mousedown", (e) => startDrag(e, spacer2));
+  spacer3.addEventListener("mousedown", (e) => startDrag(e, spacer3));
 }
 
 

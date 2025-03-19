@@ -161,10 +161,18 @@ body {
 
 .handle1,
 .handle2 {
-  border-left: #000000 1px solid;
-  border-right: #000000 1px solid;
+  border: #000000 1px solid;
   background-color: #ADADAD;
   width: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.handle3 {
+  cursor: row-resize;
+  background-color: #ADADAD;
+  border: #000000 1px solid;
+  height: 20px;
+  width: 100%;
   transition: background-color 0.3s ease;
 }
 
@@ -180,6 +188,11 @@ body {
 .handle2:hover {
   background-color: #999999;
   width: 25px;
+}
+
+.handle3:hover {
+  background-color: #999999;
+  height: 25px;
 }
 
 .code-container,
@@ -209,6 +222,7 @@ body {
 }
 
 #mycanvas {
+  flex: 1;
   background-image:
     linear-gradient(to right, grey 1px, transparent 1px),
     linear-gradient(to bottom, grey 1px, transparent 1px);
@@ -788,14 +802,21 @@ select.block-dropdown {
 }
 
 #output {
+  flex: 1;
   height: 100%;
   width: 100%;
   border: 1px solid #ccc;
-  background-color: #343330;
+  background-color: #f1f1f1;
   overflow: auto;
-  color: white;
+  color: #343330;
   padding: 10px;
   font-family: monospace;
+}
+
+#output::before {
+  content: "> ";
+  color: #4CAF50;
+  font-weight: bold;
 }
 
 .cm-editor {
