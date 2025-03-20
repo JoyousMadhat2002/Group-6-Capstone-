@@ -4,6 +4,8 @@ import { updateLineNumbers } from "./blockCreation.js";
 let highlightedBlock = null;
 let dragged = null;
 
+const logicBlocks = ["if", "while", "for"];
+
 // ==========================
 // 8. UI and Interactivity
 // ==========================
@@ -13,11 +15,13 @@ export function toggleCategory(categoryId) {
     const allCategories = document.querySelectorAll(".category-blocks");
     allCategories.forEach((category) => {
         if (category.id === categoryId) {
-            category.classList.toggle("hidden"); // Toggle visibility of the clicked category
+            category.classList.toggle("hidden");
         } else {
-            category.classList.add("hidden"); // Hide all other categories
+            category.classList.add("hidden"); 
         }
     });
+
+    console.log("Toggled category:", categoryId);
 }
 
 // Function to add interactivity to blocks
@@ -41,7 +45,7 @@ function dragStart(event) {
 // Event handler for dragging over a block or container
 function dragOver(event) {
     event.preventDefault();
-    const targetBlock = event.target.closest(".box, .child-box-container, .child-box-container-horizontal");
+    const targetBlock = event.target.closest(".box, .child-box-container, .child-box-container-horizontal, .block-code-result");
 
     if (!targetBlock || targetBlock === dragged) return;
 
@@ -50,7 +54,27 @@ function dragOver(event) {
         return;
     }
 
+    // Check if the dragged block is a logic block and the target is a horizontal container
+    if (
+        (dragged.dataset.blockID === "if" || dragged.dataset.blockID === "while" || dragged.dataset.blockID === "for") &&
+        targetBlock.classList.contains("child-box-container-horizontal")
+    ) {
+        console.log("Invalid drop: Logic block cannot be placed inside a horizontal container.");
+        targetBlock.classList.add("invalid-drop-target");
+        return; // Prevent dropping logic blocks inside horizontal containers
+    } else {
+        // Remove visual feedback if the drop is valid
+        targetBlock.classList.remove("invalid-drop-target");
+    }
+
     clearDropHighlights(); // Clear previous highlights
+
+    // Handle dropping inside the block-code-result container
+    if (targetBlock.classList.contains("block-code-result")) {
+        // Highlight the entire block-code-result container
+        targetBlock.classList.add("highlight-inside");
+        return;
+    }
 
     // Highlight the target container or block
     if (targetBlock.classList.contains("child-box-container") || targetBlock.classList.contains("child-box-container-horizontal")) {
@@ -81,11 +105,26 @@ function drop(event) {
     event.preventDefault();
     if (!dragged) return;
 
-    const targetBlock = event.target.closest(".box, .child-box-container, .child-box-container-horizontal");
+    const targetBlock = event.target.closest(".box, .child-box-container, .child-box-container-horizontal, .block-code-result");
 
     if (!targetBlock || targetBlock === dragged) return;
 
-    if (targetBlock.classList.contains("highlight-inside")) {
+    // Get the parent container of the target block
+    const parentContainer = targetBlock.parentElement;
+
+    // Check if the dragged block is a logic block and the parent container is a horizontal container
+    if (
+        (dragged.dataset.blockID === "if" || dragged.dataset.blockID === "while" || dragged.dataset.blockID === "for") &&
+        parentContainer.classList.contains("child-box-container-horizontal")
+    ) {
+        console.log("Invalid drop: Logic block cannot be placed inside a horizontal container.");
+        return; // Prevent dropping logic blocks inside horizontal containers
+    }
+
+    if (targetBlock.classList.contains("block-code-result")) {
+        // Drop at the bottom of the block-code-result container
+        targetBlock.appendChild(dragged);
+    } else if (targetBlock.classList.contains("highlight-inside")) {
         // Drop inside a container
         targetBlock.appendChild(dragged);
     } else if (targetBlock.classList.contains("drop-above")) {
@@ -111,10 +150,46 @@ function drop(event) {
 
     // Update the depth for all nested blocks
     updateNestedDepths(dragged);
+    updateLineNumbers();
+
+    console.log("Dragged Block ID:", dragged.dataset.blockID);
+    console.log("Target Block Class:", targetBlock.classList);
+    console.log("Parent Container Class:", parentContainer.classList);
 
     clearDropHighlights();
     dragged = null;
 }
+
+// Event handler for when the dragged element leaves the drop target
+function dragLeave(event) {
+    const targetBlock = event.target.closest(".box, .child-box-container, .child-box-container-horizontal");
+
+    if (targetBlock) {
+        // Remove all highlights when leaving the target
+        targetBlock.classList.remove("highlight-inside", "drop-above", "drop-below", "invalid-drop-target");
+    }
+}
+
+// Event handler for clicking outside any block
+function handleClickOutside(event) {
+    const targetBlock = event.target.closest(".box, .child-box-container, .child-box-container-horizontal");
+
+    if (!targetBlock) {
+        // Clicked outside any block, remove all highlights
+        clearDropHighlights();
+    }
+}
+
+// Function to clear all drop highlights
+export function clearDropHighlights() {
+    document.querySelectorAll(".drop-above, .drop-below, .highlight-inside, .invalid-drop-target").forEach((block) => {
+        block.classList.remove("drop-above", "drop-below", "highlight-inside", "invalid-drop-target");
+    });
+}
+
+// Add event listeners
+document.addEventListener("dragleave", dragLeave);
+document.addEventListener("click", handleClickOutside);
 
 // Event handler for selecting a block when clicked
 function selectBlock(event) {
@@ -132,13 +207,6 @@ function selectBlock(event) {
     highlightedBlock.classList.add("selected");
 
     event.stopPropagation(); // Prevent click event from propagating
-}
-
-// Function to clear all drop highlights
-export function clearDropHighlights() {
-    document.querySelectorAll(".drop-above, .drop-below, .highlight-inside").forEach((block) => {
-        block.classList.remove("drop-above", "drop-below", "highlight-inside");
-    });
 }
 
 // Function to calculate the depth of a block

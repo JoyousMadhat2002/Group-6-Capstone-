@@ -14,33 +14,45 @@ let isPythonView = false;
 
 // Function to dynamically create buttons and assign background colors to categories
 export function createCategoryButtons(blockCategory) {
+    // Clear all existing category buttons and their event listeners
+    for (const categoryName of Object.keys(blockCategory)) {
+        const categoryContainer = document.getElementById(categoryName);
+        if (categoryContainer) {
+            // Remove all child elements (buttons) from the category container
+            categoryContainer.innerHTML = "";
+
+            // Remove event listeners from the category header
+            const categoryHeader = categoryContainer.parentElement.querySelector(".category-header");
+            if (categoryHeader) {
+                // Clone the category header to remove all event listeners
+                const newHeader = categoryHeader.cloneNode(true);
+                categoryHeader.replaceWith(newHeader);
+            }
+        }
+    }
+
+    // Create new category buttons
     for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
         const categoryContainer = document.getElementById(categoryName);
 
-        // Check if the category container exists
         if (!categoryContainer) {
             console.warn(`No container found for category: ${categoryName}`);
             continue;
         }
 
-        // Apply the background color to the category header
-        const categoryHeader =
-            categoryContainer.parentElement.querySelector(".category-header");
+        const categoryHeader = categoryContainer.parentElement.querySelector(".category-header");
         const color = categoryColors[categoryName] || "#cccccc";
 
-        // Set default color for Variable Declaration block
-        if (categoryName === "Variable Declaration") {
-            categoryHeader.style.backgroundColor = "#cccccc";
-        } else {
-            categoryHeader.style.backgroundColor = color;
-        }
+        // Apply the background color to the category header
+        categoryHeader.style.backgroundColor = color;
 
         // Add the onclick event listener to the category header
-        categoryHeader.addEventListener("click", function () {
+        categoryHeader.addEventListener("click", function (event) {
+            event.stopPropagation(); // Stop event propagation
             toggleCategory(categoryName);
         });
 
-        // Iterate through each element in the category
+        // Iterate through each element in the category and create buttons
         categoryData.elements.forEach((element) => {
             // Skip creating Variable Operations and Variable Blocks if no variables exist
             if (
@@ -85,12 +97,13 @@ export function refreshCategoryButtons() {
         }
     }
 
+    console.log("Refreshing category buttons...");
+
     // Recreate the buttons
     createCategoryButtons(blockCategory);
 }
 
 export function newBlock(blockID) {
-
     const container = document.getElementById("box-container");
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
@@ -168,6 +181,7 @@ export function newBlock(blockID) {
     return newBlock.id;
 }
 
+
 // Function to update the line numbers based on the number of blocks
 export function updateLineNumbers() {
     const codeLinesContainer = document.querySelector(".code-lines");
@@ -177,17 +191,31 @@ export function updateLineNumbers() {
     codeLinesContainer.innerHTML = "";
 
     // Create new line numbers based on the number of blocks
-    const totalLines = blocks.length + 1; // +1 for the extra empty line at the bottom
-    for (let i = 1; i <= totalLines; i++) {
+    let lineNumberCounter = 1;
+
+    blocks.forEach((block, index) => {
         const lineNumber = document.createElement("div");
         lineNumber.classList.add("code-line");
-        if (i === totalLines) {
-            lineNumber.textContent = i;
-        } else {
-            lineNumber.textContent = i; // Line numbers start from 1
+
+        // Check if the block is inside another block and not inside a child-box-container-horizontal
+        const parentBlock = block.parentElement.closest(".box");
+        const isInsideHorizontal = block.parentElement.classList.contains("child-box-container-horizontal");
+        const isInsideVertical = block.parentElement.classList.contains("child-box-container");
+
+        if (parentBlock && (!isInsideHorizontal || !isInsideVertical)) {
+            // Skip adding a line number for this block
+            return;
         }
+
+        // Regular line
+        const blockHeight = block.offsetHeight;
+
+        // Set the height of the code line to match the block's height
+        lineNumber.style.height = `${blockHeight}px`;
+        lineNumber.textContent = lineNumberCounter++;
+
         codeLinesContainer.appendChild(lineNumber);
-    }
+    });
 }
 
 // ==========================
@@ -325,14 +353,47 @@ function handleLoopBlocks(block, blockID) {
 }
 
 function handleVariableDeclarationBlock(block) {
-    const variableName = prompt("Enter a new variable name:");
-    if (!variableName) return;
+    // Get the modal and input elements
+    const modal = document.getElementById("variableModal");
+    const variableNameInput = document.getElementById("variableNameInput");
+    const submitButton = document.getElementById("submitVariable");
+    const cancelButton = document.getElementById("cancelVariable");
+    const closeButton = document.querySelector(".close");
 
-    if (!userVariables.includes(variableName)) {
-        userVariables.push(variableName);
-        updateUserVariableDropdowns();
-        refreshCategoryButtons();
-    }
+    // Show the modal
+    modal.style.display = "block";
+
+    // Function to close the modal
+    const closeModal = () => {
+        modal.style.display = "none";
+        variableNameInput.value = ""; // Clear the input field
+    };
+
+    // Handle the submit button click
+    submitButton.onclick = () => {
+        const variableName = variableNameInput.value.trim();
+        if (variableName) {
+            if (!userVariables.includes(variableName)) {
+                userVariables.push(variableName);
+                updateUserVariableDropdowns();
+                refreshCategoryButtons();
+            }
+            closeModal();
+        }
+    };
+
+    // Handle the cancel button click
+    cancelButton.onclick = closeModal;
+
+    // Handle the close button click
+    closeButton.onclick = closeModal;
+
+    // Close the modal if the user clicks outside of it
+    window.onclick = (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
 }
 
 function handleVariableBlock(block) {
@@ -398,6 +459,7 @@ function handleElseIfOption(block, elifElseDiv, dropdown, plusIcon) {
 
     // Reset and update the IDs for all elif-else blocks
     resetAndUpdateElifElseIds(block);
+    updateLineNumbers();
 
     // Increment the "else if" counter
     block.dataset.elseIfCount = parseInt(block.dataset.elseIfCount || 0) + 1;
@@ -471,29 +533,69 @@ function handleRangeBlock(block) {
 // ==========================
 
 function createInputField(placeholder, className, dataKey, blockID) {
-    const input = document.createElement("input");
-    input.type = "text";
-    input.placeholder = placeholder;
-    input.classList.add(className);
+    let input;
 
-    input.addEventListener("input", function () {
-        const block = input.closest(".box");
-        const value = input.value.trim();
+    if (blockID === "printText") {
+        // Use a textarea for text blocks to allow newlines
+        input = document.createElement("textarea");
+        input.rows = 1; // Start with one row
+        input.placeholder = placeholder;
+        input.addEventListener("input", () => {
+            // Adjust the number of rows based on the content
+            input.style.height = "auto";
+            input.style.height = `${input.scrollHeight}px`;
 
-        // Validate input based on block type
-        if (blockID === "mathText" || blockID === "mathBlock") {
-            // Only allow numbers for Math blocks
-            if (/^-?\d*\.?\d*$/.test(value)) {
-                block.dataset[dataKey] = value;
+            // Update the data-block-value with newlines
+            const block = input.closest(".box");
+            block.dataset[dataKey] = input.value.replace(/\n/g, "\\n");
+        });
+    } else {
+        // Use an input for other blocks (e.g., math blocks)
+        input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = placeholder;
+
+        // Function to adjust the width of the input field (for non-textarea inputs)
+        const adjustInputWidth = () => {
+            const tempSpan = document.createElement("span");
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.whiteSpace = "pre";
+            tempSpan.style.fontFamily = getComputedStyle(input).fontFamily;
+            tempSpan.style.fontSize = getComputedStyle(input).fontSize;
+            tempSpan.textContent = input.value || input.placeholder;
+            document.body.appendChild(tempSpan);
+            const width = tempSpan.offsetWidth + 10; // Add some padding
+            document.body.removeChild(tempSpan);
+            input.style.width = `${width}px`;
+        };
+
+        // Adjust width on input (for non-textarea inputs)
+        input.addEventListener("input", () => {
+            const block = input.closest(".box");
+            const value = input.value.trim();
+
+            // Validate input based on block type
+            if (blockID === "mathText" || blockID === "mathBlock") {
+                // Only allow numbers for Math blocks
+                if (/^-?\d*\.?\d*$/.test(value)) {
+                    block.dataset[dataKey] = value;
+                } else {
+                    input.value = block.dataset[dataKey] || "";
+                }
             } else {
-                input.value = block.dataset[dataKey] || "";
+                // Allow any input for non-Math blocks
+                block.dataset[dataKey] = value;
             }
-        } else {
-            // Allow any input for non-Math blocks
-            block.dataset[dataKey] = value;
-        }
-    });
 
+            // Adjust the input width dynamically (for non-textarea inputs)
+            adjustInputWidth();
+        });
+
+        // Adjust width initially (for non-textarea inputs)
+        adjustInputWidth();
+    }
+
+    input.classList.add(className);
     return input;
 }
 

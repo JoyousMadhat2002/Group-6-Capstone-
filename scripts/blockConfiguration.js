@@ -52,7 +52,7 @@ const blockCategory = {
         parentElement: "block",
         childElement: "block",
       },
-      {
+      /*{
         name: "break",
         blockID: "break",
         description: "Break loop",
@@ -67,7 +67,7 @@ const blockCategory = {
         type: "loop",
         parentElement: "block",
         childElement: null,
-      },
+      },*/
     ],
   },
   math: {
