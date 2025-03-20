@@ -547,10 +547,7 @@ function runCode() {
   //KEEP INDENTS AS IS FOR PYTHON CODE; DO NOT CHANGE turtleSetupCode
   var turtleSetupCode = `
 import turtle
-t = turtle.Turtle()
-t.shape("turtle")
-t.color("green")
-t.setheading(90)
+import math
 `;
 
   var cleanedProg = prog.trimStart();
