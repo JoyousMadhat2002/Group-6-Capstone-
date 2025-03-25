@@ -13,7 +13,11 @@ function getBlockDropdownList(blockID) {
 
   switch (blockID) {
     case "movement":
-      return ["---", "right", "left", "forward", "back"]
+      return ["---", "right", "left", "forward", "backward"]
+    case "turn":
+      return ["---", "right", "left"]
+    case "setCoordinates":
+      return ["---", "setX", "setY", "setHeading"]
     case "arithmeticOps":
       return ["---", "+", "-", "*", "/", "%", "**", "//"];
     case "comparisonOps":

@@ -463,6 +463,11 @@ select.block-dropdown {
 
 .dropdown-menu {
   background-color: #f1f1f1;
+  
+}
+
+.elif-else i:hover {
+  color: #343a40;
 }
 
 .child-box-container {

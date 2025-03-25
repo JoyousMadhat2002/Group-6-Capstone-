@@ -149,8 +149,17 @@ export function newBlock(blockID) {
         handleOperatorBlock(newBlock, blockID);
     } else if (blockID === "print") {
         handlePrintBlock(newBlock, blockID);
-    } else if (blockID === "movement") {
-        handleMovementBlock(newBlock, blockID);
+    } else if (
+        blockID === "movement" ||
+        blockID === "turn" ||
+        blockID === "speed" ||
+        blockID === "goto" ||
+        blockID === "pendown" ||
+        blockID === "penup" ||
+        blockID === "color" ||
+        blockID === "setCoordinates"
+    ) {
+        handleTurtleBlocks(newBlock, blockID);
     } else if (
         blockID === "mathConstants" ||
         blockID === "roundingTruncation" ||
@@ -207,10 +216,10 @@ export function updateLineNumbers() {
             return;
         }
 
-        // Regular line
+        // Get only the base block height, ignoring dropdowns
         const blockHeight = block.offsetHeight;
 
-        // Set the height of the code line to match the block's height
+        // Set the height of the code line to match the block's base height
         lineNumber.style.height = `${blockHeight}px`;
         lineNumber.textContent = lineNumberCounter++;
 
@@ -241,22 +250,46 @@ function handlePrintBlock(newBlock, blockID) {
     newBlock.appendChild(childContainer);
 }
 
-function handleMovementBlock(block, blockID) {
-    const turtlePrefix = document.createElement("span"); //temp text
-    turtlePrefix.textContent = "turtle.";
+function handleTurtleBlocks(block, blockID) {
+    const turtlePrefix = document.createElement("span");
+    if (blockID === "movement") {
+        turtlePrefix.textContent = "Move ";
+    } else if (blockID === "turn") {
+        turtlePrefix.textContent = "Turn ";
+    } else if (blockID === "speed") {
+        turtlePrefix.textContent = "Set speed to";
+    } else if (blockID === "goto") {
+        turtlePrefix.textContent = "Go to";
+    } else if (blockID === "color") {
+        turtlePrefix.textContent = "Set color to";
+    } else if (blockID === "jumpto") {
+        turtlePrefix.textContent = "Jump to";
+    } else if (blockID === "pendown") {
+        turtlePrefix.textContent = "Pen Down";
+    } else if (blockID === "penup") {
+        turtlePrefix.textContent = "Pen Up";
+    } else if (blockID === "setCoordinates") {
+        turtlePrefix.textContent = "";
+    }
+
     block.appendChild(turtlePrefix);
 
-    const dropdown = createOperatorDropdown(blockID);
-    block.appendChild(dropdown);
+    if (blockID === "movement" || blockID === "turn" || blockID === "setCoordinates") {
+        const dropdown = createOperatorDropdown(blockID);
+        block.appendChild(dropdown);
+    }
 
-    if (blockID != "movement") {
+    if (blockID === "goto") {
+        const childContainerX = createChildBoxHorizontal(block.id, blockID);
+        block.appendChild(childContainerX);
+
+
+        const childContainerY = createChildBoxHorizontal(block.id, blockID);
+        block.appendChild(childContainerY);
+    } else if (blockID != "penup" && blockID != "pendown") {
         const childContainer = createChildBoxHorizontal(block.id, blockID);
         block.appendChild(childContainer);
     }
-
-    // Add a horizontal child block for the value input
-    const childContainer = createChildBoxHorizontal(block.id, blockID);
-    block.appendChild(childContainer);
 }
 
 function handleOperatorBlock(block, blockID) {
@@ -756,7 +789,6 @@ function setupDropdownMenu(plusIcon, block, elifElseDiv) {
     const updateDropdownOptions = () => {
         dropdown.innerHTML = "";
 
-        // Always add the "else if" option
         const elseIfOption = createDropdownOption("else if", () =>
             handleElseIfOption(block, elifElseDiv, dropdown, plusIcon)
         );
@@ -772,9 +804,18 @@ function setupDropdownMenu(plusIcon, block, elifElseDiv) {
     };
 
     // Update dropdown options every time the dropdown is opened
-    plusIcon.addEventListener("click", () => {
+    plusIcon.addEventListener("click", (e) => {
+        e.stopPropagation();
         updateDropdownOptions();
         toggleDropdownVisibility(dropdown);
+        setTimeout(() => updateLineNumbers(), 0);
+        console.log("Dropdown opened");
+    });
+    document.addEventListener("click", (e) => {
+        if (!dropdown.contains(e.target)) {
+            toggleDropdownVisibility(dropdown);
+            updateLineNumbers();
+        }
     });
 }
 
