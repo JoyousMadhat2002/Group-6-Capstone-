@@ -17,13 +17,78 @@ const blockCategory = {
   movement: {
     elements: [
       {
-        name: "movement",
+        name: "Move",
         blockID: "movement",
-        description: "Movement for Turtle",
+        description: "Move Turtle",
         type: "movement",
         parentElement: "block",
         childElement: ["function", "value"],
-      }
+      },
+      {
+        name: "Turn",
+        blockID: "turn",
+        description: "Turn the turtle by angle",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["angle"],
+      },
+      {
+        name: "Speed",
+        blockID: "speed",
+        description: "Set the speed of the turtle",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["speed"],
+      },
+      {
+        name: "Home",
+        blockID: "home",
+        description: "Move the turtle to the origin",
+        type: "movement",
+        parentElement: "block",
+        childElement: null,
+      },
+      {
+        name: "Color",
+        blockID: "color",
+        description: "Set the color of the turtle",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["color"],
+      },
+      {
+        name: "Pen Up",
+        blockID: "penup",
+        description: "Lift the pen",
+        type: "movement",
+        parentElement: "block",
+        childElement: null,
+      },
+      {
+        name: "Pen Down",
+        blockID: "pendown",
+        description: "Lower the pen",
+        type: "movement",
+        parentElement: "block",
+        childElement: null,
+      },
+      {
+        name: "Go To",
+        blockID: "goto",
+        description: "Move the turtle to a specific location",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["x", "y"],
+      },
+      {
+        name: "Set Position",
+        blockID: "setCoordinates",
+        description: "Set the position or angle of the turtle",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["x", "y", "angle"],
+      },
+
     ],
   },
   logic: {
@@ -52,22 +117,6 @@ const blockCategory = {
         parentElement: "block",
         childElement: "block",
       },
-      /*{
-        name: "break",
-        blockID: "break",
-        description: "Break loop",
-        type: "loop",
-        parentElement: "block",
-        childElement: null,
-      },
-      {
-        name: "continue",
-        blockID: "continue",
-        description: "Continue loop",
-        type: "loop",
-        parentElement: "block",
-        childElement: null,
-      },*/
     ],
   },
   math: {
@@ -141,24 +190,6 @@ const blockCategory = {
   },
   functions: {
     elements: [
-      /* Future implementation
-      {
-        name: "def",
-        blockID: "def",
-        description: "Define a function",
-        type: "function",
-        parentElement: "block",
-        childElement: ["function_name", "arguments"],
-      },
-      {
-        name: "return",
-        blockID: "return",
-        description: "Return from a function",
-        type: "function",
-        parentElement: "block",
-        childElement: ["expression"],
-      },
-      */
       {
         name: "print",
         blockID: "print",
