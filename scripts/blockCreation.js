@@ -157,7 +157,8 @@ export function newBlock(blockID) {
         blockID === "pendown" ||
         blockID === "penup" ||
         blockID === "color" ||
-        blockID === "setCoordinates"
+        blockID === "setCoordinates" ||
+        blockID === "pause"
     ) {
         handleTurtleBlocks(newBlock, blockID);
     } else if (
@@ -270,6 +271,8 @@ function handleTurtleBlocks(block, blockID) {
         turtlePrefix.textContent = "Pen Up";
     } else if (blockID === "setCoordinates") {
         turtlePrefix.textContent = "";
+    } else if (blockID === "pause") {
+        turtlePrefix.textContent = "Pause for";
     }
 
     block.appendChild(turtlePrefix);
