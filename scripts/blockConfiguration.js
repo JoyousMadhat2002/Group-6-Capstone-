@@ -99,6 +99,7 @@ const blockCategory = {
 
     ],
   },
+
   logic: {
     elements: [
       {
@@ -125,8 +126,17 @@ const blockCategory = {
         parentElement: "block",
         childElement: "block",
       },
+      {
+        name: "Logical Operations",
+        blockID: "logicalOps",
+        description: "Logical operators (and, or, not)",
+        type: "logical",
+        parentElement: "block",
+        childElement: ["operator", "operand1", "operand2"],
+      },
     ],
   },
+
   math: {
     elements: [
       {
@@ -184,18 +194,7 @@ const blockCategory = {
       },
     ],
   },
-  boolean: {
-    elements: [
-      {
-        name: "Logical Operations",
-        blockID: "logicalOps",
-        description: "Logical operators (and, or, not)",
-        type: "logical",
-        parentElement: "block",
-        childElement: ["operator", "operand1", "operand2"],
-      },
-    ],
-  },
+
   functions: {
     elements: [
       {
@@ -256,6 +255,7 @@ const blockCategory = {
       },
     ],
   },
+
   variables: {
     elements: [
       {

@@ -112,11 +112,11 @@ export function newBlock(blockID) {
 
     // Calculate and set the depth
     const parentDepth = Number(container.getAttribute("data-blockDepth")) || 0;
-    newBlock.dataset.blockDepth = parentDepth + 1; // Parent depth + 1 for the new block
+    newBlock.dataset.blockDepth = parentDepth + 1; 
 
-    // Set block properties
+    // Set block properties - special case for logicalOps to use boolean color
     const { blockCategoryColor, childElement } = getBlockProperties(blockID);
-    newBlock.style.backgroundColor = blockCategoryColor;
+    newBlock.style.backgroundColor = blockID === "logicalOps" ? categoryColors.boolean : blockCategoryColor;
 
     createBlockLabel(newBlock, blockID);
 
