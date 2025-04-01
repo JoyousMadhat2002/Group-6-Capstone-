@@ -88,6 +88,14 @@ const blockCategory = {
         parentElement: "block",
         childElement: ["x", "y", "angle"],
       },
+      {
+        name: "Pause",
+        blockID: "pause",
+        description: "Pause the turtle",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["time"],
+      },
 
     ],
   },
