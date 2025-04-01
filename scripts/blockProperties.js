@@ -28,68 +28,16 @@ function getBlockDropdownList(blockID) {
       return ["---", "=", "+=", "-=", "*=", "/="];
     case "if":
       return ["---", "else if", "else"];
-    case "roundingTruncation":
-      return [
-        "---",
-        "ceil", "floor", "trunc", 
-        "round", "nearbyint", "rint"
-      ];
-    case "absSign":
-      return [
-        "---",
-        "fabs", "copysign", "nextafter"
-      ];
-    case "numberTheory":
-      return [
-        "---",
-        "gcd", "lcm", "comb", "perm", "factorial"
-      ];
-    case "sumProd":
-      return [
-        "---",
-        "fsum", "prod"
-      ];
-    case "floatManipulation":
-      return [
-        "---",
-        "frexp", "ldexp", "modf"
-      ];
-    case "comparisonValidation":
-      return [
-        "---",
-        "isclose", "isfinite", "isinf", "isnan", "isqrt"
-      ];
-    case "remainderDivision":
-      return [
-        "---",
-        "fmod", "remainder"
-      ];
-    case "logExpFunctions":
-      return [
-        "---",
-        "exp", "expm1", "log", "log1p", 
-        "log2", "log10", "pow", "sqrt"
-      ];
-    case "trigFunctions":
-      return [
-        "---",
-        "acos", "asin", "atan", "atan2", 
-        "cos", "sin", "tan", "degrees", 
-        "radians", "dist", "hypot"
-      ];
-    case "hyperbolicFunctions":
-      return [
-        "---",
-        "acosh", "asinh", "atanh", 
-        "cosh", "sinh", "tanh"
-      ];
-    case "specialFunctions":
-      return [
-        "---",
-        "erf", "erfc", "gamma", "lgamma"
-      ];
     case "mathConstants":
       return ["---", "pi", "e", "tau", "inf", "nan"];
+    case "roundAbs":
+      return ["---", "round", "ceil", "floor", "trunc", "abs"];
+    case "basicArithmetic":
+      return ["---", "gcd", "lcm", "factorial", "sum", "prod"];
+    case "logExp":
+      return ["---", "log", "log10", "exp", "sqrt", "pow"];
+    case "trigFunctions":
+      return ["---", "sin", "cos", "tan", "asin", "acos", "atan", "radians", "degrees"];
     default:
       return ["---"]; // Default case for blocks without specific types
   }

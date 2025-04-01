@@ -163,17 +163,10 @@ export function newBlock(blockID) {
         handleTurtleBlocks(newBlock, blockID);
     } else if (
         blockID === "mathConstants" ||
-        blockID === "roundingTruncation" ||
-        blockID === "absSign" ||
-        blockID === "numberTheory" ||
-        blockID === "sumProd" ||
-        blockID === "floatManipulation" ||
-        blockID === "comparisonValidation" ||
-        blockID === "remainderDivision" ||
-        blockID === "logExpFunctions" ||
-        blockID === "trigFunctions" ||
-        blockID === "hyperbolicFunctions" ||
-        blockID === "specialFunctions"
+        blockID === "roundAbs" ||
+        blockID === "basicArithmetic" ||
+        blockID === "logExp" ||
+        blockID === "trigFunctions"
     ) {
         handleMathFunctionBlock(newBlock, blockID);
     } else if (blockID === "range") {
