@@ -112,11 +112,11 @@ export function newBlock(blockID) {
 
     // Calculate and set the depth
     const parentDepth = Number(container.getAttribute("data-blockDepth")) || 0;
-    newBlock.dataset.blockDepth = parentDepth + 1; // Parent depth + 1 for the new block
+    newBlock.dataset.blockDepth = parentDepth + 1; 
 
-    // Set block properties
+    // Set block properties - special case for logicalOps to use boolean color
     const { blockCategoryColor, childElement } = getBlockProperties(blockID);
-    newBlock.style.backgroundColor = blockCategoryColor;
+    newBlock.style.backgroundColor = blockID === "logicalOps" ? categoryColors.boolean : blockCategoryColor;
 
     createBlockLabel(newBlock, blockID);
 
@@ -163,17 +163,10 @@ export function newBlock(blockID) {
         handleTurtleBlocks(newBlock, blockID);
     } else if (
         blockID === "mathConstants" ||
-        blockID === "roundingTruncation" ||
-        blockID === "absSign" ||
-        blockID === "numberTheory" ||
-        blockID === "sumProd" ||
-        blockID === "floatManipulation" ||
-        blockID === "comparisonValidation" ||
-        blockID === "remainderDivision" ||
-        blockID === "logExpFunctions" ||
-        blockID === "trigFunctions" ||
-        blockID === "hyperbolicFunctions" ||
-        blockID === "specialFunctions"
+        blockID === "roundAbs" ||
+        blockID === "basicArithmetic" ||
+        blockID === "logExp" ||
+        blockID === "trigFunctions"
     ) {
         handleMathFunctionBlock(newBlock, blockID);
     } else if (blockID === "range") {
