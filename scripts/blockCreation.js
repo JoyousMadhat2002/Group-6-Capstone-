@@ -124,6 +124,7 @@ export function newBlock(blockID) {
     if (
         blockID === "mathBlock" ||
         blockID === "comparisonBlock" ||
+        blockID === "logicalBlock" ||
         blockID === "varOps"
     ) {
         handleMathOrComparisonOrVariableBlock(newBlock, blockID);
@@ -316,41 +317,121 @@ function handleMathOrComparisonOrVariableBlock(block, blockID) {
     const container = document.createElement("div");
     container.classList.add("childBox-Container-Horizontal");
 
-    // Create the left-hand side container for the variable or math/comparison block
+    // Create the left-hand side container
     const leftContainer = createChildBoxHorizontal(block.id, blockID);
+    leftContainer.dataset.containerIndex = "0";
     container.appendChild(leftContainer);
 
     // Create and append the operator dropdown
     const operatorDropdown = createOperatorDropdown(blockID);
     operatorDropdown.dataset.dropdownType = "operator";
+    operatorDropdown.dataset.operatorIndex = "0";
     container.appendChild(operatorDropdown);
 
-    // Create the right-hand side container for the value block
+    // Create the right-hand side container
     const rightContainer = createChildBoxHorizontal(block.id, blockID);
+    rightContainer.dataset.containerIndex = "0";
     container.appendChild(rightContainer);
+
+    // Block expansion
+    if (
+        blockID === "logicalBlock" || 
+        blockID === "mathBlock" || 
+        blockID === "comparisonBlock"
+    ) {
+        const plusMinusDiv = document.createElement("div");
+        plusMinusDiv.classList.add("plus-minus");
+
+        const plusIcon = document.createElement("i");
+        plusIcon.classList.add("fa-solid", "fa-plus");
+        plusIcon.addEventListener("click", () => addComparisonComponent(block, container));
+        plusMinusDiv.appendChild(plusIcon);
+
+        const minusIcon = document.createElement("i");
+        minusIcon.classList.add("fa-solid", "fa-minus");
+        minusIcon.addEventListener("click", () => removeComparisonComponent(block, container));
+        plusMinusDiv.appendChild(minusIcon);
+
+        minusIcon.style.display = "none";
+
+        container.appendChild(plusMinusDiv);
+    }
 
     block.appendChild(container);
 
-    // Update data attributes based on changes in the operator dropdown
     operatorDropdown.addEventListener("change", function () {
-        block.dataset.blockOperator = operatorDropdown.value;
+        updateOperatorAttributes(container);
     });
+}
 
-    // Handle changes in the left-hand side container (variable or math/comparison block)
-    leftContainer.addEventListener("change", function () {
-        const leftBlock = leftContainer.querySelector(".box");
-        if (leftBlock) {
-            block.dataset.block1Value = leftBlock.dataset.blockValue || "";
+function updateOperatorAttributes(container) {
+    const dropdowns = container.querySelectorAll(".block-dropdown[data-dropdown-type='operator']");
+    const containers = container.querySelectorAll(".child-box-container-horizontal");
+    
+    dropdowns.forEach((dropdown, index) => {
+        dropdown.dataset.operatorIndex = index;
+        const block = container.closest(".box");
+        if (index === 0) {
+            block.dataset.blockOperator = dropdown.value;
+        } else {
+            block.dataset[`blockOperator${index}`] = dropdown.value;
         }
     });
-
-    // Handle changes in the right-hand side container (value block)
-    rightContainer.addEventListener("change", function () {
-        const rightBlock = rightContainer.querySelector(".box");
-        if (rightBlock) {
-            block.dataset.block2Value = rightBlock.dataset.blockValue || "";
-        }
+    
+    containers.forEach((container, index) => {
+        container.dataset.containerIndex = index;
     });
+}
+
+function addComparisonComponent(parentBlock, container) {
+    const dropdowns = container.querySelectorAll(".block-dropdown[data-dropdown-type='operator']");
+    const newIndex = dropdowns.length;
+    
+    const newOperatorDropdown = createOperatorDropdown(parentBlock.dataset.blockID);
+    newOperatorDropdown.dataset.dropdownType = "operator";
+    newOperatorDropdown.dataset.operatorIndex = newIndex;
+    newOperatorDropdown.addEventListener("change", () => updateOperatorAttributes(container));
+    
+    const newRightContainer = createChildBoxHorizontal(parentBlock.id, parentBlock.dataset.blockID);
+    newRightContainer.dataset.containerIndex = newIndex;
+    
+    const plusMinusDiv = container.querySelector(".plus-minus");
+    container.insertBefore(newOperatorDropdown, plusMinusDiv);
+    container.insertBefore(newRightContainer, plusMinusDiv);
+    
+    const minusIcon = container.querySelector(".fa-minus");
+    minusIcon.style.display = "block";
+    
+    updateOperatorAttributes(container);
+    updateLineNumbers();
+}
+
+function removeComparisonComponent(parentBlock, container) {
+    const dropdowns = container.querySelectorAll(".block-dropdown[data-dropdown-type='operator']");
+    const containers = container.querySelectorAll(".child-box-container-horizontal");
+    
+    if (dropdowns.length <= 1) return;
+    
+    const plusMinusDiv = container.querySelector(".plus-minus");
+    const lastDropdown = dropdowns[dropdowns.length - 1];
+    const lastContainer = containers[containers.length - 1];
+    
+    if (lastDropdown && lastDropdown !== dropdowns[0]) {
+        container.removeChild(lastDropdown);
+        const block = container.closest(".box");
+        delete block.dataset[`blockOperator${dropdowns.length - 1}`];
+    }
+    if (lastContainer && lastContainer !== containers[0]) {
+        container.removeChild(lastContainer);
+    }
+    
+    if (dropdowns.length <= 2) { 
+        const minusIcon = container.querySelector(".fa-minus");
+        minusIcon.style.display = "none";
+    }
+    
+    updateOperatorAttributes(container);
+    updateLineNumbers();
 }
 
 function handleControlBlock(block, blockID) {
