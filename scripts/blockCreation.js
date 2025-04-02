@@ -18,13 +18,10 @@ export function createCategoryButtons(blockCategory) {
     for (const categoryName of Object.keys(blockCategory)) {
         const categoryContainer = document.getElementById(categoryName);
         if (categoryContainer) {
-            // Remove all child elements (buttons) from the category container
             categoryContainer.innerHTML = "";
 
-            // Remove event listeners from the category header
             const categoryHeader = categoryContainer.parentElement.querySelector(".category-header");
             if (categoryHeader) {
-                // Clone the category header to remove all event listeners
                 const newHeader = categoryHeader.cloneNode(true);
                 categoryHeader.replaceWith(newHeader);
             }
@@ -48,13 +45,12 @@ export function createCategoryButtons(blockCategory) {
 
         // Add the onclick event listener to the category header
         categoryHeader.addEventListener("click", function (event) {
-            event.stopPropagation(); // Stop event propagation
+            event.stopPropagation();
             toggleCategory(categoryName);
         });
 
         // Iterate through each element in the category and create buttons
         categoryData.elements.forEach((element) => {
-            // Skip creating Variable Operations and Variable Blocks if no variables exist
             if (
                 (element.blockID === "variableBlock") &&
                 userVariables.length === 0
@@ -70,6 +66,8 @@ export function createCategoryButtons(blockCategory) {
             // Apply category color to the button
             if (element.blockID === "varDeclOps") {
                 button.style.backgroundColor = "#cccccc";
+            } else if (element.blockID === "logicalBlock") {
+                button.style.backgroundColor = categoryColors.boolean;
             } else {
                 button.style.backgroundColor = color;
             }
@@ -116,7 +114,7 @@ export function newBlock(blockID) {
 
     // Set block properties - special case for logicalOps to use boolean color
     const { blockCategoryColor, childElement } = getBlockProperties(blockID);
-    newBlock.style.backgroundColor = blockID === "logicalOps" ? categoryColors.boolean : blockCategoryColor;
+    newBlock.style.backgroundColor = blockID === "logicalBlock" ? categoryColors.boolean : blockCategoryColor;
 
     createBlockLabel(newBlock, blockID);
 

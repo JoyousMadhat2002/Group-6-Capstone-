@@ -3,14 +3,14 @@
 // ==========================
 
 const categoryColors = {
-  movement: "#BFEFFF", // Baby Blue
-  logic: "#5a80a5", // Steel Blue
-  math: "#5abd42", // Green
-  comparison: "#ffcc99", // Peach
-  boolean: "#80cbc4", // Aqua Marine
-  functions: "#995ba6", // Amethyst Purple
-  variables: "#a55b80", // Rosewood
-  default: "#cccccc", // Light Gray
+  movement: "#669999 ", 
+  logic: "#5a80a5",
+  math: "#5abd42",
+  comparison: "#ffcc99", 
+  boolean: "#99cccc", 
+  functions: "#996699",
+  variables: "#996666",
+  default: "#cccccc",
 };
 
 const blockCategory = {
