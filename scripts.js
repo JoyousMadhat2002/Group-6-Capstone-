@@ -604,13 +604,16 @@ function setupDOMContentLoadedListener() {
   });
 }
 
-function setupSaveButtonListener() {
-  const saveButton = document.getElementById("saveButton");
-  saveButton.addEventListener("click", function () {
-    const pythonCode = document.getElementById("pythontext").value;
-    localStorage.setItem("savedCode", pythonCode);
-    alert("Code saved locally!");
-  });
+// Function to set up the "Log In" button listener
+function setupLoginButtonListener() {
+  const loginButton = document.getElementById("loginButton");
+
+  if (!loginButton) {
+    console.error("Error: 'Log In' button not found.");
+    return;
+  }
+
+  loginButton.addEventListener("click", openLoginDialog);
 }
 
 function setupButtonFunctionalityListeners() {
@@ -886,7 +889,50 @@ function fadeOutNotification(notification) {
 // 13. Saving and Loading Files
 // ==========================
 
+let currentFileName = null;
 
+// Function to save or update a file in Firestore
+function saveFile() {
+  const user = auth.currentUser;
+  if (!user) {  //check if user is logged in
+    showNotification("You must be logged in to save files.", "red");
+    return;
+  }
+
+  let fileName = currentFileName;   //check if updating an existing file
+  if (!fileName) {
+    fileName = prompt("Enter a file name (e.g., my_script.py):");
+    if (!fileName) return; //if user cancels, do nothing
+  }
+
+  const fileContent = getCode();  //get the code from the editor
+  if (!fileContent) {
+    showNotification("File content cannot be empty.", "red");
+    return;
+  }
+
+  const fileType = fileName.endsWith(".py") ? "python" : "text";  //allows saving as .py or .txt
+  const userFilesRef = collection(db, "users", user.uid, "projects");
+  const fileDoc = doc(userFilesRef, fileName);
+
+  setDoc(fileDoc, {   //save the file in database
+      name: fileName,
+      code: fileContent,
+      fileType: fileType,
+      timestamp: serverTimestamp()
+  })
+  .then(() => {
+      currentFileName = fileName; //remember the file name for future saves
+      showNotification(`File "${fileName}" saved successfully!`, "green");
+  })
+  .catch((error) => {
+      console.error("Error saving file:", error);
+      showNotification("Failed to save file. Try again.", "red");
+  });
+}
+
+//event listener for save button (might move to SetUpApp() later)
+document.getElementById("saveButton").addEventListener("click", saveFile);
 
 // ==========================
 // 14. Additional Features (Resizing Columns, Dragging, etc.)
