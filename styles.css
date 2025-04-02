@@ -196,11 +196,10 @@ body {
   height: 25px;
 }
 
-.code-container,
-.handle1 {
+.code-container {
   display: flex;
   flex-direction: column;
-  transition: display 0.3s ease;
+  width: 150px;
 }
 
 .result-container,
@@ -217,7 +216,7 @@ body {
 }
 
 .output-graph {
-  height: 100vh;
+  height: auto;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -243,14 +242,14 @@ body {
 }
 
 .category-blocks {
-  margin: 10px;
-  padding-right: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 100%;
   align-items: center;
   justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .code-result {
