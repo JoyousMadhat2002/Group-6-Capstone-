@@ -126,27 +126,35 @@ const blockCategory = {
         parentElement: "block",
         childElement: "block",
       },
-      {
+      /*{
         name: "Logical Operations",
         blockID: "logicalOps",
         description: "Logical operators (and, or, not)",
         type: "logical",
         parentElement: "block",
         childElement: ["operator", "operand1", "operand2"],
+      },*/
+      {
+        name: "Logical Block",
+        blockID: "logicalBlock",
+        description: "A logical block for boolean input",
+        type: "logical",
+        parentElement: "block",
+        childElement: ["block", "operator", "operand1", "operand2"],
       },
     ],
   },
 
   math: {
     elements: [
-      {
+      /*{
         name: "Arithmetic Operations",
         blockID: "arithmeticOps",
         description: "Arithmetic operators (+, -, *, /, %, **, //)",
         type: "arithmetic",
         parentElement: "block",
         childElement: ["operator"],
-      },
+      },*/
       {
         name: "Math Text Block",
         blockID: "mathText",
@@ -168,14 +176,14 @@ const blockCategory = {
 
   comparison: {
     elements: [
-      {
+      /*{
         name: "Comparison Operators",
         blockID: "comparisonOps",
         description: "Comparison operators (==, !=, >, <, >=, <=)",
         type: "comparison",
         parentElement: "block",
         childElement: ["operator"],
-      },
+      },*/
       {
         name: "Comparison Block",
         blockID: "comparisonBlock",

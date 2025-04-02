@@ -9,6 +9,8 @@ function getBlockDropdownList(blockID) {
     blockID = "arithmeticOps";
   } else if (blockID === "comparisonBlock") {
     blockID = "comparisonOps";
+  } else if (blockID === "logicalBlock") {
+    blockID = "logicalOps";
   }
 
   switch (blockID) {

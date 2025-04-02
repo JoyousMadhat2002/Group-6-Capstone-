@@ -125,6 +125,7 @@ body {
 
 .code-container {
   background-color: #FFFFFF;
+  width: 10vw;
 }
 
 .result-container {
@@ -212,6 +213,7 @@ body {
   display: flex;
   flex-direction: row;
   height: 100%;
+  overflow-x: auto;
 }
 
 .output-graph {
@@ -242,9 +244,13 @@ body {
 
 .category-blocks {
   margin: 10px;
+  padding-right: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .code-result {
@@ -374,6 +380,8 @@ button:hover {
   flex-direction: row;
   width: 100%;
   min-height: 100vh;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .code-line {
@@ -398,6 +406,7 @@ button:hover {
   border: #000000 1px solid;
   width: 100%;
   min-height: 100vh;
+  overflow-x: auto;
 }
 
 select.block-dropdown {
@@ -503,6 +512,22 @@ select.block-dropdown {
   min-width: 50px;
   min-height: 25px;
   border: #000000 1px dotted;
+}
+
+.plus-minus {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+
+.plus-minus i {
+  font-size: 20px;
+  color: #000000;
+}
+.plus-minus i:hover {
+  color: #343a40;
 }
 
 /* Drop snap guide */
