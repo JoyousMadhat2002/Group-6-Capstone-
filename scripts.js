@@ -14,10 +14,10 @@ import {
 import { userVariables } from "./scripts/blockCreation.js";
 
 
-// Import Firebase modules correctly
+// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -604,18 +604,6 @@ function setupDOMContentLoadedListener() {
   });
 }
 
-// Function to set up the "Log In" button listener
-function setupLoginButtonListener() {
-  const loginButton = document.getElementById("loginButton");
-
-  if (!loginButton) {
-    console.error("Error: 'Log In' button not found.");
-    return;
-  }
-
-  loginButton.addEventListener("click", openLoginDialog);
-}
-
 function setupSaveButtonListener() {
   const saveButton = document.getElementById("saveButton");
   saveButton.addEventListener("click", function () {
@@ -714,11 +702,11 @@ function createLoginDialog() {
   loginDialog.innerHTML = `
       <div class="dialog-box">
           <h2>Log In</h2>
-          <label for="login-email">Email:</label>
-          <input type="email" id="login-email" placeholder="Enter your email">
+          <label for="login-email">Email:</label><br>
+          <input type="email" id="login-email" placeholder="Enter your email"><br>
 
-          <label for="login-password">Password:</label>
-          <input type="password" id="login-password" placeholder="Enter your password">
+          <label for="login-password">Password:</label><br>
+          <input type="password" id="login-password" placeholder="Enter your password"><br>
 
           <p id="login-error" class="error-message hidden"></p>
 
@@ -778,15 +766,15 @@ function createSignupDialog() {
   signupDialog.innerHTML = `
       <div class="dialog-box" id="signup-box">
         <h2>Create an Account</h2>
-        <label for="signup-email">Email:</label>
-        <input type="email" id="signup-email" placeholder="Enter your email">
+        <label for="signup-email">Email:</label><br>
+        <input type="email" id="signup-email" placeholder="Enter your email"><br>
 
-        <label for="signup-password">Password:</label>
-        <input type="password" id="signup-password" placeholder="Enter your password">
+        <label for="signup-password">Password:</label><br>
+        <input type="password" id="signup-password" placeholder="Enter your password"><br>
 
         <p id="signup-error" class="error-message hidden"></p>
 
-        <p class="switch-auth">Already have an account? 
+        <p class="switch-auth">Already have an account?<br>
             <span id="switch-to-login" class="auth-link">Click here to log in</span>
         </p>
 
@@ -895,7 +883,13 @@ function fadeOutNotification(notification) {
 
 
 // ==========================
-// 13. Additional Features (Resizing Columns, Dragging, etc.)
+// 13. Saving and Loading Files
+// ==========================
+
+
+
+// ==========================
+// 14. Additional Features (Resizing Columns, Dragging, etc.)
 // ==========================
 
 function setupColumnResizing() {
@@ -1055,7 +1049,7 @@ function setupDraggableBlocks() {
 
 
 // ==========================
-// 14. Miscellaneous Code
+// 15. Miscellaneous Code
 // ==========================
 
 /*
@@ -1145,7 +1139,6 @@ function setUpApp() {
   setupKeydownListener();
   setupDOMContentLoadedListener();
   setupLoginButtonListener();
-  setupSaveButtonListener();
   setupButtonFunctionalityListeners();
   setupColumnResizing();
   setupDraggableBlocks();
