@@ -324,6 +324,7 @@ function textToBlock(container) {
 
     // logic to build blocks
     if (tokens != "") {
+      console.log(`${tokens[0][0]}`);
 
       if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for" || tokens[1] == "if") {
 
@@ -408,6 +409,29 @@ function textToBlock(container) {
           let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
           parentBlock.append(document.getElementById(nbCons));
         }
+      }
+      else if(tokens[0][0] == 'p' && tokens[0][1] == 'r' && tokens[0][2] == 'i' && tokens[0][3] == 'n' && tokens[0][4] == 't'){
+        console.log("PRINT IN TTB");
+        let nbCons = newBlock("print"); // newblock construction based on keyword
+        let nbRef = document.getElementById(nbCons); // created reference to newblock
+        depthBuilder[currDepth] = nbRef.id;
+        nbRef.dataset.blockDepth = currDepth;
+        depthBuilder[currDepth] = nbRef;
+
+        if (depthBuilder[currDepth - 1] != "box-container") {
+          if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-if-elif-else-id") == "1") {
+            console.log("PARENT IS AN ELSE")
+            let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelectorAll(".child-box-container");
+            parentBlock[parentBlock.length - 1].append(document.getElementById(nbCons));
+          }
+          else {
+            let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
+            parentBlock.append(document.getElementById(nbCons));
+
+          }
+        }
+
+        blockBuilder(tokens, nbRef.querySelector(".child-box-container-horizontal"))
       }
 
       else {
@@ -568,6 +592,70 @@ function blockBuilder(arr, container) {
 
 
     }
+    else if(oArray[0][0] == 'p' ){
+      
+        console.log("PRINT STATEMENT");
+
+        if(oArray[0][6] == "\"" && oArray.length == 1){
+          let nbComp = newBlock("printText");
+          let elText = document.getElementById(nbComp);
+          elText.querySelector(".text-input").value += oArray[0].substring(7, oArray[0].length -2);
+          console.log("rmBlock: " + `${rmBlock}`);
+
+          retArray[arrCount] = elText;
+          arrCount++;
+          rmBlock.push(elText);
+        }
+        else if(oArray[0][6] == "\"" && oArray.length > 0){
+          let nbComp = newBlock("printText");
+          let elText = document.getElementById(nbComp);
+          elText.querySelector(".text-input").value += oArray[0].substring(7, oArray[0].length);
+
+          for(let j = 1; j < oArray.length-1; j++){
+            elText.querySelector(".text-input").value += " " + oArray[j];
+          }
+
+          elText.querySelector(".text-input").value += " " + oArray[oArray.length - 1].substring(0, oArray[oArray.length - 1].length -2);
+
+
+          console.log("rmBlock: " + `${rmBlock}`);
+
+          retArray[arrCount] = elText;
+          arrCount++;
+          rmBlock.push(elText);
+          i = oArray.length+1;
+        }
+        else if(oArray[0][6] >= '0' && oArray[0][6] <= '9'){
+          console.log("PRINT INT");
+          let nbComp = newBlock("mathText");
+          let elText = document.getElementById(nbComp);
+          let tempString = oArray[0].substring(6, oArray[0].length -1);
+          console.log(tempString);
+          let mText = parseInt(tempString, 10);
+          console.log(mText);
+          elText.querySelector(".math-input").value += mText;
+          console.log("rmBlock: " + `${rmBlock}`);
+
+          retArray[arrCount] = elText;
+          arrCount++;
+          rmBlock.push(elText);
+          
+        }
+        else if(userVariables.includes(oArray[0].substring(6, oArray[0].length -1))){
+          let tempVar = newBlock("variableBlock");
+          let varRef = document.getElementById(tempVar);
+          varRef.querySelector(".block-dropdown").value = oArray[0].substring(6, oArray[0].length -1);
+          
+
+          retArray[arrCount] = varRef;
+          arrCount++;
+
+          rmBlock.push(varRef);
+          
+        }
+      
+      
+    }
 
     else if (i == oArray.length - 1) {
       if (oArray[i] >= "0" && oArray[i] <= "9") {
@@ -582,6 +670,20 @@ function blockBuilder(arr, container) {
         // let rCont = rmBlock.querySelectorAll(".childbox-container-horizontal");
         // console.log(rCont);
 
+      }
+      else if(userVariables.includes(oArray[i])) {
+        let tempVar = newBlock("variableBlock");
+        let varRef = document.getElementById(tempVar);
+        varRef.querySelector(".block-dropdown").value = oArray[i];
+        rmBlock[0].querySelectorAll(".childBox-Container-Horizontal .child-box-container-horizontal")[1].append(varRef);
+      }
+
+      else {
+        let nbComp = newBlock("printText");
+        let elText = document.getElementById(nbComp);
+        elText.querySelector(".text-input").value += oArray[i];
+        rmBlock.push(elText);
+        //compElems[0].append(elText);
       }
     }
 
