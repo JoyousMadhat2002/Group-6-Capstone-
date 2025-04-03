@@ -1,12 +1,24 @@
-import { showNotification } from "../scripts.js";
-
+// import { showNotification, updateUIAfterLogin } from "../scripts.js";    //was causing errors, leave commented out for now
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCteFAmh1TjbbQB0hsbBwcbqwK8mofMO4Y",
+  authDomain: "b-coders-database.firebaseapp.com",
+  projectId: "b-coders-database",
+  storageBucket: "b-coders-database.appspot.com",
+  messagingSenderId: "268773123996",
+  appId: "1:268773123996:web:fec77ef63557a9c6b50a59",
+  measurementId: "G-92LTT20BXB"
+};
 
 // ==========================
 // Authencation: Login and Logout + Dialogs
 // ==========================
 
-const auth = getAuth();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 // Function to open the login dialog
 export function openLoginDialog() {

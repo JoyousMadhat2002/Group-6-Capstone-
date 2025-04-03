@@ -541,6 +541,12 @@ function getCode() {
   return editor.state.doc.toString();
 }
 
+function setCode(content) {
+  editor.dispatch({
+    changes: { from: 0, to: editor.state.doc.length, insert: content }
+  });
+}
+
 document.getElementById("run-code-btn").addEventListener("click", runCode);
 
 // Function to run the Python code
@@ -642,7 +648,7 @@ function setupButtonFunctionalityListeners() {
 // ==========================
 
 // Function to update the UI after user login/logout
-function updateUIAfterLogin(user) {
+export function updateUIAfterLogin(user) {
   const loginButton = document.getElementById("loginButton");
 
   if (user) {
@@ -751,6 +757,24 @@ function saveFile() {
 
 //event listener for save button (might move to SetUpApp() later)
 document.getElementById("saveButton").addEventListener("click", saveFile);
+
+// Function to load a saved file from Firestore
+function loadSavedFileFromDashboard() {
+  const savedName = localStorage.getItem("loadedFileName");
+  const savedCode = localStorage.getItem("loadedFileContent");
+
+  if (savedName && savedCode) {
+    currentFileName = savedName;
+    document.getElementById("file-name-display").textContent = savedName;
+    setCode(savedCode) // Load into the CodeMirror editor
+    textToBlock("box-container"); // run textToBlock() to convert to blocks automatically
+    showNotification(`Loaded "${savedName}" from dashboard.`, "blue");
+
+    // Clean up so it doesn't reload every time
+    localStorage.removeItem("loadedFileName");
+    localStorage.removeItem("loadedFileContent");
+  }
+}
 
 // ==========================
 // 14. Additional Features (Resizing Columns, Dragging, etc.)
@@ -1007,6 +1031,7 @@ function setUpApp() {
   setupColumnResizing();
   setupDraggableBlocks();
   setupClearHighlightsOnClickListener();
+  loadSavedFileFromDashboard();
   //initializeMiscellaneous();
 }
 
