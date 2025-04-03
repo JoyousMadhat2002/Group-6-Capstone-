@@ -105,34 +105,47 @@ function blockToText(pc) {
 
   } // end of depth recalculation
 
-  let tDepth = 0;
-  // let colonC = 0;
+  let tDepth = 1;
+  let pCount = 0;
+  let cCount = 0;
+  let mCount = 0;
+  let tCount = 0;
+  
 
   for (let i = 0; i < blockChildElements.length; i++) {
     let curBlock = blockChildElements[i];
 
 
-    // else{
-    //   tDepth = curBlock.dataset.blockDepth;
-    // }
+    
 
     if (curBlock.dataset.blockID == "if" || curBlock.dataset.blockID == "for" || curBlock.dataset.blockID == "while") {
-      // colonC = 1;
-      // tDepth += 1;
-      // if(curBlock.dataset.blockDepth != tDepth || curBlock.dataset.blockDepth){
-      //   pythontext.value += ":\n";
-      // }
-      if (tDepth != 0) {
-        textBuilder += ":\n";
+      if(pCount > 0){
+        textBuilder += ")\n";
+        pCount -= 1;
       }
+      if(cCount > 0){
+        textBuilder += ":\n";
+        cCount -= 1;
+      }
+      
+      cCount += 1;
 
       for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
         textBuilder += "  ";
       }
       textBuilder += `${curBlock.dataset.blockID}`;
+      
       tDepth = curBlock.dataset.blockDepth;
     }
     else if (curBlock.innerText == "else if:" || curBlock.innerText == "else:") {
+      if(pCount > 0){
+        textBuilder += ")";
+        pCount -= 1;
+      }
+      if(cCount > 0){
+        textBuilder += ":";
+        cCount -= 1;
+      }
       textBuilder += "\n";
       for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
         textBuilder += "  ";
@@ -149,37 +162,100 @@ function blockToText(pc) {
 
 
     if (curBlock.className == "block-dropdown") {
-      if (curBlock.dataset.blockDepth > tDepth) {
-        textBuilder += ":\n";
-        for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
-          textBuilder += "  ";
-        }
-        textBuilder += `${curBlock.value}`
-        tDepth = curBlock.dataset.blockDepth;
+      // if (curBlock.dataset.blockDepth > tDepth) {
+      //   //textBuilder += ":\n";
+      //   for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
+      //     textBuilder += "  ";
+      //   }
+      //   textBuilder += `${curBlock.value}`
+      //   tDepth = curBlock.dataset.blockDepth;
+      // }
+      // else {
+      //   textBuilder += " " + `${curBlock.value}`;
+      // }
+
+      if(mCount > 0){
+        textBuilder +=  `${curBlock.value}`;
+        mCount -= 1;
       }
-      else {
+      else{
         textBuilder += " " + `${curBlock.value}`;
       }
     }
 
-    if (curBlock.className == "text-input") {
-      if (curBlock.dataset.blockDepth > tDepth) {
+    if (curBlock.dataset.blockID == "print") {
+      if(pCount > 0){
+        textBuilder += ")\n";
+        pCount -= 1;
+      }
+      if(cCount > 0){
         textBuilder += ":\n";
+        cCount -= 1;
+      }
+      if (curBlock.dataset.blockDepth > tDepth) {
+        textBuilder += "\n";
         tDepth = curBlock.dataset.blockDepth;
       }
-      textBuilder += " " + `${curBlock.value}`;
+      textBuilder += "print(";
+      pCount += 1;
+    }
+    if (curBlock.className == "text-input") {
+      if (curBlock.dataset.blockDepth > tDepth) {
+        textBuilder += "\n";
+        tDepth = curBlock.dataset.blockDepth;
+      }
+      textBuilder += "\"" + `${curBlock.value}` + "\"";
     }
     if (curBlock.className == "math-input") {
       if (curBlock.dataset.blockDepth > tDepth) {
-        textBuilder += ":\n";
+        textBuilder += "\n";
         tDepth = curBlock.dataset.blockDepth;
       }
-      textBuilder += " " + `${curBlock.value}`;
+      if(tCount > 0){
+        textBuilder += '(' + `${curBlock.value}` + ')' ;
+        tCount -= 1;
+      }
+      else{
+        textBuilder += `${curBlock.value}`;
+      }
+      
+      
     }
+    if (curBlock.dataset.blockID == "mathConstants") {
+      textBuilder += " math.";
+      mCount += 1;
+    }
+    if (curBlock.dataset.blockID == "movement") {
+      textBuilder += "turtle.";
+      tCount += 1;
+      mCount += 1;
+    }
+    if (curBlock.dataset.blockID == "home") {
+      textBuilder += "turtle.home()";      
+    }
+    if (curBlock.dataset.blockID == "speed") {
+      textBuilder += "turtle.speed";
+      tCount += 1;
+    }
+    if (curBlock.dataset.blockID == "penup" || curBlock.dataset.blockID == "pendown") {
+      textBuilder += 'turtle.' + `${curBlock.dataset.blockID}` + '()';
+    }
+    
 
 
+    if(i == blockChildElements.length - 1){
+      console.log("CLOSING TIME");
+      if(pCount > 0){
+        textBuilder += ")\n";
+        pCount -= 1;
+      }
+      if(cCount > 0){
+        textBuilder += ":\n";
+        cCount -= 1;
+      }
+    }
   }
-  let yyyyy = "THIS IS TEXT";
+  
 
 
   editor.dispatch({
@@ -260,7 +336,8 @@ function textToBlock(container) {
         if (tokens[1] == "if") {
           console.log('depthBuilder: ' + `${depthBuilder}`);
           let tempIf = document.getElementById(depthBuilder[currDepth]);
-          tempIf.querySelector(".fa-solid").dispatchEvent(clickEvent);
+          let tempClick = tempIf.querySelectorAll(".fa-solid");
+          tempClick[tempClick.length - 1].dispatchEvent(clickEvent);
           let elDrops = tempIf.querySelectorAll(".dropdown-item");
           elDrops[0].dispatchEvent(clickEvent);
 
@@ -303,7 +380,8 @@ function textToBlock(container) {
 
       else if (tokens[0] == "else" && tokens.length == 1) {
         let tempIf = document.getElementById(depthBuilder[currDepth]);
-        tempIf.querySelector(".fa-solid").dispatchEvent(clickEvent);
+        let tempClick = tempIf.querySelectorAll(".fa-solid");
+        tempClick[tempClick.length - 1].dispatchEvent(clickEvent);
         let elDrops = tempIf.querySelectorAll(".dropdown-item");
         console.log(elDrops);
         elDrops[1].dispatchEvent(clickEvent);
