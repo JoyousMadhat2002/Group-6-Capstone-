@@ -826,6 +826,12 @@ function saveFile() {
   .then(() => {
       currentFileName = fileName; //remember the file name for future saves
       showNotification(`File "${fileName}" saved successfully!`, "green");
+      
+      // Update the file name display in the UI
+      const fileNameDisplay = document.getElementById("file-name-display");
+      if (fileNameDisplay) {
+        fileNameDisplay.textContent = currentFileName;
+      }  
   })
   .catch((error) => {
       console.error("Error saving file:", error);

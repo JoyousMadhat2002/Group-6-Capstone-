@@ -66,8 +66,8 @@ function timeAgo(date) {
 // Wait for authentication state 
 onAuthStateChanged(auth, async (user) => {
 	// debug
-    console.log("Logged in as:", user.uid);
-    console.log("Fetching from:", `users/${user.uid}/projects`);
+    // console.log("Logged in as:", user.uid);
+    // console.log("Fetching from:", `users/${user.uid}/projects`);
     
     if (!user) {
 		if (typeof openLoginDialog === "function") {
@@ -85,8 +85,8 @@ onAuthStateChanged(auth, async (user) => {
 	  const snapshot = await getDocs(userProjectsRef);
 
       // debug
-      console.log("Snapshot empty?", snapshot.empty);
-      snapshot.forEach(fileDoc => console.log("Project:", fileDoc.data()));
+    //   console.log("Snapshot empty?", snapshot.empty);
+    //   snapshot.forEach(fileDoc => console.log("Project:", fileDoc.data()));
 
 	  const fileListContainer = document.getElementById("file-list");
   
