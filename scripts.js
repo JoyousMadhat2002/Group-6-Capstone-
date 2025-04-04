@@ -727,7 +727,7 @@ function setCode(content) {
   });
 }
 
-document.getElementById("run-code-btn").addEventListener("click", runCode);
+//document.getElementById("run-code-btn").addEventListener("click", runCode);
 
 // Function to run the Python code
 function runCode() {
@@ -758,11 +758,30 @@ import math
 
 window.runCode = runCode;
 
-// Function to handle the output of the Python code
+// Function to handle output of Python code
 function outf(text) {
   var mypre = document.getElementById("output");
-  mypre.innerHTML += text.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "\n";
+  mypre.innerHTML += text
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/\n/g, "<br>")
+  .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
 }
+
+document.getElementById("pythontext").addEventListener("keydown", function (e) {
+  if (e.key == "Tab") {
+    e.preventDefault();
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+    const tabNode = document.createTextNode("  ");
+
+    range.insertNode(tabNode);
+    range.setStartAfter(tabNode);
+    range.setEndAfter(tabNode);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+})
 
 // Function to read built-in files
 function builtinRead(x) {
