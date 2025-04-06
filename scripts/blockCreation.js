@@ -14,35 +14,43 @@ let isPythonView = false;
 
 // Function to dynamically create buttons and assign background colors to categories
 export function createCategoryButtons(blockCategory) {
+    // Clear all existing category buttons and their event listeners
+    for (const categoryName of Object.keys(blockCategory)) {
+        const categoryContainer = document.getElementById(categoryName);
+        if (categoryContainer) {
+            categoryContainer.innerHTML = "";
+
+            const categoryHeader = categoryContainer.parentElement.querySelector(".category-header");
+            if (categoryHeader) {
+                const newHeader = categoryHeader.cloneNode(true);
+                categoryHeader.replaceWith(newHeader);
+            }
+        }
+    }
+
+    // Create new category buttons
     for (const [categoryName, categoryData] of Object.entries(blockCategory)) {
         const categoryContainer = document.getElementById(categoryName);
 
-        // Check if the category container exists
         if (!categoryContainer) {
             console.warn(`No container found for category: ${categoryName}`);
             continue;
         }
 
-        // Apply the background color to the category header
-        const categoryHeader =
-            categoryContainer.parentElement.querySelector(".category-header");
+        const categoryHeader = categoryContainer.parentElement.querySelector(".category-header");
         const color = categoryColors[categoryName] || "#cccccc";
 
-        // Set default color for Variable Declaration block
-        if (categoryName === "Variable Declaration") {
-            categoryHeader.style.backgroundColor = "#cccccc";
-        } else {
-            categoryHeader.style.backgroundColor = color;
-        }
+        // Apply the background color to the category header
+        categoryHeader.style.backgroundColor = color;
 
         // Add the onclick event listener to the category header
-        categoryHeader.addEventListener("click", function () {
+        categoryHeader.addEventListener("click", function (event) {
+            event.stopPropagation();
             toggleCategory(categoryName);
         });
 
-        // Iterate through each element in the category
+        // Iterate through each element in the category and create buttons
         categoryData.elements.forEach((element) => {
-            // Skip creating Variable Operations and Variable Blocks if no variables exist
             if (
                 (element.blockID === "variableBlock") &&
                 userVariables.length === 0
@@ -58,6 +66,8 @@ export function createCategoryButtons(blockCategory) {
             // Apply category color to the button
             if (element.blockID === "varDeclOps") {
                 button.style.backgroundColor = "#cccccc";
+            } else if (element.blockID === "logicalBlock") {
+                button.style.backgroundColor = categoryColors.boolean;
             } else {
                 button.style.backgroundColor = color;
             }
@@ -85,16 +95,13 @@ export function refreshCategoryButtons() {
         }
     }
 
+    console.log("Refreshing category buttons...");
+
     // Recreate the buttons
     createCategoryButtons(blockCategory);
 }
 
 export function newBlock(blockID) {
-    if (isPythonView) {
-        console.warn("Cannot create a new block in Python view.");
-        return; // Exit the function early
-    }
-
     const container = document.getElementById("box-container");
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
@@ -103,11 +110,11 @@ export function newBlock(blockID) {
 
     // Calculate and set the depth
     const parentDepth = Number(container.getAttribute("data-blockDepth")) || 0;
-    newBlock.dataset.blockDepth = parentDepth + 1; // Parent depth + 1 for the new block
+    newBlock.dataset.blockDepth = parentDepth + 1; 
 
-    // Set block properties
+    // Set block properties - special case for logicalOps to use boolean color
     const { blockCategoryColor, childElement } = getBlockProperties(blockID);
-    newBlock.style.backgroundColor = blockCategoryColor;
+    newBlock.style.backgroundColor = blockID === "logicalBlock" ? categoryColors.boolean : blockCategoryColor;
 
     createBlockLabel(newBlock, blockID);
 
@@ -115,6 +122,7 @@ export function newBlock(blockID) {
     if (
         blockID === "mathBlock" ||
         blockID === "comparisonBlock" ||
+        blockID === "logicalBlock" ||
         blockID === "varOps"
     ) {
         handleMathOrComparisonOrVariableBlock(newBlock, blockID);
@@ -140,21 +148,24 @@ export function newBlock(blockID) {
         handleOperatorBlock(newBlock, blockID);
     } else if (blockID === "print") {
         handlePrintBlock(newBlock, blockID);
-    } else if (blockID === "movement") {
-        handleMovementBlock(newBlock, blockID);
+    } else if (
+        blockID === "movement" ||
+        blockID === "turn" ||
+        blockID === "speed" ||
+        blockID === "goto" ||
+        blockID === "pendown" ||
+        blockID === "penup" ||
+        blockID === "color" ||
+        blockID === "setCoordinates" ||
+        blockID === "pause"
+    ) {
+        handleTurtleBlocks(newBlock, blockID);
     } else if (
         blockID === "mathConstants" ||
-        blockID === "roundingTruncation" ||
-        blockID === "absSign" ||
-        blockID === "numberTheory" ||
-        blockID === "sumProd" ||
-        blockID === "floatManipulation" ||
-        blockID === "comparisonValidation" ||
-        blockID === "remainderDivision" ||
-        blockID === "logExpFunctions" ||
-        blockID === "trigFunctions" ||
-        blockID === "hyperbolicFunctions" ||
-        blockID === "specialFunctions"
+        blockID === "roundAbs" ||
+        blockID === "basicArithmetic" ||
+        blockID === "logExp" ||
+        blockID === "trigFunctions"
     ) {
         handleMathFunctionBlock(newBlock, blockID);
     } else if (blockID === "range") {
@@ -172,6 +183,7 @@ export function newBlock(blockID) {
     return newBlock.id;
 }
 
+
 // Function to update the line numbers based on the number of blocks
 export function updateLineNumbers() {
     const codeLinesContainer = document.querySelector(".code-lines");
@@ -181,17 +193,31 @@ export function updateLineNumbers() {
     codeLinesContainer.innerHTML = "";
 
     // Create new line numbers based on the number of blocks
-    const totalLines = blocks.length + 1; // +1 for the extra empty line at the bottom
-    for (let i = 1; i <= totalLines; i++) {
+    let lineNumberCounter = 1;
+
+    blocks.forEach((block, index) => {
         const lineNumber = document.createElement("div");
         lineNumber.classList.add("code-line");
-        if (i === totalLines) {
-            lineNumber.textContent = i;
-        } else {
-            lineNumber.textContent = i; // Line numbers start from 1
+
+        // Check if the block is inside another block and not inside a child-box-container-horizontal
+        const parentBlock = block.parentElement.closest(".box");
+        const isInsideHorizontal = block.parentElement.classList.contains("child-box-container-horizontal");
+        const isInsideVertical = block.parentElement.classList.contains("child-box-container");
+
+        if (parentBlock && (!isInsideHorizontal || !isInsideVertical)) {
+            // Skip adding a line number for this block
+            return;
         }
+
+        // Get only the base block height, ignoring dropdowns
+        const blockHeight = block.offsetHeight;
+
+        // Set the height of the code line to match the block's base height
+        lineNumber.style.height = `${blockHeight}px`;
+        lineNumber.textContent = lineNumberCounter++;
+
         codeLinesContainer.appendChild(lineNumber);
-    }
+    });
 }
 
 // ==========================
@@ -217,22 +243,48 @@ function handlePrintBlock(newBlock, blockID) {
     newBlock.appendChild(childContainer);
 }
 
-function handleMovementBlock(block, blockID) {
-    const turtlePrefix = document.createElement("span"); //temp text
-    turtlePrefix.textContent = "turtle.";
+function handleTurtleBlocks(block, blockID) {
+    const turtlePrefix = document.createElement("span");
+    if (blockID === "movement") {
+        turtlePrefix.textContent = "Move ";
+    } else if (blockID === "turn") {
+        turtlePrefix.textContent = "Turn ";
+    } else if (blockID === "speed") {
+        turtlePrefix.textContent = "Set speed to";
+    } else if (blockID === "goto") {
+        turtlePrefix.textContent = "Go to";
+    } else if (blockID === "color") {
+        turtlePrefix.textContent = "Set color to";
+    } else if (blockID === "jumpto") {
+        turtlePrefix.textContent = "Jump to";
+    } else if (blockID === "pendown") {
+        turtlePrefix.textContent = "Pen Down";
+    } else if (blockID === "penup") {
+        turtlePrefix.textContent = "Pen Up";
+    } else if (blockID === "setCoordinates") {
+        turtlePrefix.textContent = "";
+    } else if (blockID === "pause") {
+        turtlePrefix.textContent = "Pause for";
+    }
+
     block.appendChild(turtlePrefix);
 
-    const dropdown = createOperatorDropdown(blockID);
-    block.appendChild(dropdown);
+    if (blockID === "movement" || blockID === "turn" || blockID === "setCoordinates") {
+        const dropdown = createOperatorDropdown(blockID);
+        block.appendChild(dropdown);
+    }
 
-    if (blockID != "movement") {
+    if (blockID === "goto") {
+        const childContainerX = createChildBoxHorizontal(block.id, blockID);
+        block.appendChild(childContainerX);
+
+
+        const childContainerY = createChildBoxHorizontal(block.id, blockID);
+        block.appendChild(childContainerY);
+    } else if (blockID != "penup" && blockID != "pendown") {
         const childContainer = createChildBoxHorizontal(block.id, blockID);
         block.appendChild(childContainer);
     }
-
-    // Add a horizontal child block for the value input
-    const childContainer = createChildBoxHorizontal(block.id, blockID);
-    block.appendChild(childContainer);
 }
 
 function handleOperatorBlock(block, blockID) {
@@ -263,41 +315,121 @@ function handleMathOrComparisonOrVariableBlock(block, blockID) {
     const container = document.createElement("div");
     container.classList.add("childBox-Container-Horizontal");
 
-    // Create the left-hand side container for the variable or math/comparison block
+    // Create the left-hand side container
     const leftContainer = createChildBoxHorizontal(block.id, blockID);
+    leftContainer.dataset.containerIndex = "0";
     container.appendChild(leftContainer);
 
     // Create and append the operator dropdown
     const operatorDropdown = createOperatorDropdown(blockID);
     operatorDropdown.dataset.dropdownType = "operator";
+    operatorDropdown.dataset.operatorIndex = "0";
     container.appendChild(operatorDropdown);
 
-    // Create the right-hand side container for the value block
+    // Create the right-hand side container
     const rightContainer = createChildBoxHorizontal(block.id, blockID);
+    rightContainer.dataset.containerIndex = "0";
     container.appendChild(rightContainer);
+
+    // Block expansion
+    if (
+        blockID === "logicalBlock" || 
+        blockID === "mathBlock" || 
+        blockID === "comparisonBlock"
+    ) {
+        const plusMinusDiv = document.createElement("div");
+        plusMinusDiv.classList.add("plus-minus");
+
+        const plusIcon = document.createElement("i");
+        plusIcon.classList.add("fa-solid", "fa-plus");
+        plusIcon.addEventListener("click", () => addComparisonComponent(block, container));
+        plusMinusDiv.appendChild(plusIcon);
+
+        const minusIcon = document.createElement("i");
+        minusIcon.classList.add("fa-solid", "fa-minus");
+        minusIcon.addEventListener("click", () => removeComparisonComponent(block, container));
+        plusMinusDiv.appendChild(minusIcon);
+
+        minusIcon.style.display = "none";
+
+        container.appendChild(plusMinusDiv);
+    }
 
     block.appendChild(container);
 
-    // Update data attributes based on changes in the operator dropdown
     operatorDropdown.addEventListener("change", function () {
-        block.dataset.blockOperator = operatorDropdown.value;
+        updateOperatorAttributes(container);
     });
+}
 
-    // Handle changes in the left-hand side container (variable or math/comparison block)
-    leftContainer.addEventListener("change", function () {
-        const leftBlock = leftContainer.querySelector(".box");
-        if (leftBlock) {
-            block.dataset.block1Value = leftBlock.dataset.blockValue || "";
+function updateOperatorAttributes(container) {
+    const dropdowns = container.querySelectorAll(".block-dropdown[data-dropdown-type='operator']");
+    const containers = container.querySelectorAll(".child-box-container-horizontal");
+    
+    dropdowns.forEach((dropdown, index) => {
+        dropdown.dataset.operatorIndex = index;
+        const block = container.closest(".box");
+        if (index === 0) {
+            block.dataset.blockOperator = dropdown.value;
+        } else {
+            block.dataset[`blockOperator${index}`] = dropdown.value;
         }
     });
-
-    // Handle changes in the right-hand side container (value block)
-    rightContainer.addEventListener("change", function () {
-        const rightBlock = rightContainer.querySelector(".box");
-        if (rightBlock) {
-            block.dataset.block2Value = rightBlock.dataset.blockValue || "";
-        }
+    
+    containers.forEach((container, index) => {
+        container.dataset.containerIndex = index;
     });
+}
+
+function addComparisonComponent(parentBlock, container) {
+    const dropdowns = container.querySelectorAll(".block-dropdown[data-dropdown-type='operator']");
+    const newIndex = dropdowns.length;
+    
+    const newOperatorDropdown = createOperatorDropdown(parentBlock.dataset.blockID);
+    newOperatorDropdown.dataset.dropdownType = "operator";
+    newOperatorDropdown.dataset.operatorIndex = newIndex;
+    newOperatorDropdown.addEventListener("change", () => updateOperatorAttributes(container));
+    
+    const newRightContainer = createChildBoxHorizontal(parentBlock.id, parentBlock.dataset.blockID);
+    newRightContainer.dataset.containerIndex = newIndex;
+    
+    const plusMinusDiv = container.querySelector(".plus-minus");
+    container.insertBefore(newOperatorDropdown, plusMinusDiv);
+    container.insertBefore(newRightContainer, plusMinusDiv);
+    
+    const minusIcon = container.querySelector(".fa-minus");
+    minusIcon.style.display = "block";
+    
+    updateOperatorAttributes(container);
+    updateLineNumbers();
+}
+
+function removeComparisonComponent(parentBlock, container) {
+    const dropdowns = container.querySelectorAll(".block-dropdown[data-dropdown-type='operator']");
+    const containers = container.querySelectorAll(".child-box-container-horizontal");
+    
+    if (dropdowns.length <= 1) return;
+    
+    const plusMinusDiv = container.querySelector(".plus-minus");
+    const lastDropdown = dropdowns[dropdowns.length - 1];
+    const lastContainer = containers[containers.length - 1];
+    
+    if (lastDropdown && lastDropdown !== dropdowns[0]) {
+        container.removeChild(lastDropdown);
+        const block = container.closest(".box");
+        delete block.dataset[`blockOperator${dropdowns.length - 1}`];
+    }
+    if (lastContainer && lastContainer !== containers[0]) {
+        container.removeChild(lastContainer);
+    }
+    
+    if (dropdowns.length <= 2) { 
+        const minusIcon = container.querySelector(".fa-minus");
+        minusIcon.style.display = "none";
+    }
+    
+    updateOperatorAttributes(container);
+    updateLineNumbers();
 }
 
 function handleControlBlock(block, blockID) {
@@ -329,14 +461,47 @@ function handleLoopBlocks(block, blockID) {
 }
 
 function handleVariableDeclarationBlock(block) {
-    const variableName = prompt("Enter a new variable name:");
-    if (!variableName) return;
+    // Get the modal and input elements
+    const modal = document.getElementById("variableModal");
+    const variableNameInput = document.getElementById("variableNameInput");
+    const submitButton = document.getElementById("submitVariable");
+    const cancelButton = document.getElementById("cancelVariable");
+    const closeButton = document.querySelector(".close");
 
-    if (!userVariables.includes(variableName)) {
-        userVariables.push(variableName);
-        updateUserVariableDropdowns();
-        refreshCategoryButtons();
-    }
+    // Show the modal
+    modal.style.display = "block";
+
+    // Function to close the modal
+    const closeModal = () => {
+        modal.style.display = "none";
+        variableNameInput.value = ""; // Clear the input field
+    };
+
+    // Handle the submit button click
+    submitButton.onclick = () => {
+        const variableName = variableNameInput.value.trim();
+        if (variableName) {
+            if (!userVariables.includes(variableName)) {
+                userVariables.push(variableName);
+                updateUserVariableDropdowns();
+                refreshCategoryButtons();
+            }
+            closeModal();
+        }
+    };
+
+    // Handle the cancel button click
+    cancelButton.onclick = closeModal;
+
+    // Handle the close button click
+    closeButton.onclick = closeModal;
+
+    // Close the modal if the user clicks outside of it
+    window.onclick = (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
 }
 
 function handleVariableBlock(block) {
@@ -402,6 +567,7 @@ function handleElseIfOption(block, elifElseDiv, dropdown, plusIcon) {
 
     // Reset and update the IDs for all elif-else blocks
     resetAndUpdateElifElseIds(block);
+    updateLineNumbers();
 
     // Increment the "else if" counter
     block.dataset.elseIfCount = parseInt(block.dataset.elseIfCount || 0) + 1;
@@ -475,29 +641,69 @@ function handleRangeBlock(block) {
 // ==========================
 
 function createInputField(placeholder, className, dataKey, blockID) {
-    const input = document.createElement("input");
-    input.type = "text";
-    input.placeholder = placeholder;
-    input.classList.add(className);
+    let input;
 
-    input.addEventListener("input", function () {
-        const block = input.closest(".box");
-        const value = input.value.trim();
+    if (blockID === "printText") {
+        // Use a textarea for text blocks to allow newlines
+        input = document.createElement("textarea");
+        input.rows = 1; // Start with one row
+        input.placeholder = placeholder;
+        input.addEventListener("input", () => {
+            // Adjust the number of rows based on the content
+            input.style.height = "auto";
+            input.style.height = `${input.scrollHeight}px`;
 
-        // Validate input based on block type
-        if (blockID === "mathText" || blockID === "mathBlock") {
-            // Only allow numbers for Math blocks
-            if (/^-?\d*\.?\d*$/.test(value)) {
-                block.dataset[dataKey] = value;
+            // Update the data-block-value with newlines
+            const block = input.closest(".box");
+            block.dataset[dataKey] = input.value.replace(/\n/g, "\\n");
+        });
+    } else {
+        // Use an input for other blocks (e.g., math blocks)
+        input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = placeholder;
+
+        // Function to adjust the width of the input field (for non-textarea inputs)
+        const adjustInputWidth = () => {
+            const tempSpan = document.createElement("span");
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.whiteSpace = "pre";
+            tempSpan.style.fontFamily = getComputedStyle(input).fontFamily;
+            tempSpan.style.fontSize = getComputedStyle(input).fontSize;
+            tempSpan.textContent = input.value || input.placeholder;
+            document.body.appendChild(tempSpan);
+            const width = tempSpan.offsetWidth + 10; // Add some padding
+            document.body.removeChild(tempSpan);
+            input.style.width = `${width}px`;
+        };
+
+        // Adjust width on input (for non-textarea inputs)
+        input.addEventListener("input", () => {
+            const block = input.closest(".box");
+            const value = input.value.trim();
+
+            // Validate input based on block type
+            if (blockID === "mathText" || blockID === "mathBlock") {
+                // Only allow numbers for Math blocks
+                if (/^-?\d*\.?\d*$/.test(value)) {
+                    block.dataset[dataKey] = value;
+                } else {
+                    input.value = block.dataset[dataKey] || "";
+                }
             } else {
-                input.value = block.dataset[dataKey] || "";
+                // Allow any input for non-Math blocks
+                block.dataset[dataKey] = value;
             }
-        } else {
-            // Allow any input for non-Math blocks
-            block.dataset[dataKey] = value;
-        }
-    });
 
+            // Adjust the input width dynamically (for non-textarea inputs)
+            adjustInputWidth();
+        });
+
+        // Adjust width initially (for non-textarea inputs)
+        adjustInputWidth();
+    }
+
+    input.classList.add(className);
     return input;
 }
 
@@ -658,7 +864,6 @@ function setupDropdownMenu(plusIcon, block, elifElseDiv) {
     const updateDropdownOptions = () => {
         dropdown.innerHTML = "";
 
-        // Always add the "else if" option
         const elseIfOption = createDropdownOption("else if", () =>
             handleElseIfOption(block, elifElseDiv, dropdown, plusIcon)
         );
@@ -674,9 +879,18 @@ function setupDropdownMenu(plusIcon, block, elifElseDiv) {
     };
 
     // Update dropdown options every time the dropdown is opened
-    plusIcon.addEventListener("click", () => {
+    plusIcon.addEventListener("click", (e) => {
+        e.stopPropagation();
         updateDropdownOptions();
         toggleDropdownVisibility(dropdown);
+        setTimeout(() => updateLineNumbers(), 0);
+        console.log("Dropdown opened");
+    });
+    document.addEventListener("click", (e) => {
+        if (!dropdown.contains(e.target)) {
+            toggleDropdownVisibility(dropdown);
+            updateLineNumbers();
+        }
     });
 }
 
@@ -684,19 +898,31 @@ export function toggleView() {
     var x = document.getElementById("python-code-result");
     var y = document.getElementById("block-container");
     var toggleButton = document.getElementById("toggleButton");
-  
+    var codeContainer = document.querySelector(".code-container");
+    var handle1 = document.querySelector(".handle1");
+
     if (x.classList.contains("hidden")) {
-      x.classList.remove("hidden");
-      y.classList.add("hidden");
-      toggleButton.textContent = "Block";
-      isPythonView = true; // Switch to Python view
+        // Switch to Python view
+        x.classList.remove("hidden");
+        y.classList.add("hidden");
+        toggleButton.textContent = "Block";
+        isPythonView = true;
+
+        // Hide the code container and handle1
+        if (codeContainer) codeContainer.style.display = "none";
+        if (handle1) handle1.style.display = "none";
     } else {
-      x.classList.add("hidden");
-      y.classList.remove("hidden");
-      toggleButton.textContent = "Python";
-      isPythonView = false; // Switch to Block view
+        // Switch to Block view
+        x.classList.add("hidden");
+        y.classList.remove("hidden");
+        toggleButton.textContent = "Python";
+        isPythonView = false;
+
+        // Show the code container and handle1
+        if (codeContainer) codeContainer.style.display = "flex";
+        if (handle1) handle1.style.display = "block";
     }
-  }
+}
 
 
 export {

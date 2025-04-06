@@ -3,29 +3,103 @@
 // ==========================
 
 const categoryColors = {
-  movement: "#BFEFFF", // Baby Blue
-  logic: "#5a80a5", // Steel Blue
-  math: "#5abd42", // Green
-  comparison: "#ffcc99", // Peach
-  boolean: "#80cbc4", // Aqua Marine
-  functions: "#995ba6", // Amethyst Purple
-  variables: "#a55b80", // Rosewood
-  default: "#cccccc", // Light Gray
+  movement: "#669999 ", 
+  logic: "#5a80a5",
+  math: "#5abd42",
+  comparison: "#ffcc99", 
+  boolean: "#99cccc", 
+  functions: "#996699",
+  variables: "#996666",
+  default: "#cccccc",
 };
 
 const blockCategory = {
   movement: {
     elements: [
       {
-        name: "movement",
+        name: "Move",
         blockID: "movement",
-        description: "Movement for Turtle",
+        description: "Move Turtle",
         type: "movement",
         parentElement: "block",
         childElement: ["function", "value"],
-      }
+      },
+      {
+        name: "Turn",
+        blockID: "turn",
+        description: "Turn the turtle by angle",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["angle"],
+      },
+      {
+        name: "Speed",
+        blockID: "speed",
+        description: "Set the speed of the turtle",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["speed"],
+      },
+      {
+        name: "Home",
+        blockID: "home",
+        description: "Move the turtle to the origin",
+        type: "movement",
+        parentElement: "block",
+        childElement: null,
+      },
+      {
+        name: "Color",
+        blockID: "color",
+        description: "Set the color of the turtle",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["color"],
+      },
+      {
+        name: "Pen Up",
+        blockID: "penup",
+        description: "Lift the pen",
+        type: "movement",
+        parentElement: "block",
+        childElement: null,
+      },
+      {
+        name: "Pen Down",
+        blockID: "pendown",
+        description: "Lower the pen",
+        type: "movement",
+        parentElement: "block",
+        childElement: null,
+      },
+      {
+        name: "Go To",
+        blockID: "goto",
+        description: "Move the turtle to a specific location",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["x", "y"],
+      },
+      {
+        name: "Set Position",
+        blockID: "setCoordinates",
+        description: "Set the position or angle of the turtle",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["x", "y", "angle"],
+      },
+      {
+        name: "Pause",
+        blockID: "pause",
+        description: "Pause the turtle",
+        type: "movement",
+        parentElement: "block",
+        childElement: ["time"],
+      },
+
     ],
   },
+
   logic: {
     elements: [
       {
@@ -52,34 +126,35 @@ const blockCategory = {
         parentElement: "block",
         childElement: "block",
       },
-      {
-        name: "break",
-        blockID: "break",
-        description: "Break loop",
-        type: "loop",
+      /*{
+        name: "Logical Operations",
+        blockID: "logicalOps",
+        description: "Logical operators (and, or, not)",
+        type: "logical",
         parentElement: "block",
-        childElement: null,
-      },
+        childElement: ["operator", "operand1", "operand2"],
+      },*/
       {
-        name: "continue",
-        blockID: "continue",
-        description: "Continue loop",
-        type: "loop",
+        name: "Logical Block",
+        blockID: "logicalBlock",
+        description: "A logical block for boolean input",
+        type: "logical",
         parentElement: "block",
-        childElement: null,
+        childElement: ["block", "operator", "operand1", "operand2"],
       },
     ],
   },
+
   math: {
     elements: [
-      {
+      /*{
         name: "Arithmetic Operations",
         blockID: "arithmeticOps",
         description: "Arithmetic operators (+, -, *, /, %, **, //)",
         type: "arithmetic",
         parentElement: "block",
         childElement: ["operator"],
-      },
+      },*/
       {
         name: "Math Text Block",
         blockID: "mathText",
@@ -101,14 +176,14 @@ const blockCategory = {
 
   comparison: {
     elements: [
-      {
+      /*{
         name: "Comparison Operators",
         blockID: "comparisonOps",
         description: "Comparison operators (==, !=, >, <, >=, <=)",
         type: "comparison",
         parentElement: "block",
         childElement: ["operator"],
-      },
+      },*/
       {
         name: "Comparison Block",
         blockID: "comparisonBlock",
@@ -127,38 +202,9 @@ const blockCategory = {
       },
     ],
   },
-  boolean: {
-    elements: [
-      {
-        name: "Logical Operations",
-        blockID: "logicalOps",
-        description: "Logical operators (and, or, not)",
-        type: "logical",
-        parentElement: "block",
-        childElement: ["operator", "operand1", "operand2"],
-      },
-    ],
-  },
+
   functions: {
     elements: [
-      /* Future implementation
-      {
-        name: "def",
-        blockID: "def",
-        description: "Define a function",
-        type: "function",
-        parentElement: "block",
-        childElement: ["function_name", "arguments"],
-      },
-      {
-        name: "return",
-        blockID: "return",
-        description: "Return from a function",
-        type: "function",
-        parentElement: "block",
-        childElement: ["expression"],
-      },
-      */
       {
         name: "print",
         blockID: "print",
@@ -178,102 +224,46 @@ const blockCategory = {
       {
         name: "Math Constants",
         blockID: "mathConstants",
-        description: "Math constants (pi, e, tau, inf, nan)",
+        description: "Includes commonly used mathematical constants such as pi (π), Euler's number (e), tau (τ), infinity (inf), and not-a-number (nan).",
         type: "arithmetic",
         parentElement: "block",
-        childElement: ["constant"],
+        childElement: ["constant"]
       },
       {
-        name: "Rounding and Truncation",
-        blockID: "roundingTruncation",
-        description: "Rounding and truncation functions (ceil, floor, trunc, round, nearbyint, rint)",
+        name: "Rounding and Absolute Value",
+        blockID: "roundAbs",
+        description: "Provides functions for rounding and handling absolute values, including ceiling (ceil), floor (floor), rounding to the nearest integer (round), truncating decimal values (trunc), and getting the absolute value of a number (fabs).",
         type: "arithmetic",
         parentElement: "block",
-        childElement: ["function", "value"],
+        childElement: ["function", "value"]
       },
       {
-        name: "Absolute Value and Sign",
-        blockID: "absSign",
-        description: "Absolute value and sign-related functions (fabs, copysign, nextafter)",
+        name: "Basic Arithmetic",
+        blockID: "basicArithmetic",
+        description: "Includes fundamental arithmetic operations such as finding the greatest common divisor (gcd), least common multiple (lcm), computing factorials (factorial), summing a sequence of numbers (sum), and calculating the product of a sequence (prod).",
         type: "arithmetic",
         parentElement: "block",
-        childElement: ["function", "value"],
+        childElement: ["function", "value"]
       },
       {
-        name: "Number Theory and Combinatorics",
-        blockID: "numberTheory",
-        description: "Number theory and combinatorics functions (gcd, lcm, comb, perm, factorial)",
+        name: "Logarithms and Exponents",
+        blockID: "logExp",
+        description: "Provides functions for logarithmic and exponential calculations, including computing natural logarithms (log), base-10 logarithms (log10), exponentiation (exp), square roots (sqrt), and raising a number to a given power (pow).",
         type: "arithmetic",
         parentElement: "block",
-        childElement: ["function", "value"],
+        childElement: ["function", "value"]
       },
       {
-        name: "Summation and Products",
-        blockID: "sumProd",
-        description: "Summation and product functions (fsum, prod)",
-        type: "arithmetic",
-        parentElement: "block",
-        childElement: ["function", "value"],
-      },
-      {
-        name: "Floating-Point Manipulation",
-        blockID: "floatManipulation",
-        description: "Floating-point manipulation functions (frexp, ldexp, modf)",
-        type: "arithmetic",
-        parentElement: "block",
-        childElement: ["function", "value"],
-      },
-      {
-        name: "Comparison and Validation",
-        blockID: "comparisonValidation",
-        description: "Comparison and validation functions (isclose, isfinite, isinf, isnan, isqrt)",
-        type: "arithmetic",
-        parentElement: "block",
-        childElement: ["function", "value"],
-      },
-      {
-        name: "Remainder and Division",
-        blockID: "remainderDivision",
-        description: "Remainder and division functions (fmod, remainder)",
-        type: "arithmetic",
-        parentElement: "block",
-        childElement: ["function", "value"],
-      },
-      {
-        name: "Logarithmic and Exponential Functions",
-        blockID: "logExpFunctions",
-        description: "Logarithmic and exponential functions (exp, expm1, log, log1p, log2, log10, pow, sqrt)",
-        type: "arithmetic",
-        parentElement: "block",
-        childElement: ["function", "value"],
-      },
-      {
-        name: "Trigonometric Functions",
+        name: "Trigonometry",
         blockID: "trigFunctions",
-        description: "Trigonometric functions (acos, asin, atan, atan2, cos, sin, tan, degrees, radians, dist, hypot)",
+        description: "Includes trigonometric functions for working with angles and periodic calculations, such as sine (sin), cosine (cos), tangent (tan), inverse sine (asin), inverse cosine (acos), inverse tangent (atan), conversion between radians and degrees (radians, degrees).",
         type: "arithmetic",
         parentElement: "block",
-        childElement: ["function", "value"],
+        childElement: ["function", "value"]
       },
-      {
-        name: "Hyperbolic Functions",
-        blockID: "hyperbolicFunctions",
-        description: "Hyperbolic functions (acosh, asinh, atanh, cosh, sinh, tanh)",
-        type: "arithmetic",
-        parentElement: "block",
-        childElement: ["function", "value"],
-      },
-      {
-        name: "Special Functions",
-        blockID: "specialFunctions",
-        description: "Special functions (erf, erfc, gamma, lgamma)",
-        type: "arithmetic",
-        parentElement: "block",
-        childElement: ["function", "value"],
-      },
-      
     ],
   },
+
   variables: {
     elements: [
       {

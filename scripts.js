@@ -3,29 +3,41 @@ import { python } from "@codemirror/lang-python";
 
 import { blockCategory } from "./scripts/blockConfiguration.js";
 import { getBlockProperties } from "./scripts/blockProperties.js";
-import { 
-  createCategoryButtons, 
+import {
+  createCategoryButtons,
   newBlock,
   clearDropHighlights,
-  toggleView
+  toggleView,
+  refreshCategoryButtons,
+  updateLineNumbers,
 } from "./scripts/blockCreation.js";
-import { userVariables} from "./scripts/blockCreation.js";
+import { userVariables } from "./scripts/blockCreation.js";
+
+import {
+  openLoginDialog,
+  createLoginDialog,
+  createSignupDialog,
+  attemptLogin,
+  attemptSignup,
+  logoutUser,
+  closeDialogBoxes
+} from "./scripts/authDialogs.js";
 
 
-// Import Firebase modules correctly
+// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCteFAmh1TjbbQB0hsbBwcbqwK8mofMO4Y",
-    authDomain: "b-coders-database.firebaseapp.com",
-    projectId: "b-coders-database",
-    storageBucket: "b-coders-database.appspot.com",
-    messagingSenderId: "268773123996",
-    appId: "1:268773123996:web:fec77ef63557a9c6b50a59",
-    measurementId: "G-92LTT20BXB"
+  apiKey: "AIzaSyCteFAmh1TjbbQB0hsbBwcbqwK8mofMO4Y",
+  authDomain: "b-coders-database.firebaseapp.com",
+  projectId: "b-coders-database",
+  storageBucket: "b-coders-database.appspot.com",
+  messagingSenderId: "268773123996",
+  appId: "1:268773123996:web:fec77ef63557a9c6b50a59",
+  measurementId: "G-92LTT20BXB"
 };
 
 // Initialize Firebase
@@ -35,7 +47,7 @@ const db = getFirestore(app);
 
 // Wait for Firebase authentication state
 onAuthStateChanged(auth, (user) => {
-    updateUIAfterLogin(user);
+  updateUIAfterLogin(user);
 });
 
 
@@ -46,7 +58,9 @@ const clickEvent = new Event('click');
 
 
 // Call the function to create the buttons
-createCategoryButtons(blockCategory);
+document.addEventListener("DOMContentLoaded", function () {
+  createCategoryButtons(blockCategory);
+});
 
 // ==========================
 // 9. Python Code Conversion
@@ -61,28 +75,25 @@ function blockToText(pc) {
   let textBuilder = "";
 
   // set all depth to 0
-  for(let i = 0; i < blockChildElements.length; i++){
+  for (let i = 0; i < blockChildElements.length; i++) {
     blockChildElements[i].dataset.blockDepth = 0;
   }
 
-
   // iterate through every element and recalculate depth
-  for(let i = 0; i < blockChildElements.length; i++){
+  for (let i = 0; i < blockChildElements.length; i++) {
     let curBlock = blockChildElements[i];
 
-    
-    
-      if(curBlock.parentElement.dataset.blockID == "if" || curBlock.parentElement.dataset.blockID == "for" || curBlock.parentElement.dataset.blockID == "when"){
+    if (curBlock.parentElement.dataset.blockID == "if" || curBlock.parentElement.dataset.blockID == "for" || curBlock.parentElement.dataset.blockID == "when") {
       curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
 
     }
-    else if(curBlock.parentElement.className == "child-box-container" || curBlock.parentElement.className == "block-code-result"){
-      if(curBlock.dataset.blockID == "comparisonBlock" || curBlock.className == "block-dropdown" || curBlock.dataset.blockID == "mathText"){
+    else if (curBlock.parentElement.className == "child-box-container" || curBlock.parentElement.className == "block-code-result") {
+      if (curBlock.dataset.blockID == "comparisonBlock" || curBlock.className == "block-dropdown" || curBlock.dataset.blockID == "mathText") {
         curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
 
 
       }
-      else{
+      else {
         curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth) + 1;
 
       }
@@ -98,95 +109,172 @@ function blockToText(pc) {
     // // else {
     // //   pythontext.value += `${childID}\n`;
     // // }
-    else{
+    else {
       curBlock.dataset.blockDepth = parseInt(curBlock.parentElement.dataset.blockDepth);
     }
 
   } // end of depth recalculation
 
-  let tDepth = 0;
-  // let colonC = 0;
+  let tDepth = 1;
+  let pCount = 0;
+  let cCount = 0;
+  let mCount = 0;
+  let tCount = 0;
+  
 
-  for(let i = 0; i < blockChildElements.length; i++){
+  for (let i = 0; i < blockChildElements.length; i++) {
     let curBlock = blockChildElements[i];
-    
-    
-    // else{
-    //   tDepth = curBlock.dataset.blockDepth;
-    // }
-    
-    if(curBlock.dataset.blockID == "if" || curBlock.dataset.blockID == "for" || curBlock.dataset.blockID == "while"){
-      // colonC = 1;
-      // tDepth += 1;
-      // if(curBlock.dataset.blockDepth != tDepth || curBlock.dataset.blockDepth){
-      //   pythontext.value += ":\n";
-      // }
-      if(tDepth != 0){
-        textBuilder += ":\n";
-      }
 
-      for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
+
+    
+
+    if (curBlock.dataset.blockID == "if" || curBlock.dataset.blockID == "for" || curBlock.dataset.blockID == "while") {
+      if(pCount > 0){
+        textBuilder += ")\n";
+        pCount -= 1;
+      }
+      if(cCount > 0){
+        textBuilder += ":\n";
+        cCount -= 1;
+      }
+      
+      cCount += 1;
+
+      for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
         textBuilder += "  ";
       }
       textBuilder += `${curBlock.dataset.blockID}`;
+      
       tDepth = curBlock.dataset.blockDepth;
     }
-    else if(curBlock.innerText == "else if:" || curBlock.innerText == "else:"){
+    else if (curBlock.innerText == "else if:" || curBlock.innerText == "else:") {
+      if(pCount > 0){
+        textBuilder += ")";
+        pCount -= 1;
+      }
+      if(cCount > 0){
+        textBuilder += ":";
+        cCount -= 1;
+      }
       textBuilder += "\n";
-      for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
+      for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
         textBuilder += "  ";
       }
-      if(curBlock.innerText == "else if:"){
+      if (curBlock.innerText == "else if:") {
         textBuilder += "else if";
         // colonC = 1;
         tDepth = curBlock.dataset.blockDepth;
       }
-      else if( curBlock.innerText == "else:"){
-        textBuilder += `${curBlock.innerText}` + "\n"};
+      else if (curBlock.innerText == "else:") {
+        textBuilder += `${curBlock.innerText}` + "\n"
+      };
     }
-   
-    
-  if(curBlock.className == "block-dropdown"){
-    if(curBlock.dataset.blockDepth > tDepth){
-      textBuilder += ":\n";
-      for(let d = 0 ; d < (curBlock.dataset.blockDepth-1);d++){
-        textBuilder += "  ";
+
+
+    if (curBlock.className == "block-dropdown") {
+      // if (curBlock.dataset.blockDepth > tDepth) {
+      //   //textBuilder += ":\n";
+      //   for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
+      //     textBuilder += "  ";
+      //   }
+      //   textBuilder += `${curBlock.value}`
+      //   tDepth = curBlock.dataset.blockDepth;
+      // }
+      // else {
+      //   textBuilder += " " + `${curBlock.value}`;
+      // }
+
+      if(mCount > 0){
+        textBuilder +=  `${curBlock.value}`;
+        mCount -= 1;
       }
-      textBuilder += `${curBlock.value}`
-      tDepth = curBlock.dataset.blockDepth;
+      else{
+        textBuilder += " " + `${curBlock.value}`;
+      }
     }
-    else{
-      textBuilder += " " + `${curBlock.value}`;
-    }
-  }
 
-  if(curBlock.className == "text-input"){
-    if(curBlock.dataset.blockDepth > tDepth){
-      textBuilder += ":\n";
-      tDepth = curBlock.dataset.blockDepth;
+    if (curBlock.dataset.blockID == "print") {
+      if(pCount > 0){
+        textBuilder += ")\n";
+        pCount -= 1;
+      }
+      if(cCount > 0){
+        textBuilder += ":\n";
+        cCount -= 1;
+      }
+      if (curBlock.dataset.blockDepth > tDepth) {
+        textBuilder += "\n";
+        tDepth = curBlock.dataset.blockDepth;
+      }
+      textBuilder += "print(";
+      pCount += 1;
     }
-    textBuilder += " " + `${curBlock.value}`;
-  }
-  if(curBlock.className == "math-input"){
-    if(curBlock.dataset.blockDepth > tDepth){
-      textBuilder += ":\n";
-      tDepth = curBlock.dataset.blockDepth;
+    if (curBlock.className == "text-input") {
+      if (curBlock.dataset.blockDepth > tDepth) {
+        textBuilder += "\n";
+        tDepth = curBlock.dataset.blockDepth;
+      }
+      textBuilder += "\"" + `${curBlock.value}` + "\"";
     }
-    textBuilder += " " + `${curBlock.value}`;
+    if (curBlock.className == "math-input") {
+      if (curBlock.dataset.blockDepth > tDepth) {
+        textBuilder += "\n";
+        tDepth = curBlock.dataset.blockDepth;
+      }
+      if(tCount > 0){
+        textBuilder += '(' + `${curBlock.value}` + ')' ;
+        tCount -= 1;
+      }
+      else{
+        textBuilder += `${curBlock.value}`;
+      }
+      
+      
+    }
+    if (curBlock.dataset.blockID == "mathConstants") {
+      textBuilder += " math.";
+      mCount += 1;
+    }
+    if (curBlock.dataset.blockID == "movement") {
+      textBuilder += "turtle.";
+      tCount += 1;
+      mCount += 1;
+    }
+    if (curBlock.dataset.blockID == "home") {
+      textBuilder += "turtle.home()";      
+    }
+    if (curBlock.dataset.blockID == "speed") {
+      textBuilder += "turtle.speed";
+      tCount += 1;
+    }
+    if (curBlock.dataset.blockID == "penup" || curBlock.dataset.blockID == "pendown") {
+      textBuilder += 'turtle.' + `${curBlock.dataset.blockID}` + '()';
+    }
+    
+
+
+    if(i == blockChildElements.length - 1){
+      console.log("CLOSING TIME");
+      if(pCount > 0){
+        textBuilder += ")\n";
+        pCount -= 1;
+      }
+      if(cCount > 0){
+        textBuilder += ":\n";
+        cCount -= 1;
+      }
+    }
   }
   
-  
-}
-let yyyyy = "THIS IS TEXT";
 
 
-editor.dispatch({
-  changes: {
+  editor.dispatch({
+    changes: {
       from: 0,
       to: editor.state.doc.length,
       insert: textBuilder
-  }
-})
+    }
+  })
 
 } // END OF BTT()
 
@@ -205,13 +293,13 @@ function textToBlock(container) {
   let depthBuilder = ["box-container"]; // counting preceeding zeros for depth
 
   let elseChild;
-  
+
   for (let i = 0; i < lines.length; i++) {
     let currDepth = 0;
     let linecount = 0;
-    for (let j = 0; j < lines[i].length; j++){
-      
-      if(lines[i][j] ==  " "){
+    for (let j = 0; j < lines[i].length; j++) {
+
+      if (lines[i][j] == " ") {
         linecount++;
       }
       else {
@@ -221,97 +309,100 @@ function textToBlock(container) {
 
 
     // setting currDepth based on number of indentations
-    if (linecount < 1){
+    if (linecount < 1) {
       // console.log("lineCount = " + `${linecount}`);
       // console.log("currDepth = " + `${currDepth}`);
 
       currDepth = 1;
-      
-      
+
+
     }
     else {
       // console.log("lineCount = " + `${linecount}`);
       // console.log("currDepth = " + `${currDepth}`);
-      currDepth = (linecount/2) + 1;
+      currDepth = (linecount / 2) + 1;
     }
 
     lines[i] = lines[i].trim(); // trimming text line for whitespace
 
     // Line deleting colon for statements
-    if(lines[i][lines[i].length -1] == ':'){
-      lines[i] = lines[i].substring(0, lines[i].length -1);
+    if (lines[i][lines[i].length - 1] == ':') {
+      lines[i] = lines[i].substring(0, lines[i].length - 1);
     }
 
     let tokens = lines[i].split(" "); // splitting string into tokens
 
     // logic to build blocks
-    if (tokens != ""){
-      
-      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for" || tokens[1] == "if"){
-        
+    if (tokens != "") {
+      console.log(`${tokens[0][0]}`);
+
+      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for" || tokens[1] == "if") {
+
 
         console.log(`${tokens[0]}` + " statement");
         let nbCons;
         let nbRef;
-        
+
         // Logic for else if blocks
-        if(tokens[1] == "if"){
+        if (tokens[1] == "if") {
           console.log('depthBuilder: ' + `${depthBuilder}`);
           let tempIf = document.getElementById(depthBuilder[currDepth]);
-          tempIf.querySelector(".fa-solid").dispatchEvent(clickEvent);
+          let tempClick = tempIf.querySelectorAll(".fa-solid");
+          tempClick[tempClick.length - 1].dispatchEvent(clickEvent);
           let elDrops = tempIf.querySelectorAll(".dropdown-item");
           elDrops[0].dispatchEvent(clickEvent);
 
           let elseRef = document.getElementById(depthBuilder[currDepth]).querySelectorAll(".child-box-container"); // if block reference
-          for(let k = 0; k < elseRef.length; k++){
-            if(elseRef[k].getAttribute("data-if-elif-else-id") == "1"){
+          for (let k = 0; k < elseRef.length; k++) {
+            if (elseRef[k].getAttribute("data-if-elif-else-id") == "1") {
               elseChild = elseRef[k]; // assigns elseChild with
             }
           }
           let horRef = document.getElementById(depthBuilder[currDepth]).querySelectorAll(".child-box-container-horizontal");
-          console.log(horRef[horRef.length -1]);
-          nbRef = horRef[horRef.length -1];
+          console.log(horRef[horRef.length - 1]);
+          nbRef = horRef[horRef.length - 1];
           blockBuilder(tokens, nbRef);
         }
-        else{
-        nbCons = newBlock(tokens[0]); // newblock construction based on keyword
-        nbRef = document.getElementById(nbCons); // created reference to newblock
-        depthBuilder[currDepth] = nbRef.id; // put block reference into depth array
-        nbRef.dataset.blockDepth = currDepth; // update depth of block
-        console.log(depthBuilder);
-        
+        else {
+          nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+          nbRef = document.getElementById(nbCons); // created reference to newblock
+          depthBuilder[currDepth] = nbRef.id; // put block reference into depth array
+          nbRef.dataset.blockDepth = currDepth; // update depth of block
+          console.log(depthBuilder);
 
-        if(depthBuilder[currDepth-1] != "box-container"){
-          if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") == "1"){
-            console.log("PARENT IS AN ELSE")
-            let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
-            parentBlock[parentBlock.length-1].append(document.getElementById(nbCons));
+
+          if (depthBuilder[currDepth - 1] != "box-container") {
+            if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-if-elif-else-id") == "1") {
+              console.log("PARENT IS AN ELSE")
+              let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelectorAll(".child-box-container");
+              parentBlock[parentBlock.length - 1].append(document.getElementById(nbCons));
+            }
+            else {
+              let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
+              parentBlock.append(document.getElementById(nbCons));
+
+            }
           }
-          else{
-          let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
-          parentBlock.append(document.getElementById(nbCons));
-          
-          }
-        }
-        blockBuilder(tokens, nbRef.querySelector(".child-box-container-horizontal"))
+          blockBuilder(tokens, nbRef.querySelector(".child-box-container-horizontal"))
         }
         let j = 1
 
       }
 
-      else if(tokens[0] == "else" && tokens.length == 1){
+      else if (tokens[0] == "else" && tokens.length == 1) {
         let tempIf = document.getElementById(depthBuilder[currDepth]);
-        tempIf.querySelector(".fa-solid").dispatchEvent(clickEvent);
+        let tempClick = tempIf.querySelectorAll(".fa-solid");
+        tempClick[tempClick.length - 1].dispatchEvent(clickEvent);
         let elDrops = tempIf.querySelectorAll(".dropdown-item");
         console.log(elDrops);
         elDrops[1].dispatchEvent(clickEvent);
 
       }
-              
-      
+
+
 
       // building CONTINUE and BREAK
-      else if(tokens[0] == "continue" || tokens[0] == "break"){
+      else if (tokens[0] == "continue" || tokens[0] == "break") {
         console.log(tokens[0]);
         let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
         let nbRef = document.getElementById(nbCons); // created reference to newblock
@@ -319,117 +410,143 @@ function textToBlock(container) {
         depthBuilder[currDepth] = nbRef;
         console.log(depthBuilder);
 
-        if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-if-elif-else-id") > "0"){
+        if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-if-elif-else-id") > "0") {
           console.log("PARENT IS AN ELSE")
-          let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
-          parentBlock[parentBlock.length-1].append(document.getElementById(nbCons));
+          let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelectorAll(".child-box-container");
+          parentBlock[parentBlock.length - 1].append(document.getElementById(nbCons));
         }
-        else{
-        let parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
-        parentBlock.append(document.getElementById(nbCons));
+        else {
+          let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
+          parentBlock.append(document.getElementById(nbCons));
         }
       }
+      else if(tokens[0][0] == 'p' && tokens[0][1] == 'r' && tokens[0][2] == 'i' && tokens[0][3] == 'n' && tokens[0][4] == 't'){
+        console.log("PRINT IN TTB");
+        let nbCons = newBlock("print"); // newblock construction based on keyword
+        let nbRef = document.getElementById(nbCons); // created reference to newblock
+        depthBuilder[currDepth] = nbRef.id;
+        nbRef.dataset.blockDepth = currDepth;
+        depthBuilder[currDepth] = nbRef;
 
-      else{
+        if (depthBuilder[currDepth - 1] != "box-container") {
+          if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-if-elif-else-id") == "1") {
+            console.log("PARENT IS AN ELSE")
+            let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelectorAll(".child-box-container");
+            parentBlock[parentBlock.length - 1].append(document.getElementById(nbCons));
+          }
+          else {
+            let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
+            parentBlock.append(document.getElementById(nbCons));
+
+          }
+        }
+
+        blockBuilder(tokens, nbRef.querySelector(".child-box-container-horizontal"))
+      }
+
+      else {
         let parentBlock;
-        if(document.getElementById(depthBuilder[currDepth-1]).getAttribute("data-else-if-count") > "0"){
+        if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-else-if-count") > "0") {
           console.log("PARENT IS AN ELSE")
-          let nbRef = document.getElementById(depthBuilder[currDepth-1]).querySelectorAll(".child-box-container");
-          parentBlock = nbRef[nbRef.length-1];
+          let nbRef = document.getElementById(depthBuilder[currDepth - 1]).querySelectorAll(".child-box-container");
+          parentBlock = nbRef[nbRef.length - 1];
         }
-        else{
-          parentBlock = document.getElementById(depthBuilder[currDepth-1]).querySelector(".child-box-container");
+        else {
+          parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
         }
 
-        
-        
+
+
         blockBuilder(tokens, parentBlock);
         console.log("END OF ALL ELSE");
       }
 
     }
+
     // console.log('depthBuilder: ' + `${depthBuilder}`);
+    updateLineNumbers();
+    refreshCategoryButtons();
   }
-    
-  } // END OF TTB()
 
-  function blockBuilder(arr, container){
-    let oArray = arr;
-    let rmBlock = [];
-    let retArray = [];
-    let arrCount =0;
-    let block_T;
-    for(let i = 0; i < oArray.length;i++){
-      
-    
+} // END OF TTB()
 
-      if(oArray[i] == "or" || oArray[i] == "||" || oArray[i] == "and" || oArray[i] == "&&" || oArray[i] == "not"){
-        let nbCons = newBlock("logicalOps"); // newblock construction based on keyword
-        let nbRef = document.getElementById(nbCons); // created reference to newblock
-        rmBlock.push(document.getElementById(nbCons));
-        nbRef.querySelector(".block-dropdown").value = oArray[i]  
+function blockBuilder(arr, container) {
+  let oArray = arr;
+  let rmBlock = [];
+  let retArray = [];
+  let arrCount = 0;
+  let block_T;
+  for (let i = 0; i < oArray.length; i++) {
 
 
-        if(oArray[i-1] >= "0" && oArray[i-1] <= "9"){
-          let tempNb = newBlock("mathText");
-          let tempRef = document.getElementById(tempNb);
-          let mathInput = tempRef.querySelector(".math-input") 
-          mathInput.value = oArray[i-1];
-          tempRef.dataset.blockValue = oArray[i-1];
-  
-          rmBlock[arrCount-1].append(tempRef);
-        }
-        else{
-          let nbComp = newBlock("printText");
-          let elText = document.getElementById(nbComp);
-          elText.querySelector(".text-input").value += oArray[i-1];
-          compElems.append(elText);
-        }
-        
 
-  
+    if (oArray[i] == "or" || oArray[i] == "||" || oArray[i] == "and" || oArray[i] == "&&" || oArray[i] == "not") {
+      let nbCons = newBlock("logicalOps"); // newblock construction based on keyword
+      let nbRef = document.getElementById(nbCons); // created reference to newblock
+      rmBlock.push(document.getElementById(nbCons));
+      nbRef.querySelector(".block-dropdown").value = oArray[i]
+
+
+      if (oArray[i - 1] >= "0" && oArray[i - 1] <= "9") {
+        let tempNb = newBlock("mathText");
+        let tempRef = document.getElementById(tempNb);
+        let mathInput = tempRef.querySelector(".math-input")
+        mathInput.value = oArray[i - 1];
+        tempRef.dataset.blockValue = oArray[i - 1];
+
+        rmBlock[arrCount - 1].append(tempRef);
       }
-
-      else if(oArray[i] == "=" || oArray[i] == "+=" || oArray[i] == "-=" || oArray[i] == "*=" || oArray[i] == "/="){
-        if(!userVariables.includes(oArray[i-1])){
-          userVariables.push(oArray[i-1]);
-        }
-        
-        // console.log("IT EQUALS");
-        let nbComp = newBlock("varOps");
-        let nbRef = document.getElementById(nbComp);
-        let nbHz = nbRef.querySelector(".childBox-Container-Horizontal")
-        nbRef.querySelector(".block-dropdown").value = oArray[i];
-        
-      
-        let tempVar = newBlock("variableBlock");
-        let varRef = document.getElementById(tempVar);
-        varRef.querySelector(".block-dropdown").value = oArray[i-1];
-        nbHz.childNodes[0].append(varRef);
-
-        retArray[arrCount] = nbHz;
-        arrCount++;
-
-        rmBlock.push(nbRef);
-
-      }
-
-      else if(oArray[i] == "in"){
+      else {
         let nbComp = newBlock("printText");
         let elText = document.getElementById(nbComp);
-        elText.querySelector(".text-input").value += oArray[i-1] + " ";
-        elText.querySelector(".text-input").value += oArray[i] + " ";
-        elText.querySelector(".text-input").value += oArray[i+1];
-        rmBlock.push(elText);
+        elText.querySelector(".text-input").value += oArray[i - 1];
+        compElems.append(elText);
       }
-      else if(i < oArray.length-1){
-      if(oArray[i] == "==" || oArray[i] == "!=" || oArray[i]  == ">=" || oArray[i]  == "<=" || oArray[i]  == "<" || oArray[i]  == ">"){
+
+
+
+    }
+
+    else if (oArray[i] == "=" || oArray[i] == "+=" || oArray[i] == "-=" || oArray[i] == "*=" || oArray[i] == "/=") {
+      if (!userVariables.includes(oArray[i - 1])) {
+        userVariables.push(oArray[i - 1]);
+      }
+
+      // console.log("IT EQUALS");
+      let nbComp = newBlock("varOps");
+      let nbRef = document.getElementById(nbComp);
+      let nbHz = nbRef.querySelector(".childBox-Container-Horizontal")
+      nbRef.querySelector(".block-dropdown").value = oArray[i];
+
+
+      let tempVar = newBlock("variableBlock");
+      let varRef = document.getElementById(tempVar);
+      varRef.querySelector(".block-dropdown").value = oArray[i - 1];
+      nbHz.childNodes[0].append(varRef);
+
+      retArray[arrCount] = nbHz;
+      arrCount++;
+
+      rmBlock.push(nbRef);
+
+    }
+
+    else if (oArray[i] == "in") {
+      let nbComp = newBlock("printText");
+      let elText = document.getElementById(nbComp);
+      elText.querySelector(".text-input").value += oArray[i - 1] + " ";
+      elText.querySelector(".text-input").value += oArray[i] + " ";
+      elText.querySelector(".text-input").value += oArray[i + 1];
+      rmBlock.push(elText);
+    }
+    else if (i < oArray.length - 1) {
+      if (oArray[i] == "==" || oArray[i] == "!=" || oArray[i] == ">=" || oArray[i] == "<=" || oArray[i] == "<" || oArray[i] == ">") {
         block_T = "comparisonBlock";
       }
-      else if(oArray[i] == "+" || oArray[i] == "-" || oArray[i]  == "*" || oArray[i]  == "/" || oArray[i]  == "%" || oArray[i]  == "**" || oArray[i]  == "//"){
+      else if (oArray[i] == "+" || oArray[i] == "-" || oArray[i] == "*" || oArray[i] == "/" || oArray[i] == "%" || oArray[i] == "**" || oArray[i] == "//") {
         block_T = "mathBlock";
       }
-      else{
+      else {
         block_T = "";
         continue;
       }
@@ -438,90 +555,157 @@ function textToBlock(container) {
 
       let compElems = document.getElementById(nbComp).querySelector(".childBox-Container-Horizontal"); // comparison/math block node
       console.log("compElems: " + `${compElems}`);
-      
+
       let compElems2 = compElems.querySelectorAll("*");
       console.log("compElems2: " + `${compElems2}`);
 
       console.log("compElems2 length: " + `${compElems2.length}`);
 
 
-      if(block_T == "comparisonBlock"){
+      if (block_T == "comparisonBlock") {
         rmBlock.push(document.getElementById(nbComp));
 
       }
-      if(oArray[i-1] >= "0" && oArray[i-1] <= "9"){
+      if (oArray[i - 1] >= "0" && oArray[i - 1] <= "9") {
         let tempNb = newBlock("mathText");
         let tempRef = document.getElementById(tempNb);
-        let mathInput = tempRef.querySelector(".math-input") 
-        mathInput.value = oArray[i-1];
-        tempRef.dataset.blockValue = oArray[i-1];
+        let mathInput = tempRef.querySelector(".math-input")
+        mathInput.value = oArray[i - 1];
+        tempRef.dataset.blockValue = oArray[i - 1];
 
         compElems2[0].append(tempRef);
       }
-      else{
+      else {
         let nbComp = newBlock("printText");
         let elText = document.getElementById(nbComp);
-        elText.querySelector(".text-input").value += oArray[i-1];
+        elText.querySelector(".text-input").value += oArray[i - 1];
         compElems2[0].append(elText);
         //compElems[0].append(elText);
       }
-            
+
       let elDrop = compElems.querySelector(".block-dropdown");
       elDrop.value = oArray[i];
 
-      
-      
+
+
       console.log('i: ' + `${i}`);
 
       retArray[arrCount] = compElems;
-      if(retArray.length > 1){
-        retArray[arrCount-1].append(document.getElementById(nbComp));
+      if (retArray.length > 1) {
+        retArray[arrCount - 1].append(document.getElementById(nbComp));
       }
 
-      
+
       arrCount++;
       //rmBlock = document.getElementById(nbComp);
       console.log("retArray: " + `${retArray}`);
-      
+
 
     }
+    else if(oArray[0][0] == 'p' ){
+      
+        console.log("PRINT STATEMENT");
 
-    else if(i==oArray.length-1){
-      if(oArray[i] >= "0" && oArray[i] <= "9"){
+        if(oArray[0][6] == "\"" && oArray.length == 1){
+          let nbComp = newBlock("printText");
+          let elText = document.getElementById(nbComp);
+          elText.querySelector(".text-input").value += oArray[0].substring(7, oArray[0].length -2);
+          console.log("rmBlock: " + `${rmBlock}`);
+
+          retArray[arrCount] = elText;
+          arrCount++;
+          rmBlock.push(elText);
+        }
+        else if(oArray[0][6] == "\"" && oArray.length > 0){
+          let nbComp = newBlock("printText");
+          let elText = document.getElementById(nbComp);
+          elText.querySelector(".text-input").value += oArray[0].substring(7, oArray[0].length);
+
+          for(let j = 1; j < oArray.length-1; j++){
+            elText.querySelector(".text-input").value += " " + oArray[j];
+          }
+
+          elText.querySelector(".text-input").value += " " + oArray[oArray.length - 1].substring(0, oArray[oArray.length - 1].length -2);
+
+
+          console.log("rmBlock: " + `${rmBlock}`);
+
+          retArray[arrCount] = elText;
+          arrCount++;
+          rmBlock.push(elText);
+          i = oArray.length+1;
+        }
+        else if(oArray[0][6] >= '0' && oArray[0][6] <= '9'){
+          console.log("PRINT INT");
+          let nbComp = newBlock("mathText");
+          let elText = document.getElementById(nbComp);
+          let tempString = oArray[0].substring(6, oArray[0].length -1);
+          console.log(tempString);
+          let mText = parseInt(tempString, 10);
+          console.log(mText);
+          elText.querySelector(".math-input").value += mText;
+          console.log("rmBlock: " + `${rmBlock}`);
+
+          retArray[arrCount] = elText;
+          arrCount++;
+          rmBlock.push(elText);
+          
+        }
+        else if(userVariables.includes(oArray[0].substring(6, oArray[0].length -1))){
+          let tempVar = newBlock("variableBlock");
+          let varRef = document.getElementById(tempVar);
+          varRef.querySelector(".block-dropdown").value = oArray[0].substring(6, oArray[0].length -1);
+          
+
+          retArray[arrCount] = varRef;
+          arrCount++;
+
+          rmBlock.push(varRef);
+          
+        }
+      
+      
+    }
+
+    else if (i == oArray.length - 1) {
+      if (oArray[i] >= "0" && oArray[i] <= "9") {
         let nbComp = newBlock("mathText");
         let nbRef = document.getElementById(nbComp);
-        let mathInput = nbRef.querySelector(".math-input") 
+        let mathInput = nbRef.querySelector(".math-input")
         mathInput.value = oArray[i];
         nbRef.dataset.blockValue = oArray[i];
         rmBlock[0].querySelectorAll(".childBox-Container-Horizontal .child-box-container-horizontal")[1].append(nbRef);
-        
+
 
         // let rCont = rmBlock.querySelectorAll(".childbox-container-horizontal");
         // console.log(rCont);
 
       }
+      else if(userVariables.includes(oArray[i])) {
+        let tempVar = newBlock("variableBlock");
+        let varRef = document.getElementById(tempVar);
+        varRef.querySelector(".block-dropdown").value = oArray[i];
+        rmBlock[0].querySelectorAll(".childBox-Container-Horizontal .child-box-container-horizontal")[1].append(varRef);
+      }
+
+      else {
+        let nbComp = newBlock("printText");
+        let elText = document.getElementById(nbComp);
+        elText.querySelector(".text-input").value += oArray[i];
+        rmBlock.push(elText);
+        //compElems[0].append(elText);
+      }
     }
 
-    } // end for loop over array of tokens
+  } // end for loop over array of tokens
 
-    console.log('return array: ');
-    console.log(rmBlock);
-    console.log('return container: ' + `${container}`);
-    for(let i = 0; i < rmBlock.length; i++){
-      container.appendChild(rmBlock[i]);
-    }
-  } // end blockBuilder()
-
-
-
-// function toggleView() {
-//   var x = document.getElementById("python-code-result");
-//   var y = document.getElementById("box-container");
-//   var toggleButton = document.getElementById("toggleButton");
-
-
-//   }
-
+  console.log('return array: ');
+  console.log(rmBlock);
+  console.log('return container: ' + `${container}`);
+  for (let i = 0; i < rmBlock.length; i++) {
+    container.appendChild(rmBlock[i]);
+  }
+} // end blockBuilder()
 
 
 // ==========================
@@ -537,11 +721,16 @@ function getCode() {
   return editor.state.doc.toString();
 }
 
-document.getElementById("run-code-btn").addEventListener("click", runCode);
+function setCode(content) {
+  editor.dispatch({
+    changes: { from: 0, to: editor.state.doc.length, insert: content }
+  });
+}
+
+//document.getElementById("run-code-btn").addEventListener("click", runCode);
 
 // Function to run the Python code
 function runCode() {
-  console.log("test: code running");
   var prog = getCode();
   var mypre = document.getElementById("output"); // Output area
   mypre.innerHTML = ""; // Clear previous output
@@ -554,10 +743,7 @@ function runCode() {
   //KEEP INDENTS AS IS FOR PYTHON CODE; DO NOT CHANGE turtleSetupCode
   var turtleSetupCode = `
 import turtle
-t = turtle.Turtle()
-t.shape("turtle")
-t.color("green")
-t.setheading(90)
+import math
 `;
 
   var cleanedProg = prog.trimStart();
@@ -572,11 +758,30 @@ t.setheading(90)
 
 window.runCode = runCode;
 
-// Function to handle the output of the Python code
+// Function to handle output of Python code
 function outf(text) {
   var mypre = document.getElementById("output");
-  mypre.innerHTML += text.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "\n";
+  mypre.innerHTML += text
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/\n/g, "<br>")
+  .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
 }
+
+document.getElementById("pythontext").addEventListener("keydown", function (e) {
+  if (e.key == "Tab") {
+    e.preventDefault();
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+    const tabNode = document.createTextNode("  ");
+
+    range.insertNode(tabNode);
+    range.setStartAfter(tabNode);
+    range.setEndAfter(tabNode);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+})
 
 // Function to read built-in files
 function builtinRead(x) {
@@ -619,20 +824,11 @@ function setupLoginButtonListener() {
   const loginButton = document.getElementById("loginButton");
 
   if (!loginButton) {
-      console.error("Error: 'Log In' button not found.");
-      return;
+    console.error("Error: 'Log In' button not found.");
+    return;
   }
 
   loginButton.addEventListener("click", openLoginDialog);
-}
-
-function setupSaveButtonListener() {
-  const saveButton = document.getElementById("saveButton");
-  saveButton.addEventListener("click", function () {
-    const pythonCode = document.getElementById("pythontext").value;
-    localStorage.setItem("savedCode", pythonCode);
-    alert("Code saved locally!");
-  });
 }
 
 function setupButtonFunctionalityListeners() {
@@ -647,189 +843,11 @@ function setupButtonFunctionalityListeners() {
 }
 
 // ==========================
-// 12. Login and Logout
+// 12. Login Updates
 // ==========================
 
-// Function to attempt user login
-function attemptLogin() {
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
-  const errorMsg = document.getElementById("login-error");
-
-  if (!email || !password) {
-      errorMsg.textContent = "Please enter email and password.";
-      errorMsg.classList.remove("hidden");
-      return;
-  }
-
-  signInWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-      console.log("User logged in:", userCredential.user);
-      closeDialogBoxes(); // Close the login dialog
-      updateUIAfterLogin(userCredential.user); // Update the UI
-      showNotification("Successfully logged in!", "green");
-  })
-  .catch((error) => {
-      console.error("Login Error:", error.message);
-      errorMsg.textContent = error.message;
-      errorMsg.classList.remove("hidden");
-      showNotification("Login failed. Please try again.", "red");
-  });
-}
-
-// Function to open the login dialog
-function openLoginDialog() {
-  if (!document.getElementById("login-dialog")) {
-      createLoginDialog();
-  }
-}
-
-// Function to attempt user signup
-function attemptSignup() {
-  const email = document.getElementById("signup-email").value;
-  const password = document.getElementById("signup-password").value;
-  const errorMsg = document.getElementById("signup-error");
-
-  if (!email || !password) {
-      errorMsg.textContent = "Please enter an email and password.";
-      errorMsg.classList.remove("hidden");
-      return;
-  }
-
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      console.log("User signed up:", userCredential.user);
-      closeDialogBoxes(); // Close signup dialog
-      updateUIAfterLogin(userCredential.user); // Update UI
-      showNotification("Account created successfully!", "blue");
-    })
-    .catch((error) => {
-      console.error("Signup Error:", error.message);
-      errorMsg.textContent = error.message;
-      errorMsg.classList.remove("hidden");
-      showNotification("Signup failed. Please try again.", "red");
-    });
-}
-
-
-// Function to create the login dialog
-function createLoginDialog() {
-  closeDialogBoxes(); // Close any existing login dialog
-  
-  const loginDialog = document.createElement("div");
-  loginDialog.id = "login-dialog";
-  loginDialog.classList.add("dialog-container");
-
-  // Create the login dialog content (makes HTML file cleaner by not having to include this in the main HTML file)
-  loginDialog.innerHTML = `
-      <div class="dialog-box">
-          <h2>Log In</h2>
-          <label for="login-email">Email:</label>
-          <input type="email" id="login-email" placeholder="Enter your email">
-
-          <label for="login-password">Password:</label>
-          <input type="password" id="login-password" placeholder="Enter your password">
-
-          <p id="login-error" class="error-message hidden"></p>
-
-          <p class="switch-auth">
-            <span>Don't have an account?</span><br>
-            <span id="switch-to-signup" class="auth-link">Click here to make an account!</span>
-          </p>
-
-          <div class="dialog-buttons">
-              <button id="login-submit">Log In</button>
-              <button id="login-cancel">Cancel</button>
-          </div>
-      </div>
-  `;
-
-  document.body.appendChild(loginDialog);
-
-  // Add event listeners
-  document.getElementById("login-submit").addEventListener("click", attemptLogin);
-  document.getElementById("login-cancel").addEventListener("click", closeDialogBoxes);
-  document.getElementById("switch-to-signup").addEventListener("click", createSignupDialog);
-
-  // Add event listeners for pressing "Enter" key
-  document.getElementById("login-email").addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      attemptLogin();
-    }
-  });
-
-  document.getElementById("login-password").addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      attemptLogin();
-    }
-  });
-
-  // Add event listener to close dialog when clicking outside the dialog box
-  loginDialog.addEventListener("click", function (event) {
-    if (event.target === loginDialog) {
-      closeDialogBoxes();
-    }
-  });
-}
-
-// Function to create Signup dialog
-function createSignupDialog() {
-  closeDialogBoxes(); // Close any existing login dialog
-
-  const loginDialog = document.getElementById("login-dialog");
-  if (loginDialog) loginDialog.remove(); // Remove login form
-
-  const signupDialog = document.createElement("div");
-  signupDialog.id = "login-dialog";
-  signupDialog.classList.add("dialog-container");
-
-  signupDialog.innerHTML = `
-      <div class="dialog-box" id="signup-box">
-        <h2>Create an Account</h2>
-        <label for="signup-email">Email:</label>
-        <input type="email" id="signup-email" placeholder="Enter your email">
-
-        <label for="signup-password">Password:</label>
-        <input type="password" id="signup-password" placeholder="Enter your password">
-
-        <p id="signup-error" class="error-message hidden"></p>
-
-        <p class="switch-auth">Already have an account? 
-            <span id="switch-to-login" class="auth-link">Click here to log in</span>
-        </p>
-
-        <div class="dialog-buttons">
-            <button id="signup-submit">Sign Up</button>
-            <button id="signup-cancel">Cancel</button>
-        </div>
-      </div>
-  `;
-
-  document.body.appendChild(signupDialog);
-
-  // Add event listeners
-  document.getElementById("signup-submit").addEventListener("click", attemptSignup);
-  document.getElementById("signup-cancel").addEventListener("click", closeDialogBoxes);
-  document.getElementById("switch-to-login").addEventListener("click", createLoginDialog);
-
-  signupDialog.addEventListener("click", function (event) {
-    if (event.target === signupDialog) {
-      closeDialogBoxes();
-    }
-  });
-}
-
-
-// Function to close the login dialog
-function closeDialogBoxes() {
-  const existingDialogs = document.querySelectorAll(".dialog-container");
-  existingDialogs.forEach(dialog => dialog.remove());
-}
-
 // Function to update the UI after user login/logout
-function updateUIAfterLogin(user) {
+export function updateUIAfterLogin(user) {
   const loginButton = document.getElementById("loginButton");
 
   if (user) {
@@ -843,21 +861,7 @@ function updateUIAfterLogin(user) {
   }
 }
 
-// Function to log out the current user
-function logoutUser() {
-  auth.signOut()
-    .then(() => {
-      console.log("User logged out");
-      updateUIAfterLogin(null); // Reset UI
-      showNotification("Logged out successfully!", "gray");
-    })
-    .catch((error) => {
-      console.error("Logout Error:", error.message);
-      showNotification("Error logging out. Try again.", "red");
-    });
-}
-
-function showNotification(message, color = "gold") {
+export function showNotification(message, color = "gold") {
   // Remove existing notification if present
   const existingNotification = document.getElementById("notification-box");
   if (existingNotification) existingNotification.remove();
@@ -905,130 +909,240 @@ function fadeOutNotification(notification) {
 
 
 // ==========================
-// 13. Additional Features (Resizing Columns, Dragging, etc.)
+// 13. Saving and Loading Files
+// ==========================
+
+let currentFileName = null;
+
+// Function to save or update a file in Firestore
+function saveFile() {
+  const user = auth.currentUser;
+  if (!user) {  //check if user is logged in
+    showNotification("You must be logged in to save files.", "red");
+    return;
+  }
+
+  let fileName = currentFileName;   //check if updating an existing file
+  if (!fileName) {
+    fileName = prompt("Enter a file name (e.g., my_script.py):");
+    if (!fileName) return; //if user cancels, do nothing
+  }
+
+  const fileContent = getCode();  //get the code from the editor
+  if (!fileContent) {
+    showNotification("File content cannot be empty.", "red");
+    return;
+  }
+
+  const fileType = fileName.endsWith(".py") ? "python" : "text";  //allows saving as .py or .txt
+  const userFilesRef = collection(db, "users", user.uid, "projects");
+  const fileDoc = doc(userFilesRef, fileName);
+
+  setDoc(fileDoc, {   //save the file in database
+      name: fileName,
+      code: fileContent,
+      fileType: fileType,
+      timestamp: serverTimestamp()
+  })
+  .then(() => {
+      currentFileName = fileName; //remember the file name for future saves
+      showNotification(`File "${fileName}" saved successfully!`, "green");
+      
+      // Update the file name display in the UI
+      const fileNameDisplay = document.getElementById("file-name-display");
+      if (fileNameDisplay) {
+        fileNameDisplay.textContent = currentFileName;
+      }  
+  })
+  .catch((error) => {
+      console.error("Error saving file:", error);
+      showNotification("Failed to save file. Try again.", "red");
+  });
+}
+
+//event listener for save button (might move to SetUpApp() later)
+document.getElementById("saveButton").addEventListener("click", saveFile);
+
+// Function to load a saved file from Firestore
+function loadSavedFileFromDashboard() {
+  const savedName = localStorage.getItem("loadedFileName");
+  const savedCode = localStorage.getItem("loadedFileContent");
+
+  if (savedName && savedCode) {
+    currentFileName = savedName;
+    document.getElementById("file-name-display").textContent = savedName;
+    setCode(savedCode) // Load into the CodeMirror editor
+    textToBlock("box-container"); // run textToBlock() to convert to blocks automatically
+    showNotification(`Loaded "${savedName}" from dashboard.`, "blue");
+
+    // Clean up so it doesn't reload every time
+    localStorage.removeItem("loadedFileName");
+    localStorage.removeItem("loadedFileContent");
+  }
+}
+
+// ==========================
+// 14. Additional Features (Resizing Columns, Dragging, etc.)
 // ==========================
 
 function setupColumnResizing() {
   let isDragging = false;
   let currentSpacer = null;
   let startX = 0;
-  let startWidthCol1 = 0;
+  let startY = 0;
   let startWidthCol2 = 0;
   let startWidthCol3 = 0;
+  let startHeightRow1 = 0;
+  let startHeightRow2 = 0;
 
   const MIN_WIDTH1 = 100;
   const MIN_WIDTH2 = 200;
+  const MIN_HEIGHT = 100;
 
   const spacer1 = document.querySelector(".handle1");
   const spacer2 = document.querySelector(".handle2");
+  const spacer3 = document.querySelector(".handle3");
   const col1 = document.querySelector(".code-container");
   const col2 = document.querySelector(".result-container");
   const col3 = document.querySelector(".output-graph");
+  const row1 = document.querySelector("#mycanvas");
+  const row2 = document.querySelector("#output");
+
+  // Toggle collapse states
+  let isCol1Collapsed = false;
+  let isCol3Collapsed = false;
 
   function startDrag(event, spacer) {
-    isDragging = true;
+    isDragging = false;
     currentSpacer = spacer;
     startX = event.clientX;
-    startWidthCol1 = col1.offsetWidth;
+    startY = event.clientY;
     startWidthCol2 = col2.offsetWidth;
     startWidthCol3 = col3.offsetWidth;
+    startHeightRow1 = row1.offsetHeight;
+    startHeightRow2 = row2.offsetHeight;
+
     document.addEventListener("mousemove", onDrag);
     document.addEventListener("mouseup", stopDrag);
   }
 
   function onDrag(event) {
-    if (!isDragging || !currentSpacer) return;
+    if (!currentSpacer) return;
 
     const deltaX = event.clientX - startX;
+    const deltaY = event.clientY - startY;
 
-    if (currentSpacer === spacer1) {
-      const newWidthCol1 = startWidthCol1 + deltaX;
-      const newWidthCol2 = startWidthCol2 - deltaX;
+    // If the mouse has moved significantly, consider it a drag
+    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+      isDragging = true;
+    }
 
-      if (newWidthCol1 < MIN_WIDTH1 || newWidthCol2 < MIN_WIDTH2) return;
-
-      col1.style.flexBasis = `${newWidthCol1}px`;
-      col2.style.flexBasis = `${newWidthCol2}px`;
-    } else if (currentSpacer === spacer2) {
+    if (currentSpacer === spacer2) {
       const newWidthCol2 = startWidthCol2 + deltaX;
       const newWidthCol3 = startWidthCol3 - deltaX;
 
+      // Ensure columns don't go below minimum width
       if (newWidthCol2 < MIN_WIDTH2 || newWidthCol3 < MIN_WIDTH1) return;
 
       col2.style.flexBasis = `${newWidthCol2}px`;
       col3.style.flexBasis = `${newWidthCol3}px`;
     }
+
+    if (currentSpacer === spacer3) {
+      const newHeightRow1 = startHeightRow1 + deltaY;
+      const newHeightRow2 = startHeightRow2 - deltaY;
+
+      // Ensure rows don't go below minimum height
+      if (newHeightRow1 < MIN_HEIGHT || newHeightRow2 < MIN_HEIGHT) return;
+
+      row1.style.flexBasis = `${newHeightRow1}px`;
+      row2.style.flexBasis = `${newHeightRow2}px`;
+    }
   }
 
-  function stopDrag() {
+  function stopDrag(event) {
+    if (!isDragging && currentSpacer === spacer1) {
+      isCol1Collapsed = !isCol1Collapsed;
+      col1.classList.toggle("collapsed", isCol1Collapsed);
+    } else if (!isDragging && currentSpacer === spacer2) {
+      isCol3Collapsed = !isCol3Collapsed;
+      col3.classList.toggle("collapsed", isCol3Collapsed);
+    }
+
+    // Reset dragging state
     isDragging = false;
     currentSpacer = null;
+
     document.removeEventListener("mousemove", onDrag);
     document.removeEventListener("mouseup", stopDrag);
   }
 
+  // Add event listeners for dragging and clicking
   spacer1.addEventListener("mousedown", (e) => startDrag(e, spacer1));
   spacer2.addEventListener("mousedown", (e) => startDrag(e, spacer2));
+  spacer3.addEventListener("mousedown", (e) => startDrag(e, spacer3));
 }
+
+
 
 function setupDraggableBlocks() {
   document.querySelectorAll(".box").forEach((box) => {
-      box.draggable = true;
-      box.addEventListener("dragstart", dragStart);
-      box.addEventListener("dragover", dragOver);
-      box.addEventListener("drop", drop);
-      box.addEventListener("dragend", dragEnd);
+    box.draggable = true;
+    box.addEventListener("dragstart", dragStart);
+    box.addEventListener("dragover", dragOver);
+    box.addEventListener("drop", drop);
+    box.addEventListener("dragend", dragEnd);
   });
 
   // Prevent category buttons from closing the menu
   document.querySelectorAll(".category-blocks button").forEach((button) => {
-      button.addEventListener("click", (event) => {
-          event.stopPropagation();
-      });
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
   });
 
   // Handle block deletion when dragging over the left-side container
   const codeContainer = document.querySelector(".code-container");
   codeContainer.addEventListener("dragover", function (event) {
-      event.preventDefault();
+    event.preventDefault();
   });
 
   codeContainer.addEventListener("drop", function (event) {
-      event.preventDefault();
-      if (dragged) {
-          removeBlock(dragged.id); // Use removeBlock to delete the block
-          dragged = null;
-      }
+    event.preventDefault();
+    if (dragged) {
+      removeBlock(dragged.id); // Use removeBlock to delete the block
+      dragged = null;
+    }
   });
 
   // Remove drop target highlight when dragging leaves a block
   document.addEventListener("dragleave", function (event) {
-      const targetBlock = event.target.closest(".box");
-      if (targetBlock) {
-          targetBlock.classList.remove("drop-target");
-      }
+    const targetBlock = event.target.closest(".box");
+    if (targetBlock) {
+      targetBlock.classList.remove("drop-target");
+    }
   });
 
   // Deselect block when clicking outside
   document.addEventListener("click", function (event) {
-      if (highlightedBlock && !highlightedBlock.contains(event.target)) {
-          highlightedBlock.classList.remove("selected");
-          highlightedBlock = null;
-      }
+    if (highlightedBlock && !highlightedBlock.contains(event.target)) {
+      highlightedBlock.classList.remove("selected");
+      highlightedBlock = null;
+    }
   });
 
   // Delete highlighted block with "Delete" key
   document.addEventListener("keydown", function (event) {
-      if (event.key === "Delete" && highlightedBlock) {
-          removeBlock(highlightedBlock.id); // Use removeBlock to delete the block
-          highlightedBlock = null;
-      }
+    if (event.key === "Delete" && highlightedBlock) {
+      removeBlock(highlightedBlock.id); // Use removeBlock to delete the block
+      highlightedBlock = null;
+    }
   });
 }
 
 
 // ==========================
-// 14. Miscellaneous Code
+// 15. Miscellaneous Code
 // ==========================
 
 /*
@@ -1098,18 +1212,31 @@ document.addEventListener("DOMContentLoaded", function () {
       hideTooltip();
     }
   });
+
+  function addCodeContainer() {
+    //future implementation of the categories
+  }
+
 });
 
+function myFunction() {
+  const burgerMenu = document.getElementById("burgerMenu");
+  if (burgerMenu.style.display === "none" || burgerMenu.style.display === "") {
+    burgerMenu.style.display = "flex";
+  } else {
+    burgerMenu.style.display = "none";
+  }
+}
 
 function setUpApp() {
   setupKeydownListener();
   setupDOMContentLoadedListener();
   setupLoginButtonListener();
-  setupSaveButtonListener();
   setupButtonFunctionalityListeners();
   setupColumnResizing();
   setupDraggableBlocks();
   setupClearHighlightsOnClickListener();
+  loadSavedFileFromDashboard();
   //initializeMiscellaneous();
 }
 
