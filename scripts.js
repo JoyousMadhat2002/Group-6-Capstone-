@@ -759,14 +759,37 @@ import math
 window.runCode = runCode;
 
 // Function to handle output of Python code
+let lineBuffer = "";
+let atLineStart = true;
+
 function outf(text) {
-  var mypre = document.getElementById("output");
-  mypre.innerHTML += text
-  .replace(/</g, "&lt;")
-  .replace(/>/g, "&gt;")
-  .replace(/\n/g, "<br>")
-  .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+  const mypre = document.getElementById("output");
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    if (atLineStart) {
+      lineBuffer += `<span style="color: green;">&gt;</span> `;
+      atLineStart = false;
+    }
+
+    if (char === "<") {
+      lineBuffer += "&lt;";
+    } else if (char === ">") {
+      lineBuffer += "&gt;";
+    } else if (char === "\t") {
+      lineBuffer += "&nbsp;&nbsp;&nbsp;&nbsp;";
+    } else if (char === "\n") {
+      lineBuffer += "<br>";
+      mypre.innerHTML += lineBuffer;
+      lineBuffer = "";
+      atLineStart = true;
+    } else {
+      lineBuffer += char;
+    }
+  }
 }
+
 
 document.getElementById("pythontext").addEventListener("keydown", function (e) {
   if (e.key == "Tab") {

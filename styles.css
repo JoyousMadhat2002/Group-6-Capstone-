@@ -842,12 +842,6 @@ select.block-dropdown {
   font-family: monospace;
 }
 
-#output::before {
-  content: "> ";
-  color: #4CAF50;
-  font-weight: bold;
-}
-
 .cm-editor {
   height: 100%;
 }
