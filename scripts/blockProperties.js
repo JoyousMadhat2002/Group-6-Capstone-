@@ -1,8 +1,10 @@
+import { blockCategory, categoryColors } from "./blockConfiguration.js";
+
 // ==========================
 // 2. Block Properties
 // ==========================
 
-import { blockCategory, categoryColors } from "./blockConfiguration.js";
+
 
 function getBlockDropdownList(blockID) {
   if (blockID === "mathBlock") {

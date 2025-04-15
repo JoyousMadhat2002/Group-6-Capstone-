@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencil-Python - Help</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+</head>
+
+<body>
+    <div class="header">
+        <div class="nav-left">
+            <button class="burgerbtn" onclick="toggleBurgerMenu()"><i class="fa fa-bars"></i></button>
+            <div class="burger-menu" id="burgerMenu">
+                <button id="homeButton"><a href="dashboard.html">Home</a></button>
+                <button id="aboutButton">About</button>
+                <button id="settingsButton">Settings</button>
+                <button id="helpButton"><a href="help.html">Help</a></button>
+                <button id="loginButton">Log in</button>
+            </div>
+        </div>
+        <span class="file-name-display">Help Documentation</span>
+        <div class="nav-right">
+            <button class="Button" onclick="window.location.href='index.html'">Back to Editor</button>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="help-container">
+            <div class="help-section-list">
+                <!-- Movement Section -->
+                <div class="help-section-list-items">
+                    <h2>Movement</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="move-description">Move</div>
+                        <div class="block-example" data-target="turn-description">Turn</div>
+                        <div class="block-example" data-target="speed-description">Speed</div>
+                        <div class="block-example" data-target="home-description">Home</div>
+                        <div class="block-example" data-target="color-description">Color</div>
+                        <div class="block-example" data-target="penup-description">Pen Up</div>
+                        <div class="block-example" data-target="pendown-description">Pen Down</div>
+                        <div class="block-example" data-target="goto-description">Go To</div>
+                        <div class="block-example" data-target="setposition-description">Set Position</div>
+                        <div class="block-example" data-target="pause-description">Pause</div>
+                    </div>
+                </div>
+            
+                <!-- Logic Section -->
+                <div class="help-section-list-items">
+                    <h2>Logic</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="if-description">if</div>
+                        <div class="block-example" data-target="while-description">while</div>
+                        <div class="block-example" data-target="for-description">for</div>
+                        <div class="block-example" data-target="logicalblock-description">Logical Block</div>
+                    </div>
+                </div>
+            
+                <!-- Math Section -->
+                <div class="help-section-list-items">
+                    <h2>Math</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="mathtext-description">Math Text Block</div>
+                        <div class="block-example" data-target="mathblock-description">Math Block</div>
+                        <div class="block-example" data-target="mathconstants-description">Math Constants</div>
+                        <div class="block-example" data-target="roundabs-description">Rounding and Absolute Value</div>
+                        <div class="block-example" data-target="basicarithmetic-description">Basic Arithmetic</div>
+                        <div class="block-example" data-target="logexp-description">Logarithms and Exponents</div>
+                        <div class="block-example" data-target="trigfunctions-description">Trigonometry</div>
+                    </div>
+                </div>
+            
+                <!-- Comparison Section -->
+                <div class="help-section-list-items">
+                    <h2>Comparison</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="comparisonblock-description">Comparison Block</div>
+                        <div class="block-example" data-target="range-description">Range</div>
+                    </div>        
+                </div>
+            
+                <!-- Functions Section -->
+                <div class="help-section-list-items">
+                    <h2>Functions</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="print-description">print</div>
+                        <div class="block-example" data-target="text-description">Text</div>
+                    </div>
+                </div>
+            
+                <!-- Variables Section -->
+                <div class="help-section-list-items">
+                    <h2>Variables</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="vardeclaration-description">Variable Declaration</div>
+                        <div class="block-example" data-target="varoperations-description">Variable Operations</div>
+                        <div class="block-example" data-target="variableblock-description">Variable Block</div>
+                    </div>
+                </div>
+            </div>
+          
+            <div class="help-section-items">
+                <!-- Movement Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Movement Blocks</h2>
+                    
+                    <!-- Move Block -->
+                    <div id="move-description" class="block-description">
+                        <h3>Move</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Move Turtle forward or backward by specified units</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>turtle.move(100)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/move_block.png" alt="Move Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/move_example.png" alt="Move Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Turn Block -->
+                    <div id="turn-description" class="block-description">
+                        <h3>Turn</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Turn the turtle by specified angle (in degrees)</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>turtle.turn(90)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/turn_block.png" alt="Turn Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/turn_example.png" alt="Turn Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Speed Block -->
+                    <div id="speed-description" class="block-description">
+                        <h3>Speed</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Set the speed of the turtle (0-10)</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>turtle.speed(5)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/speed_block.png" alt="Speed Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/speed_example.png" alt="Speed Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Home Block -->
+                    <div id="home-description" class="block-description">
+                        <h3>Home</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Move the turtle to the origin (0,0) and face north</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>turtle.home()</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/home_block.png" alt="Home Block" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Color Block -->
+                    <div id="color-description" class="block-description">
+                        <h3>Color</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Set the color of the turtle's pen</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>turtle.color("red")</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/color_block.png" alt="Color Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/color_example.png" alt="Color Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Pen Up Block -->
+                    <div id="penup-description" class="block-description">
+                        <h3>Pen Up</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Lift the pen - turtle will move without drawing</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>turtle.penup()</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/penup_block.png" alt="Pen Up Block" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Pen Down Block -->
+                    <div id="pendown-description" class="block-description">
+                        <h3>Pen Down</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Lower the pen - turtle will draw when moving</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>turtle.pendown()</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/pendown_block.png" alt="Pen Down Block" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Go To Block -->
+                    <div id="goto-description" class="block-description">
+                        <h3>Go To</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Move the turtle to a specific (x,y) location</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>turtle.goto(100, 100)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/goto_block.png" alt="Go To Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/goto_example.png" alt="Go To Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Set Position Block -->
+                    <div id="setposition-description" class="block-description">
+                        <h3>Set Position</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Set the position or angle of the turtle</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>turtle.setposition(100, 100, 45)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/setposition_block.png" alt="Set Position Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/setposition_example.png" alt="Set Position Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Pause Block -->
+                    <div id="pause-description" class="block-description">
+                        <h3>Pause</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Pause the turtle's movement for specified time (in seconds)</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>turtle.pause(2)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/pause_block.png" alt="Pause Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/pause_example.png" alt="Pause Example" class="block-image">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Logic Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Logic Blocks</h2>
+                    
+                    <!-- If Block -->
+                    <div id="if-description" class="block-description">
+                        <h3>if</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Conditional statement - execute code if condition is true</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>if x > 5:
+    print("x is greater than 5")</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/if_block.png" alt="If Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/if_example.png" alt="If Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- While Block -->
+                    <div id="while-description" class="block-description">
+                        <h3>while</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>While loop - repeat code while condition is true</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>while x < 10:
+    print(x)
+    x += 1</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/while_block.png" alt="While Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/while_example.png" alt="While Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- For Block -->
+                    <div id="for-description" class="block-description">
+                        <h3>for</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>For loop - repeat code for specified number of times</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>for i in range(5):
+    print(i)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/for_block.png" alt="For Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/for_example.png" alt="For Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Logical Block -->
+                    <div id="logicalblock-description" class="block-description">
+                        <h3>Logical Block</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>A logical block for boolean operations (AND, OR, NOT)</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>if x > 5 and y < 10:
+    print("Condition met")</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/logical_block.png" alt="Logical Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/logical_example.png" alt="Logical Example" class="block-image">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Math Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Math Blocks</h2>
+                    
+                    <!-- Math Text Block -->
+                    <div id="mathtext-description" class="block-description">
+                        <h3>Math Text Block</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>A text block that accepts only numeric input</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>42</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/math_text_block.png" alt="Math Text Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/math_text_example.png" alt="Math Text Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Math Block -->
+                    <div id="mathblock-description" class="block-description">
+                        <h3>Math Block</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>A math block for arithmetic operations (+, -, *, /, etc.)</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>5 + 3</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/math_block.png" alt="Math Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/math_example.png" alt="Math Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Math Constants -->
+                    <div id="mathconstants-description" class="block-description">
+                        <h3>Math Constants</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Includes pi (π), Euler's number (e), tau (τ), infinity (inf), and not-a-number (nan)</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>math.pi</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/math_constants_block.png" alt="Math Constants Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/math_constants_example.png" alt="Math Constants Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Rounding and Absolute Value -->
+                    <div id="roundabs-description" class="block-description">
+                        <h3>Rounding and Absolute Value</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Includes ceil, floor, round, trunc, and absolute value functions</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>math.floor(3.7)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/round_abs_block.png" alt="Round/Abs Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/round_abs_example.png" alt="Round/Abs Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Basic Arithmetic -->
+                    <div id="basicarithmetic-description" class="block-description">
+                        <h3>Basic Arithmetic</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Includes gcd, lcm, factorial, sum, and product functions</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>math.factorial(5)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/basic_arithmetic_block.png" alt="Basic Arithmetic Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/basic_arithmetic_example.png" alt="Basic Arithmetic Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Logarithms and Exponents -->
+                    <div id="logexp-description" class="block-description">
+                        <h3>Logarithms and Exponents</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Includes log, log10, exp, sqrt, and pow functions</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>math.sqrt(16)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/log_exp_block.png" alt="Log/Exp Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/log_exp_example.png" alt="Log/Exp Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Trigonometry -->
+                    <div id="trigfunctions-description" class="block-description">
+                        <h3>Trigonometry</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Includes sin, cos, tan, asin, acos, atan, radians, and degrees functions</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>math.sin(math.radians(90))</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/trig_functions_block.png" alt="Trig Functions Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/trig_functions_example.png" alt="Trig Functions Example" class="block-image">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Comparison Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Comparison Blocks</h2>
+                    
+                    <!-- Comparison Block -->
+                    <div id="comparisonblock-description" class="block-description">
+                        <h3>Comparison Block</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Compare values (==, !=, >, <, >=, <=)</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>x > 5</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/comparison_block.png" alt="Comparison Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/comparison_example.png" alt="Comparison Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Range -->
+                    <div id="range-description" class="block-description">
+                        <h3>Range</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Generate a range of numbers for loops</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>range(0, 10, 2)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/range_block.png" alt="Range Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/range_example.png" alt="Range Example" class="block-image">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Functions Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Function Blocks</h2>
+                    
+                    <!-- Print -->
+                    <div id="print-description" class="block-description">
+                        <h3>print</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Print values to the console</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>print("Hello, World!")</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/print_block.png" alt="Print Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/print_example.png" alt="Print Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Text -->
+                    <div id="text-description" class="block-description">
+                        <h3>Text</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>A text block for string input</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>"Hello, World!"</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/text_block.png" alt="Text Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/text_example.png" alt="Text Example" class="block-image">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Variables Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Variable Blocks</h2>
+                    
+                    <!-- Variable Declaration -->
+                    <div id="vardeclaration-description" class="block-description">
+                        <h3>Variable Declaration</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Declare a variable with a name and initial value</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>x = 10</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/var_declaration_block.png" alt="Variable Declaration Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/var_declaration_example.png" alt="Variable Declaration Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Variable Operations -->
+                    <div id="varoperations-description" class="block-description">
+                        <h3>Variable Operations</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Perform operations on variables (assign, increment, etc.)</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>x += 5</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/var_operations_block.png" alt="Variable Operations Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/var_operations_example.png" alt="Variable Operations Example" class="block-image">
+                        </div>
+                    </div>
+                    
+                    <!-- Variable Block -->
+                    <div id="variableblock-description" class="block-description">
+                        <h3>Variable Block</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>Reference a variable's value</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Example:</h4>
+                            <pre><code>print(x)</code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <img src="images/blocks/variable_block.png" alt="Variable Block" class="block-image">
+                        </div>
+                        <div class="block-example-section">
+                            <h4>Block Code Example:</h4>
+                            <img src="images/blocks/variable_example.png" alt="Variable Example" class="block-image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/810299bc4f.js" crossorigin="anonymous"></script>
+    <script>
+        // Simple script for navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers for navigation
+            document.querySelectorAll('.block-example').forEach(block => {
+                block.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const element = document.getElementById(targetId);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                        element.classList.add('highlight');
+                        setTimeout(() => element.classList.remove('highlight'), 2000);
+                    }
+                });
+            });
+            
+            // Burger menu toggle
+            window.toggleBurgerMenu = function() {
+                const menu = document.getElementById('burgerMenu');
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            };
+        });
+    </script>
+</body>
+</html>
