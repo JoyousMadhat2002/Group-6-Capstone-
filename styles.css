@@ -1063,6 +1063,20 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  
+}
+
+.block-example{
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-bottom: #333 1px solid;
+  transition: padding 0.3s;
+}
+
+.block-example:hover {
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 5px;
 }
 
 .block-example-section {
@@ -1076,5 +1090,9 @@ h1 {
 .block-example-section h4 {
   margin-bottom: 10px;
   color: #343a40;
+}
+
+#vardeclaration-block-preview{
+  width: fit-content;
 }
 

@@ -7,7 +7,7 @@ function createBlockPreview(containerId, blockId) {
     // Skip variable declaration blocks in help preview
     if (blockId === "varDeclOps") {
         const placeholder = document.createElement('div');
-        placeholder.textContent = "[Variable Declaration Block]";
+        placeholder.textContent = "Variable Declaration";
         placeholder.style.padding = "10px";
         placeholder.style.backgroundColor = "#cccccc";
         placeholder.style.color = "white";
@@ -35,147 +35,147 @@ function createBlockPreview(containerId, blockId) {
 // Movement blocks
 function createMovementExample(elementId, blockType) {
     // Creates an example movement block preview in the specified element
-    document.getElementById(elementId).innerHTML = `<div class="block-example movement">move(${blockType})</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes movement">move(${blockType})</div>`;
 }
 
 function createTurnExample(elementId, blockType) {
     // Creates an example turn block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example turn">turn(${blockType})</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes turn">turn(${blockType})</div>`;
 }
 
 function createSpeedExample(elementId, blockType) {
     // Creates an example speed control block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example speed">speed(${blockType})</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes speed">speed(${blockType})</div>`;
 }
 
 function createHomeExample(elementId, blockType) {
     // Creates an example home position block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example home">home()</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes home">home()</div>`;
 }
 
 function createColorExample(elementId, blockType) {
     // Creates an example color selection block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example color">color(${blockType})</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes color">color(${blockType})</div>`;
 }
 
 function createPenupExample(elementId, blockType) {
     // Creates an example pen up block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example penup">penUp()</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes penup">penUp()</div>`;
 }
 
 function createPendownExample(elementId, blockType) {
     // Creates an example pen down block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example pendown">penDown()</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes pendown">penDown()</div>`;
 }
 
 function createGotoExample(elementId, blockType) {
     // Creates an example goto position block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example goto">goto(${blockType})</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes goto">goto(${blockType})</div>`;
 }
 
 function createSetCoordinatesExample(elementId, blockType) {
     // Creates an example set coordinates block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example set-coordinates">setPosition(${blockType})</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes set-coordinates">setPosition(${blockType})</div>`;
 }
 
 function createPauseExample(elementId, blockType) {
     // Creates an example pause block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example pause">pause(${blockType})</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes pause">pause(${blockType})</div>`;
 }
 
 // Logic blocks
 function createIfExample(elementId, blockType) {
     // Creates an example if conditional block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example if">if (${blockType}) { }</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes if">if (${blockType}) { }</div>`;
 }
 
 function createWhileExample(elementId, blockType) {
     // Creates an example while loop block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example while">while (${blockType}) { }</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes while">while (${blockType}) { }</div>`;
 }
 
 function createForExample(elementId, blockType) {
     // Creates an example for loop block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example for">for (${blockType}) { }</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes for">for (${blockType}) { }</div>`;
 }
 
 function createLogicalBlockExample(elementId, blockType) {
     // Creates an example logical operator block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example logical">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes logical">${blockType}</div>`;
 }
 
 // Math blocks
 function createMathTextExample(elementId, blockType) {
     // Creates an example math text block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example math-text">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes math-text">${blockType}</div>`;
 }
 
 function createMathBlockExample(elementId, blockType) {
     // Creates an example math operation block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example math">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes math">${blockType}</div>`;
 }
 
 function createMathConstantsExample(elementId, blockType) {
     // Creates an example math constants block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example math-constants">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes math-constants">${blockType}</div>`;
 }
 
 function createRoundAbsExample(elementId, blockType) {
     // Creates an example rounding/absolute value block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example round-abs">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes round-abs">${blockType}</div>`;
 }
 
 function createBasicArithmeticExample(elementId, blockType) {
     // Creates an example basic arithmetic block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example arithmetic">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes arithmetic">${blockType}</div>`;
 }
 
 function createLogExpExample(elementId, blockType) {
     // Creates an example logarithm/exponent block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example log-exp">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes log-exp">${blockType}</div>`;
 }
 
 function createTrigFunctionsExample(elementId, blockType) {
     // Creates an example trigonometric functions block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example trig">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes trig">${blockType}</div>`;
 }
 
 // Comparison blocks
 function createComparisonBlockExample(elementId, blockType) {
     // Creates an example comparison operator block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example comparison">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes comparison">${blockType}</div>`;
 }
 
 function createRangeExample(elementId, blockType) {
     // Creates an example range block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example range">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes range">${blockType}</div>`;
 }
 
 // Function blocks
 function createPrintExample(elementId, blockType) {
     // Creates an example print block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example print">print(${blockType})</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes print">print(${blockType})</div>`;
 }
 
 function createPrintTextExample(elementId, blockType) {
     // Creates an example text block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example text">"${blockType}"</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes text">"${blockType}"</div>`;
 }
 
 // Variable blocks
 function createVarDeclOpsExample(elementId, blockType) {
     // Creates an example variable declaration block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example var-decl">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes var-decl">${blockType}</div>`;
 }
 
 function createVarOpsExample(elementId, blockType) {
     // Creates an example variable operation block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example var-ops">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes var-ops">${blockType}</div>`;
 }
 
 function createVariableBlockExample(elementId, blockType) {
     // Creates an example variable block preview
-    document.getElementById(elementId).innerHTML = `<div class="block-example variable">${blockType}</div>`;
+    document.getElementById(elementId).innerHTML = `<div class="block-example-codes variable">${blockType}</div>`;
 }
 
 
@@ -223,44 +223,44 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Create block examples when DOM is loaded
     // Movement blocks
-    createMovementExample('move-block-example', 'movement');
-    createTurnExample('turn-block-example', 'turn');
-    createSpeedExample('speed-block-example', 'speed');
-    createHomeExample('home-block-example', 'home');
-    createColorExample('color-block-example', 'color');
-    createPenupExample('penup-block-example', 'penup');
-    createPendownExample('pendown-block-example', 'pendown');
-    createGotoExample('goto-block-example', 'goto');
-    createSetCoordinatesExample('setposition-block-example', 'setCoordinates');
-    createPauseExample('pause-block-example', 'pause');
+    createMovementExample('move-block-example-codes', 'movement');
+    createTurnExample('turn-block-example-codes', 'turn');
+    createSpeedExample('speed-block-example-codes', 'speed');
+    createHomeExample('home-block-example-codes', 'home');
+    createColorExample('color-block-example-codes', 'color');
+    createPenupExample('penup-block-example-codes', 'penup');
+    createPendownExample('pendown-block-example-codes', 'pendown');
+    createGotoExample('goto-block-example-codes', 'goto');
+    createSetCoordinatesExample('setposition-block-example-codes', 'setCoordinates');
+    createPauseExample('pause-block-example-codes', 'pause');
 
     // Logic blocks
-    createIfExample('if-block-example', 'if');
-    createWhileExample('while-block-example', 'while');
-    createForExample('for-block-example', 'for');
-    createLogicalBlockExample('logical-block-example', 'logicalBlock');
+    createIfExample('if-block-example-codes', 'if');
+    createWhileExample('while-block-example-codes', 'while');
+    createForExample('for-block-example-codes', 'for');
+    createLogicalBlockExample('logical-block-example-codes', 'logicalBlock');
 
     // Math blocks
-    createMathTextExample('mathtext-block-example', 'mathText');
-    createMathBlockExample('math-block-example', 'mathBlock');
-    createMathConstantsExample('mathconstants-block-example', 'mathConstants');
-    createRoundAbsExample('roundabs-block-example', 'roundAbs');
-    createBasicArithmeticExample('basicarithmetic-block-example', 'basicArithmetic');
-    createLogExpExample('logexp-block-example', 'logExp');
-    createTrigFunctionsExample('trigfunctions-block-example', 'trigFunctions');
+    createMathTextExample('mathtext-block-example-codes', 'mathText');
+    createMathBlockExample('math-block-example-codes', 'mathBlock');
+    createMathConstantsExample('mathconstants-block-example-codes', 'mathConstants');
+    createRoundAbsExample('roundabs-block-example-codes', 'roundAbs');
+    createBasicArithmeticExample('basicarithmetic-block-example-codes', 'basicArithmetic');
+    createLogExpExample('logexp-block-example-codes', 'logExp');
+    createTrigFunctionsExample('trigfunctions-block-example-codes', 'trigFunctions');
 
     // Comparison blocks
-    createComparisonBlockExample('comparison-block-example', 'comparisonBlock');
-    createRangeExample('range-block-example', 'range');
+    createComparisonBlockExample('comparison-block-example-codes', 'comparisonBlock');
+    createRangeExample('range-block-example-codes', 'range');
 
     // Function blocks
-    createPrintExample('print-block-example', 'print');
-    createPrintTextExample('text-block-example', 'printText');
+    createPrintExample('print-block-example-codes', 'print');
+    createPrintTextExample('text-block-example-codes', 'printText');
 
     // Variable blocks
-    createVarDeclOpsExample('vardeclaration-block-example', 'varDeclOps');
-    createVarOpsExample('varoperations-block-example', 'varOps');
-    createVariableBlockExample('variable-block-example', 'variableBlock');
+    createVarDeclOpsExample('vardeclaration-block-example-codes', 'varDeclOps');
+    createVarOpsExample('varoperations-block-example-codes', 'varOps');
+    createVariableBlockExample('variable-block-example-codes', 'variableBlock');
 
     // Add click handlers for navigation
     document.querySelectorAll('.block-example').forEach(block => {
