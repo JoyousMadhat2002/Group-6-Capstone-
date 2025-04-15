@@ -1035,27 +1035,6 @@ h1 {
   margin: 20px 0;
 }
 
-.block-example-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.block-example {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  text-align: center;
-  background-color: #fff;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  width: 150px;
-}
-
-.block-example:hover {
-  background-color: #f0f0f0;
-}
-
 .help-section-items-list {
   margin-bottom: 30px;
 }
@@ -1080,19 +1059,22 @@ h1 {
   opacity: 0.9;
 }
 
-.block-image {
-  max-width: 100%;
-  height: auto;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
 .block-example-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.highlight {
-  background-color: #ffffcc;
-  transition: background-color 2s;
+
+.block-example-section {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #669999;
 }
+
+.block-example-section h4 {
+  margin-bottom: 10px;
+  color: #343a40;
+}
+
