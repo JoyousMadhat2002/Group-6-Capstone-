@@ -197,6 +197,8 @@ export function newBlock(blockID, customContainer = null) {
 // Function to update the line numbers based on the number of blocks
 export function updateLineNumbers() {
     const codeLinesContainer = document.querySelector(".code-lines");
+    if (!codeLinesContainer) return; // Exit if the container is not found
+    
     const blocks = document.querySelectorAll("#box-container .box");
 
     // Clear existing line numbers
