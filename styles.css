@@ -988,3 +988,111 @@ select.block-dropdown {
   font-size: 0.85rem;
   cursor: pointer;
 }
+
+.help-container {
+  display: flex;
+  flex-direction: row;
+}
+
+ /* Main content layout */
+ .main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Help container styles */
+.help-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Left sidebar (sticky) */
+.help-section-list {
+  width: 250px;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  border-right: 1px solid #ddd;
+  position: sticky;
+  top: 60px; /* Height of header */
+  height: calc(100vh - 60px);
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+/* Right content (scrollable) */
+.help-section-items {
+  width: 100%;
+  overflow-y: auto;
+  padding: 15px;
+  height: calc(100vh - 60px);
+}
+
+/* Block reference styles */
+h1 {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.block-example-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.block-example {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 150px;
+}
+
+.block-example:hover {
+  background-color: #f0f0f0;
+}
+
+.help-section-items-list {
+  margin-bottom: 30px;
+}
+
+.block-description {
+  padding: 15px;
+  margin-bottom: 10px;
+  border-left: 4px solid #669999;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Description highlight effect */
+.highlight {
+  background-color: #ffff99;
+  transition: background-color 2s ease-out;
+}
+
+.help-page .box {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.9;
+}
+
+.block-image {
+  max-width: 100%;
+  height: auto;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.block-example-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.highlight {
+  background-color: #ffffcc;
+  transition: background-color 2s;
+}

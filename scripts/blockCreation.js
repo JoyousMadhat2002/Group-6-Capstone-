@@ -101,8 +101,18 @@ export function refreshCategoryButtons() {
     createCategoryButtons(blockCategory);
 }
 
-export function newBlock(blockID) {
-    const container = document.getElementById("box-container");
+let defaultContainer = null;
+
+export function setDefaultContainer(container) {
+    defaultContainer = container;
+}
+
+export function newBlock(blockID, customContainer = null) {
+    const container = customContainer || defaultContainer || document.getElementById("box-container");
+    if (!container) {
+        console.warn("No container available for block creation");
+        return null;
+    }
     const newBlock = document.createElement("div");
     newBlock.classList.add("box");
     newBlock.id = "box_" + ++blockCounter;
@@ -187,6 +197,8 @@ export function newBlock(blockID) {
 // Function to update the line numbers based on the number of blocks
 export function updateLineNumbers() {
     const codeLinesContainer = document.querySelector(".code-lines");
+    if (!codeLinesContainer) return; // Exit if the container is not found
+    
     const blocks = document.querySelectorAll("#box-container .box");
 
     // Clear existing line numbers
