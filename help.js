@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     createBlockPreview('mathtext-block-preview', 'mathText');
     createBlockPreview('math-block-preview', 'mathBlock');
+
     createBlockPreview('mathconstants-block-preview', 'mathConstants');
     createBlockPreview('roundabs-block-preview', 'roundAbs');
     createBlockPreview('basicarithmetic-block-preview', 'basicArithmetic');
@@ -38,90 +39,90 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Create block examples
     // turtle.move(100)
-    createBlockExample('move-block-example-codes');
+    createBlockExample('move-block-example-codes', 'movement');
 
     // turtle.turn(90)
-    createBlockExample('turn-block-example-codes');
+    createBlockExample('turn-block-example-codes', 'turn');
 
     // turtle.speed(5)
-    createBlockExample('speed-block-example-codes');
+    createBlockExample('speed-block-example-codes', 'speed');
 
     // turtle.home()
-    createBlockExample('home-block-example-codes');
+    createBlockExample('home-block-example-codes', 'home');
 
     // turtle.color("red")
-    createBlockExample('color-block-example-codes');
+    createBlockExample('color-block-example-codes', 'color');
 
     // turtle.penup()
-    createBlockExample('penup-block-example-codes');
+    createBlockExample('penup-block-example-codes', 'penup');
 
     // turtle.pendown()
-    createBlockExample('pendown-block-example-codes');
+    createBlockExample('pendown-block-example-codes', 'pendown');
 
     // turtle.goto(100, 100)
-    createBlockExample('goto-block-example-codes');
+    createBlockExample('goto-block-example-codes', 'goto');
 
     // turtle.setposition(100, 100, 45)
-    createBlockExample('setposition-block-example-codes');
+    createBlockExample('setposition-block-example-codes', 'setCoordinates');
 
     // turtle.pause(2)
-    createBlockExample('pause-block-example-codes');
+    createBlockExample('pause-block-example-codes', 'pause');
 
     // if x > 5:
     //     print("x is greater than 5")
-    createBlockExample('if-block-example-codes');
+    createBlockExample('if-block-example-codes', 'if');
 
     // while x < 10:
     //     print(x)
     //     x += 1
-    createBlockExample('while-block-example-codes');
+    createBlockExample('while-block-example-codes', 'while');
 
     // for i in range(5):
     //     print(i)
-    createBlockExample('for-block-example-codes');
+    createBlockExample('for-block-example-codes', 'for');
 
     // if x > 5 and y < 10:
     //     print("Condition met")
-    createBlockExample('logical-block-example-codes');
+    createBlockExample('logical-block-example-codes', 'logicalBlock');
 
     // 42
-    createBlockExample('mathtext-block-example-codes');
+    createBlockExample('mathtext-block-example-codes', 'mathText');
 
     // 5 + 3
-    createBlockExample('math-block-example-codes');
+    createBlockExample('math-block-example-codes', 'mathBlock');
 
     // math.pi
-    createBlockExample('mathconstants-block-example-codes');
+    createBlockExample('mathconstants-block-example-codes', 'mathConstants');
 
     // math.floor(3.7)
-    createBlockExample('roundabs-block-example-codes');
+    createBlockExample('roundabs-block-example-codes', 'roundAbs');
 
     // math.factorial(5)
-    createBlockExample('basicarithmetic-block-example-codes');
+    createBlockExample('basicarithmetic-block-example-codes', 'basicArithmetic');
 
     // math.sqrt(16)
-    createBlockExample('logexp-block-example-codes');
+    createBlockExample('logexp-block-example-codes', 'logExp');
 
     // math.sin(math.radians(90))
-    createBlockExample('trigfunctions-block-example-codes');
+    createBlockExample('trigfunctions-block-example-codes', 'trigFunctions');
 
     // x > 5
-    createBlockExample('comparison-block-example-codes');
+    createBlockExample('comparison-block-example-codes', 'comparisonBlock');
 
     // range(0, 10, 2)
-    createBlockExample('range-block-example-codes');
+    createBlockExample('range-block-example-codes', 'range');
 
     // print("Hello, World!")
-    createBlockExample('print-block-example-codes');
+    createBlockExample('print-block-example-codes', 'print');
 
     // "Hello, World!"
-    createBlockExample('text-block-example-codes');
-
-    // x = 10
-    createBlockExample('varoperations-block-example-codes');
+    createBlockExample('text-block-example-codes', 'printText');
 
     // x += 5
-    createBlockExample('variable-block-example-codes');
+    createBlockExample('varoperations-block-example-codes', 'varOps');
+
+    // variable x
+    createBlockExample('variable-block-example-codes', 'variableBlock');
 
     // Navigation click handlers
     document.querySelectorAll('.block-example').forEach(block => {
@@ -143,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 });
 
-function createBlockExample(containerId) {
+function createBlockExample(containerId, blockId) {
     const container = document.getElementById(containerId);
 }
 
