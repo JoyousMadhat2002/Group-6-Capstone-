@@ -255,6 +255,8 @@ body {
 
 .code-result {
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #python-code-result.hidden,
