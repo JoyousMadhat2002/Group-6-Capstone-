@@ -255,6 +255,8 @@ body {
 
 .code-result {
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #python-code-result.hidden,
@@ -564,6 +566,26 @@ select.block-dropdown {
 .box.selected {
   border: 2px solid red;
 }
+
+/* Drag and drop delete sidebar */
+.code-container.drag-active {
+  background-color: #ffd2d2;
+  border: 2px dashed red;
+  position: relative;
+}
+
+.drag-delete-message {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  font-weight: bold;
+  color: red;
+  font-size: 18px;
+  pointer-events: none;
+  z-index: 100;
+}
+/**/
 
 .box.joined {
   display: flex;

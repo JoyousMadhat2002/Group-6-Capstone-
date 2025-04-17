@@ -27,10 +27,10 @@
                 <button id="settingsButton">Settings</button>
                 <button id="helpButton"><a href="help.html">Help</a></button>
                 <button id="loginButton">Log in</button>
-                
+
             </div>
         </div>
-        
+
         <span id="file-name-display" class="file-name-display">(no file loaded)</span>
 
         <div class="nav-right">
@@ -38,13 +38,11 @@
             <button class="Button" name="ttb">ttb</button>
             <button class="Button" name="toggleView" id="toggleButton">Python</button>
 
-            <button id="run-code-btn" class="run-code-btn" onclick="runCode()" 
-                    data-tooltip="Run Program (Ctrl+Enter)">
+            <button id="run-code-btn" class="run-code-btn" onclick="runCode()" data-tooltip="Run Program (Ctrl+Enter)">
                 <i class="icon-play"></i>
             </button>
 
-            <button id="saveButton" class="saveButton run-code-btn" 
-                    data-tooltip="Save Program (Ctrl+S)">
+            <button id="saveButton" class="saveButton run-code-btn" data-tooltip="Save Program (Ctrl+S)">
                 <i class="fas fa-save"></i>
             </button>
 
@@ -99,19 +97,16 @@
 
             <div class="code-result">
 
-                <div class="codes">
+                <div class="block-code-result-container" id="block-container" data-blockDepth=0>
+                    <!-- Block code input area -->
+                    <div class="code-lines"></div>
 
-                    <div class="block-code-result-container" id="block-container" data-blockDepth=0>
-                        <!-- Block code input area -->
-                        <div class="code-lines"></div>
+                    <div class="block-code-result" id="box-container" data-block-depth=0></div>
+                </div>
 
-                        <div class="block-code-result" id="box-container" data-block-depth=0></div>
-                    </div>
-
-                    <div class="python-code-result hidden" id="python-code-result">
-                        <!-- Python text input area -->
-                        <div id="pythontext"></div>
-                    </div>
+                <div class="python-code-result hidden" id="python-code-result">
+                    <!-- Python text input area -->
+                    <div id="pythontext"></div>
                 </div>
             </div>
         </div>
@@ -125,7 +120,7 @@
         </div>
     </div>
 
-    
+
 
     <div id="variableModal" class="modal">
         <div class="modal-content">
@@ -136,7 +131,7 @@
             <button id="cancelVariable">Cancel</button>
         </div>
     </div>
-    
+
     <div class="bottom-bar"></div>
 </body>
 
