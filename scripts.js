@@ -1132,8 +1132,15 @@ function setupDraggableBlocks() {
 
   codeContainer.addEventListener("drop", function (event) {
     event.preventDefault();
+    
+    const container = document.querySelector(".code-container");
+    container.classList.remove("drag-active");
+    
+    const message = container.querySelector(".drag-delete-message");
+    if (message) message.style.display = "none";
+  
     if (dragged) {
-      removeBlock(dragged.id); // Use removeBlock to delete the block
+      dragged.remove();
       dragged = null;
     }
   });
@@ -1157,10 +1164,44 @@ function setupDraggableBlocks() {
   // Delete highlighted block with "Delete" key
   document.addEventListener("keydown", function (event) {
     if (event.key === "Delete" && highlightedBlock) {
-      removeBlock(highlightedBlock.id); // Use removeBlock to delete the block
+      dragged.remove();
       highlightedBlock = null;
     }
   });
+
+  // Creates the drag message element
+  document.addEventListener("DOMContentLoaded", () => {
+  const codeContainer = document.querySelector(".code-container");
+
+  const dragMessage = document.createElement("div");
+  dragMessage.className = "drag-delete-message";
+  dragMessage.textContent = "Drag here to delete";
+  
+  dragMessage.style.display = "none"; // Hide it initially
+
+  codeContainer.appendChild(dragMessage); // Add to code container
+});
+
+// Function to handle drag start event
+document.addEventListener("dragstart", (block) => {
+  if (block.target.classList.contains("box")) {
+    dragged = block.target;
+    const container = document.querySelector(".code-container");
+    container.classList.add("drag-active");
+
+    const message = container.querySelector(".drag-delete-message");
+    if (message) message.style.display = "block";
+  }
+});
+
+// Function to handle drag end event
+document.addEventListener("dragend", () => {
+  const container = document.querySelector(".code-container");
+  container.classList.remove("drag-active");
+
+  const message = container.querySelector(".drag-delete-message");
+  if (message) message.style.display = "none";
+});
 }
 
 
