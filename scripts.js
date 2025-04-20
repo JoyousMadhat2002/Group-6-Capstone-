@@ -214,6 +214,9 @@ function blockToText(pc) {
         textBuilder += "\n";
         tDepth = curBlock.dataset.blockDepth;
       }
+      else if(curBlock.dataset.blockDepth = tDepth){
+        textBuilder += " ";
+      }
       textBuilder += "\"" + `${curBlock.value}` + "\"";
     }
     if (curBlock.className == "math-input") {
