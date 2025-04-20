@@ -448,7 +448,9 @@ function textToBlock(container) {
       }
 
       else {
+        console.log('current string is: ' + `${tokens}`);
         let parentBlock;
+        if (depthBuilder[currDepth - 1] != "box-container") {
         if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-else-if-count") > "0") {
           console.log("PARENT IS AN ELSE")
           let nbRef = document.getElementById(depthBuilder[currDepth - 1]).querySelectorAll(".child-box-container");
@@ -457,6 +459,10 @@ function textToBlock(container) {
         else {
           parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
         }
+      }
+      else{
+        parentBlock = document.getElementById("box-container");
+      }
 
 
 
@@ -532,6 +538,9 @@ function blockBuilder(arr, container) {
 
       rmBlock.push(nbRef);
 
+      // console.log('Assignment DB rmBlocks: ' + `${rmBlock}`);
+      // console.log('Assignment DB retArray: ' + `${retArray}`);
+      // console.log('Assignment DB i: ' + i);
     }
 
     else if (oArray[i] == "in") {
@@ -578,12 +587,28 @@ function blockBuilder(arr, container) {
 
         compElems2[0].append(tempRef);
       }
+      else if (userVariables.includes(oArray[i - 1])) {
+        console.log("Left Operator is a variable.");
+        let nbRef = document.getElementById(nbComp);
+        let nbHz = nbRef.querySelector(".childBox-Container-Horizontal")
+        nbRef.querySelector(".block-dropdown").value = oArray[i];
+
+
+        let tempVar = newBlock("variableBlock");
+        let varRef = document.getElementById(tempVar);
+        varRef.querySelector(".block-dropdown").value = oArray[i - 1];
+        nbHz.childNodes[0].append(varRef);
+
+        retArray[arrCount] = nbHz;
+        arrCount++;
+
+      rmBlock.push(nbRef);
+      }
       else {
         let nbComp = newBlock("printText");
         let elText = document.getElementById(nbComp);
         elText.querySelector(".text-input").value += oArray[i - 1];
         compElems2[0].append(elText);
-        //compElems[0].append(elText);
       }
 
       let elDrop = compElems.querySelector(".block-dropdown");
@@ -672,6 +697,7 @@ function blockBuilder(arr, container) {
 
     else if (i == oArray.length - 1) {
       if (oArray[i] >= "0" && oArray[i] <= "9") {
+        console.log("this is a number at the end");
         let nbComp = newBlock("mathText");
         let nbRef = document.getElementById(nbComp);
         let mathInput = nbRef.querySelector(".math-input")
