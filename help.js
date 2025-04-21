@@ -1,6 +1,28 @@
 import { newBlock, userVariables } from './scripts/blockCreation.js';
 
 document.addEventListener('DOMContentLoaded', function () {
+    const backToTopBtn = document.getElementById('backToTopBtn');
+    const helpSection = document.querySelector('.help-section-items');
+
+    if (backToTopBtn && helpSection) {
+        // Show/hide button based on scroll position
+        helpSection.addEventListener('scroll', function() {
+            if (helpSection.scrollTop > 300) {
+                backToTopBtn.style.display = 'flex';
+            } else {
+                backToTopBtn.style.display = 'none';
+            }
+        });
+
+        // Scroll to top when clicked
+        backToTopBtn.addEventListener('click', function() {
+            helpSection.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+
     // Create block previews
     createBlockPreview('move-block-preview', 'movement');
     createBlockPreview('turn-block-preview', 'turn');
@@ -135,6 +157,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 setTimeout(() => element.classList.remove('highlight'), 2000);
             }
         });
+    });
+
+    // Make sections collapsible
+    document.querySelectorAll('.help-section-list-items h2').forEach(header => {
+        header.addEventListener('click', function() {
+            this.classList.toggle('collapsed');
+        });
+        
+        header.classList.add('collapsed');
     });
 
     // Burger menu toggle
