@@ -1028,6 +1028,7 @@ select.block-dropdown {
   display: flex;
   flex: 1;
   overflow: hidden;
+  width: 100%;
 }
 
 /* Left sidebar (sticky) */
@@ -1059,11 +1060,13 @@ h1 {
 
 .help-section-items-list {
   margin-bottom: 30px;
+  width: 100%;
 }
 
 .block-description {
   padding: 15px;
   margin-bottom: 10px;
+  width: 100%;
   border-left: 4px solid #669999;
   background-color: #fff;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -1117,4 +1120,5 @@ h1 {
 #vardeclaration-block-preview{
   width: fit-content;
 }
+
 

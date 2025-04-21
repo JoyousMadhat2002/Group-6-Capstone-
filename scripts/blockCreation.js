@@ -156,7 +156,7 @@ export function newBlock(blockID, customContainer = null) {
         blockID === "logicalOps"
     ) {
         handleOperatorBlock(newBlock, blockID);
-    } else if (blockID === "print") {
+    } else if (blockID === "print" || blockID === "random") {
         handlePrintBlock(newBlock, blockID);
     } else if (
         blockID === "movement" ||
@@ -248,9 +248,13 @@ function handleDefaultBlock(block, blockID) {
 
 function handlePrintBlock(newBlock, blockID) {
     const printLabel = document.createElement("span");
-    printLabel.textContent = "print";
-    newBlock.appendChild(printLabel);
+    if (blockID === "print") {
+        printLabel.textContent = "Print:";
+    } else if (blockID === "random") {
+        printLabel.textContent = "Random";
+    } 
 
+    newBlock.appendChild(printLabel);
     const childContainer = createChildBoxHorizontal(newBlock.id, blockID);
     newBlock.appendChild(childContainer);
 }

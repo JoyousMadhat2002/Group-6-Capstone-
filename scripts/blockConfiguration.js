@@ -222,6 +222,14 @@ const blockCategory = {
         childElement: ["text"],
       },
       {
+        name: "Random",
+        blockID: "random",
+        description: "Generate a random number",
+        type: "random",
+        parentElement: "block",
+        childElement: ["min", "max"],
+      },
+      {
         name: "Math Constants",
         blockID: "mathConstants",
         description: "Includes commonly used mathematical constants such as pi (π), Euler's number (e), tau (τ), infinity (inf), and not-a-number (nan).",
