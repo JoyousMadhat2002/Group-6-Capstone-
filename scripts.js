@@ -116,28 +116,49 @@ function blockToText(pc) {
   } // end of depth recalculation
 
   let tDepth = 1;
-  let pCount = 0;
-  let cCount = 0;
-  let mCount = 0;
-  let tCount = 0;
+  let pCount = 0; //counter for parenthesis
+  let cCount = 0; //counter for colon
+  let mCount = 0; //counter for dropdown spaces
+  let tCount = 0; //counter for when to ignore dropdown spacing
+  let fCount = 1; //counter for first block
   
 
   for (let i = 0; i < blockChildElements.length; i++) {
     let curBlock = blockChildElements[i];
-
-
     
+    if(curBlock.dataset.blockDepth != tDepth){
 
-    if (curBlock.dataset.blockID == "if" || curBlock.dataset.blockID == "for" || curBlock.dataset.blockID == "while") {
+
       if(pCount > 0){
-        textBuilder += ")\n";
+        textBuilder += ")";
         pCount -= 1;
-      }
+      }     
       if(cCount > 0){
-        textBuilder += ":\n";
+        textBuilder += ":";
         cCount -= 1;
       }
-      
+      tDepth = curBlock.dataset.blockDepth;
+    }
+
+    if (curBlock.dataset.blockID == "if" || curBlock.dataset.blockID == "for" || curBlock.dataset.blockID == "while") {
+      // if(pCount > 0){
+      //   textBuilder += ")\n";
+      //   pCount -= 1;
+      // }
+      // if(cCount > 0){
+      //   textBuilder += ":\n";
+      //   cCount -= 1;
+      // }
+      if(fCount == 0){
+        textBuilder += "\n";
+        
+      }
+      else if(fCount == 1){
+        fCount -= 1;
+      }
+      if(mCount > 0){
+        mCount -= 1;
+      }
       cCount += 1;
 
       for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
@@ -148,26 +169,49 @@ function blockToText(pc) {
       tDepth = curBlock.dataset.blockDepth;
     }
     else if (curBlock.innerText == "else if:" || curBlock.innerText == "else:") {
-      if(pCount > 0){
-        textBuilder += ")";
-        pCount -= 1;
-      }
-      if(cCount > 0){
-        textBuilder += ":";
-        cCount -= 1;
-      }
-      textBuilder += "\n";
+      // if(pCount > 0){
+      //   textBuilder += ")";
+      //   pCount -= 1;
+      // }
+      // if(cCount > 0){
+      //   textBuilder += ":";
+      //   cCount -= 1;
+      // }
+      //textBuilder += "\n";
       for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
         textBuilder += "  ";
       }
       if (curBlock.innerText == "else if:") {
         textBuilder += "else if";
-        // colonC = 1;
+        colonC = 1;
         tDepth = curBlock.dataset.blockDepth;
       }
       else if (curBlock.innerText == "else:") {
         textBuilder += `${curBlock.innerText}` + "\n"
       };
+    }
+
+    if(curBlock.dataset.blockID == "varOps"){
+      if(fCount == 0){
+        textBuilder += "\n"
+      }
+      else if(fCount == 1){
+        fCount -= 1;
+      }
+      for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
+        textBuilder += "  ";
+      }
+      mCount += 1;
+    }
+
+    if(curBlock.dataset.blockID == "comparisonBlock"){
+      if(fCount == 0){
+        textBuilder += "\n"
+      }
+      else if(fCount == 1){
+        fCount -= 1;
+      }
+      mCount += 1;
     }
 
 
@@ -194,35 +238,46 @@ function blockToText(pc) {
     }
 
     if (curBlock.dataset.blockID == "print") {
-      if(pCount > 0){
-        textBuilder += ")\n";
-        pCount -= 1;
-      }
-      if(cCount > 0){
-        textBuilder += ":\n";
-        cCount -= 1;
-      }
+      // if(pCount > 0){
+      //   textBuilder += ")\n";
+      //   pCount -= 1;
+      // }
+      // if(cCount > 0){
+      //   textBuilder += ":\n";
+      //   cCount -= 1;
+      // }
       if (curBlock.dataset.blockDepth > tDepth) {
-        textBuilder += "\n";
-        tDepth = curBlock.dataset.blockDepth;
+        // textBuilder += "\n";
+        // tDepth = curBlock.dataset.blockDepth;
       }
       textBuilder += "print(";
       pCount += 1;
     }
     if (curBlock.className == "text-input") {
-      if (curBlock.dataset.blockDepth > tDepth) {
-        textBuilder += "\n";
-        tDepth = curBlock.dataset.blockDepth;
-      }
-      else if(curBlock.dataset.blockDepth = tDepth){
+      // if (curBlock.dataset.blockDepth > tDepth) {
+      //   textBuilder += "\n";
+      //   tDepth = curBlock.dataset.blockDepth;
+      // }
+      // else 
+      if(curBlock.dataset.blockDepth = tDepth){
         textBuilder += " ";
+      }
+      if(mCount > 0){
+        mCount -= 1;
       }
       textBuilder += "\"" + `${curBlock.value}` + "\"";
     }
     if (curBlock.className == "math-input") {
-      if (curBlock.dataset.blockDepth > tDepth) {
-        textBuilder += "\n";
-        tDepth = curBlock.dataset.blockDepth;
+      // if (curBlock.dataset.blockDepth > tDepth) {
+      //   textBuilder += "\n";
+      //   tDepth = curBlock.dataset.blockDepth;
+      // }
+      // else 
+      if(curBlock.dataset.blockDepth = tDepth){
+        if(tCount == 0){
+          textBuilder += " ";
+        }
+        
       }
       if(tCount > 0){
         textBuilder += '(' + `${curBlock.value}` + ')' ;
@@ -230,6 +285,9 @@ function blockToText(pc) {
       }
       else{
         textBuilder += `${curBlock.value}`;
+      }
+      if(mCount > 0){
+        mCount -= 1;
       }
       
       
@@ -239,18 +297,22 @@ function blockToText(pc) {
       mCount += 1;
     }
     if (curBlock.dataset.blockID == "movement") {
+      textBuilder += "\n";
       textBuilder += "turtle.";
       tCount += 1;
-      mCount += 1;
+      mCount += 2;
     }
     if (curBlock.dataset.blockID == "home") {
+      textBuilder += "\n";
       textBuilder += "turtle.home()";      
     }
     if (curBlock.dataset.blockID == "speed") {
+      textBuilder += "\n";
       textBuilder += "turtle.speed";
       tCount += 1;
     }
     if (curBlock.dataset.blockID == "penup" || curBlock.dataset.blockID == "pendown") {
+      textBuilder += "\n";
       textBuilder += 'turtle.' + `${curBlock.dataset.blockID}` + '()';
     }
     
@@ -258,14 +320,14 @@ function blockToText(pc) {
 
     if(i == blockChildElements.length - 1){
       console.log("CLOSING TIME");
-      if(pCount > 0){
-        textBuilder += ")\n";
-        pCount -= 1;
-      }
-      if(cCount > 0){
-        textBuilder += ":\n";
-        cCount -= 1;
-      }
+      // if(pCount > 0){
+      //   textBuilder += ")\n";
+      //   pCount -= 1;
+      // }
+      // if(cCount > 0){
+      //   textBuilder += ":\n";
+      //   cCount -= 1;
+      // }
     }
   }
   
