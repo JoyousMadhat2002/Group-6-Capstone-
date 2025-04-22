@@ -1194,3 +1194,34 @@ code {
 .back-to-top:active {
   transform: translateY(1px);
 }
+
+.comparison-container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.comparison-pair {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comparison-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 4px;
+}
+
+.comparison-add, .comparison-remove {
+  padding: 2px 8px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background: #e0e0e0;
+}
+
+.comparison-add:hover, .comparison-remove:hover {
+  background: #d0d0d0;
+}
