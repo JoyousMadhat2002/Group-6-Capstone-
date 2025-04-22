@@ -5,7 +5,7 @@ import { toggleCategory, addBlockInteractivity, clearDropHighlights, toggleDropd
 let blockCounter = 0;
 export let userVariables = [];
 let isPythonView = false;
-
+let dropdownBlockCounter = 0;
 
 
 // ==========================
