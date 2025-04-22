@@ -3,11 +3,11 @@
 // ==========================
 
 const categoryColors = {
-  movement: "#669999 ", 
+  movement: "#669999 ",
   logic: "#5a80a5",
   math: "#5abd42",
-  comparison: "#ffcc99", 
-  boolean: "#99cccc", 
+  comparison: "#ffcc99",
+  boolean: "#99cccc",
   functions: "#996699",
   variables: "#996666",
   default: "#cccccc",
@@ -141,6 +141,14 @@ const blockCategory = {
         type: "logical",
         parentElement: "block",
         childElement: ["block", "operator", "operand1", "operand2"],
+      },
+      {
+        name: "Comma Separated",
+        blockID: "commaSeparated",
+        description: "A block that combines values with commas",
+        type: "logical",
+        parentElement: "block",
+        childElement: ["block", "operand1", "operand2"],
       },
     ],
   },
@@ -301,6 +309,6 @@ const blockCategory = {
     ],
   },
 };
-  
+
 
 export { categoryColors, blockCategory };

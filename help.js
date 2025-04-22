@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
     createBlockPreview('basicarithmetic-block-preview', 'basicArithmetic');
     createBlockPreview('logexp-block-preview', 'logExp');
     createBlockPreview('trigfunctions-block-preview', 'trigFunctions');
+    createBlockPreview('random-block-preview', 'random');
 
     createBlockPreview('comparison-block-preview', 'comparisonBlock');
     createBlockPreview('range-block-preview', 'range');

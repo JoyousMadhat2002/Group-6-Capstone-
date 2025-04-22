@@ -43,7 +43,7 @@ function getBlockDropdownList(blockID) {
     case "trigFunctions":
       return ["---", "sin", "cos", "tan", "asin", "acos", "atan", "radians", "degrees"];
     case "random":
-      return ["---", "random", "randint", "uniform", "shuffle"];
+      return ["---", "random", "randint", "uniform", "choice", "sample", "shuffle"];
     default:
       return ["---"]; // Default case for blocks without specific types
   }

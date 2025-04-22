@@ -156,7 +156,7 @@ export function newBlock(blockID, customContainer = null) {
         blockID === "logicalOps"
     ) {
         handleOperatorBlock(newBlock, blockID);
-    } else if (blockID === "print" || blockID === "random") {
+    } else if (blockID === "print") {
         handlePrintBlock(newBlock, blockID);
     } else if (
         blockID === "movement" ||
@@ -180,6 +180,8 @@ export function newBlock(blockID, customContainer = null) {
         handleMathFunctionBlock(newBlock, blockID);
     } else if (blockID === "range") {
         handleRangeBlock(newBlock);
+    } else if(blockID === 'random'){
+        handleRandomBlock(newBlock, blockID);
     } else {
         handleDefaultBlock(newBlock, blockID);
     }
@@ -246,13 +248,28 @@ function handleDefaultBlock(block, blockID) {
     block.appendChild(blockLabel);
 }
 
+function handleRandomBlock(block, blockID) {
+     const randomLabel = document.createElement("span");
+    randomLabel.textContent = "Random";
+    block.appendChild(randomLabel);
+
+    // Add dropdown for random functions
+    const dropdown = createOperatorDropdown(blockID);
+    block.appendChild(dropdown);
+
+    // Add child container for parameters
+    const childContainer = createChildBoxHorizontal(block.id, blockID);
+    block.appendChild(childContainer);
+
+    // Set up dropdown change handler
+    dropdown.addEventListener("change", function() {
+        block.dataset.blockOperator = dropdown.value;
+    });
+}
+
 function handlePrintBlock(newBlock, blockID) {
     const printLabel = document.createElement("span");
-    if (blockID === "print") {
-        printLabel.textContent = "Print:";
-    } else if (blockID === "random") {
-        printLabel.textContent = "Random";
-    } 
+    printLabel.textContent = "Print:";
 
     newBlock.appendChild(printLabel);
     const childContainer = createChildBoxHorizontal(newBlock.id, blockID);
@@ -325,6 +342,7 @@ function handleMathFunctionBlock(block, blockID) {
         const childContainer = createChildBoxHorizontal(block.id, blockID);
         block.appendChild(childContainer);
     }
+    
 }
 
 function handleMathOrComparisonOrVariableBlock(block, blockID) {

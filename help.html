@@ -64,11 +64,6 @@
                     <div class="block-example-container">
                         <div class="block-example" data-target="mathtext-description">Math Text Block</div>
                         <div class="block-example" data-target="mathblock-description">Math Block</div>
-                        <div class="block-example" data-target="mathconstants-description">Math Constants</div>
-                        <div class="block-example" data-target="roundabs-description">Rounding and Absolute Value</div>
-                        <div class="block-example" data-target="basicarithmetic-description">Basic Arithmetic</div>
-                        <div class="block-example" data-target="logexp-description">Logarithms and Exponents</div>
-                        <div class="block-example" data-target="trigfunctions-description">Trigonometry</div>
                     </div>
                 </div>
 
@@ -87,6 +82,12 @@
                     <div class="block-example-container">
                         <div class="block-example" data-target="print-description">print</div>
                         <div class="block-example" data-target="text-description">Text</div>
+                        <div class="block-example" data-target="random-description">Random</div>
+                        <div class="block-example" data-target="mathconstants-description">Math Constants</div>
+                        <div class="block-example" data-target="roundabs-description">Rounding and Absolute Value</div>
+                        <div class="block-example" data-target="basicarithmetic-description">Basic Arithmetic</div>
+                        <div class="block-example" data-target="logexp-description">Logarithms and Exponents</div>
+                        <div class="block-example" data-target="trigfunctions-description">Trigonometry</div>
                     </div>
                 </div>
 
@@ -819,7 +820,285 @@
                             <div class="block-example-codes" id="math-block-example-codes"></div>
                         </div>
                     </div>
+                </div>
 
+                <!-- Comparison Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Comparison Blocks</h2>
+
+                    <!-- Comparison Block -->
+                    <div id="comparisonblock-description" class="block-description">
+                        <h3>Comparison Block</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Comparison Block compares two values using standard comparison operators: equal (==),
+                                not equal (!=),
+                                greater than (>), less than (<), greater than or equal (>=), and less than or equal (
+                                    <=). These are fundamental for creating conditional statements and controlling
+                                        program flow.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Equality:</p>
+                            <pre><code>
+                                5 == 5     # True
+                            </code></pre>
+                            <pre><code>
+                                5 == 3     # False
+                            </code></pre>
+
+                            <p>Inequality:</p>
+                            <pre><code>
+                                5 != 3     # True
+                            </code></pre>
+                            <pre><code>
+                                5 != 5     # False
+                            </code></pre>
+
+                            <p>Greater/less than:</p>
+                            <pre><code>
+                                10 > 5     # True
+                            </code></pre>
+                            <pre><code>
+                                5 < 3      # False
+                            </code></pre>
+
+                            <p>Greater/less than or equal:</p>
+                            <pre><code>
+                                5 >= 5     # True
+                            </code></pre>
+                            <pre><code>
+                                4 <= 3     # False
+                            </code></pre>
+
+                            <p>In conditional statements:</p>
+                            <pre><code>
+                                if temperature > 30:
+                                    print("It's hot!")
+                                elif temperature < 10:
+                                    print("It's cold!")
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="comparison-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="comparison-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Range -->
+                    <div id="range-description" class="block-description">
+                        <h3>Range</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Range block generates a sequence of numbers, typically used for controlling loops. It
+                                can create
+                                sequences from start to stop with a specified step size. This is particularly useful
+                                with For loops
+                                to repeat an operation a specific number of times or to iterate through numerical
+                                ranges.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Basic range:</p>
+                            <pre><code>
+                                for i in range(5):      # 0,1,2,3,4
+                                    print(i)
+                            </code></pre>
+
+                            <p>With start and stop:</p>
+                            <pre><code>
+                                for i in range(2, 6):   # 2,3,4,5
+                                    print(i)
+                            </code></pre>
+
+                            <p>With step:</p>
+                            <pre><code>
+                                for i in range(0, 10, 2):  # 0,2,4,6,8
+                                    print(i)
+                            </code></pre>
+
+                            <p>Negative step:</p>
+                            <pre><code>
+                                for i in range(5, 0, -1):  # 5,4,3,2,1
+                                    print(i)
+                            </code></pre>
+
+                            <p>Turtle example:</p>
+                            <pre><code>
+                                for i in range(0, 360, 15):
+                                    turtle.setheading(i)
+                                    turtle.forward(50)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="range-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="range-block-example-codes"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Functions Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Function Blocks</h2>
+
+                    <!-- Print -->
+                    <div id="print-description" class="block-description">
+                        <h3>print</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Print block outputs text or values to the console. This is essential for debugging,
+                                showing
+                                program results, or providing user feedback. You can print multiple items separated by
+                                commas,
+                                and the output will automatically include spaces between items.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Simple print:</p>
+                            <pre><code>
+                                print("Hello, World!")
+                            </code></pre>
+
+                            <p>Printing variables:</p>
+                            <pre><code>
+                                name = "Alice"
+                                age = 25
+                                print("Name:", name, "Age:", age)
+                            </code></pre>
+
+                            <p>Formatted output:</p>
+                            <pre><code>
+                                print(f"{name} is {age} years old")
+                            </code></pre>
+
+                            <p>Printing calculations:</p>
+                            <pre><code>
+                                print("5 + 3 =", 5 + 3)
+                            </code></pre>
+
+                            <p>Multiple lines:</p>
+                            <pre><code>
+                                print("Line 1\nLine 2")
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="print-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="print-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Text -->
+                    <div id="text-description" class="block-description">
+                        <h3>Text</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Text block represents string values (sequences of characters) in your program.
+                                Strings are
+                                used for text output, user input processing, and as identifiers in many contexts.
+                                Strings can
+                                include letters, numbers, symbols, and spaces, enclosed in quotes.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Simple string:</p>
+                            <pre><code>
+                                "Hello, World!"
+                            </code></pre>
+
+                            <p>String with quotes:</p>
+                            <pre><code>
+                                'She said "Hello"'
+                            </code></pre>
+                            <pre><code>
+                                "It's a beautiful day"
+                            </code></pre>
+
+                            <p>Multiline string:</p>
+                            <pre><code>
+                                """This is a
+                                multi-line
+                                string"""
+                            </code></pre>
+
+                            <p>String concatenation:</p>
+                            <pre><code>
+                                "Hello" + " " + "World"  # "Hello World"
+                            </code></pre>
+
+                            <p>String in print:</p>
+                            <pre><code>
+                                print("Welcome to the program!")
+                            </code></pre>
+
+                            <p>Turtle text:</p>
+                            <pre><code>
+                                turtle.write("Hello!", font=("Arial", 16, "normal"))
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="text-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="text-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Random Function -->
+                    <div id="random-description" class="block-description">
+                        <h3>Random Function</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Random Function block generates random numbers or selects random items from a list.
+                                This is
+                                useful for creating unpredictable behavior in your programs, such as random movements,
+                                game mechanics,
+                                or sampling data. The random module provides various functions for generating random
+                                integers,
+                                floating-point numbers, and choices from sequences.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Random integer:</p>
+                            <pre><code>
+                                import random
+                                random.randint(1, 10)  # Random number between 1 and 10
+                            </code></pre>
+
+                            <p>Random float:</p>
+                            <pre><code>
+                                random.uniform(0, 1)   # Random float between 0 and 1
+                            </code></pre>
+
+                            <p>Random choice from a list:</p>
+                            <pre><code>
+                                colors = ["red", "green", "blue"]
+                                random.choice(colors)  # Randomly selects one color
+                            </code></pre>
+
+                            <p>Turtle example:</p>
+                            <pre><code>
+                                for _ in range(10):
+                                    turtle.goto(random.randint(-200, 200), random.randint(-200, 200))
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="random-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="random-block-example-codes"></div>
+                        </div>
+                    </div>
                     <!-- Math Constants -->
                     <div id="mathconstants-description" class="block-description">
                         <h3>Math Constants</h3>
@@ -1074,238 +1353,6 @@
                     </div>
                 </div>
 
-                <!-- Comparison Descriptions -->
-                <div class="help-section-items-list">
-                    <h2>Comparison Blocks</h2>
-
-                    <!-- Comparison Block -->
-                    <div id="comparisonblock-description" class="block-description">
-                        <h3>Comparison Block</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Comparison Block compares two values using standard comparison operators: equal (==),
-                                not equal (!=),
-                                greater than (>), less than (<), greater than or equal (>=), and less than or equal (
-                                    <=). These are fundamental for creating conditional statements and controlling
-                                        program flow.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Equality:</p>
-                            <pre><code>
-                                5 == 5     # True
-                            </code></pre>
-                            <pre><code>
-                                5 == 3     # False
-                            </code></pre>
-
-                            <p>Inequality:</p>
-                            <pre><code>
-                                5 != 3     # True
-                            </code></pre>
-                            <pre><code>
-                                5 != 5     # False
-                            </code></pre>
-
-                            <p>Greater/less than:</p>
-                            <pre><code>
-                                10 > 5     # True
-                            </code></pre>
-                            <pre><code>
-                                5 < 3      # False
-                            </code></pre>
-
-                            <p>Greater/less than or equal:</p>
-                            <pre><code>
-                                5 >= 5     # True
-                            </code></pre>
-                            <pre><code>
-                                4 <= 3     # False
-                            </code></pre>
-
-                            <p>In conditional statements:</p>
-                            <pre><code>
-                                if temperature > 30:
-                                    print("It's hot!")
-                                elif temperature < 10:
-                                    print("It's cold!")
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="comparison-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="comparison-block-example-codes"></div>
-                        </div>
-                    </div>
-
-                    <!-- Range -->
-                    <div id="range-description" class="block-description">
-                        <h3>Range</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Range block generates a sequence of numbers, typically used for controlling loops. It
-                                can create
-                                sequences from start to stop with a specified step size. This is particularly useful
-                                with For loops
-                                to repeat an operation a specific number of times or to iterate through numerical
-                                ranges.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Basic range:</p>
-                            <pre><code>
-                                for i in range(5):      # 0,1,2,3,4
-                                    print(i)
-                            </code></pre>
-
-                            <p>With start and stop:</p>
-                            <pre><code>
-                                for i in range(2, 6):   # 2,3,4,5
-                                    print(i)
-                            </code></pre>
-
-                            <p>With step:</p>
-                            <pre><code>
-                                for i in range(0, 10, 2):  # 0,2,4,6,8
-                                    print(i)
-                            </code></pre>
-
-                            <p>Negative step:</p>
-                            <pre><code>
-                                for i in range(5, 0, -1):  # 5,4,3,2,1
-                                    print(i)
-                            </code></pre>
-
-                            <p>Turtle example:</p>
-                            <pre><code>
-                                for i in range(0, 360, 15):
-                                    turtle.setheading(i)
-                                    turtle.forward(50)
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="range-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="range-block-example-codes"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Functions Descriptions -->
-                <div class="help-section-items-list">
-                    <h2>Function Blocks</h2>
-
-                    <!-- Print -->
-                    <div id="print-description" class="block-description">
-                        <h3>print</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Print block outputs text or values to the console. This is essential for debugging,
-                                showing
-                                program results, or providing user feedback. You can print multiple items separated by
-                                commas,
-                                and the output will automatically include spaces between items.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Simple print:</p>
-                            <pre><code>
-                                print("Hello, World!")
-                            </code></pre>
-
-                            <p>Printing variables:</p>
-                            <pre><code>
-                                name = "Alice"
-                                age = 25
-                                print("Name:", name, "Age:", age)
-                            </code></pre>
-
-                            <p>Formatted output:</p>
-                            <pre><code>
-                                print(f"{name} is {age} years old")
-                            </code></pre>
-
-                            <p>Printing calculations:</p>
-                            <pre><code>
-                                print("5 + 3 =", 5 + 3)
-                            </code></pre>
-
-                            <p>Multiple lines:</p>
-                            <pre><code>
-                                print("Line 1\nLine 2")
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="print-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="print-block-example-codes"></div>
-                        </div>
-                    </div>
-
-                    <!-- Text -->
-                    <div id="text-description" class="block-description">
-                        <h3>Text</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Text block represents string values (sequences of characters) in your program.
-                                Strings are
-                                used for text output, user input processing, and as identifiers in many contexts.
-                                Strings can
-                                include letters, numbers, symbols, and spaces, enclosed in quotes.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Simple string:</p>
-                            <pre><code>
-                                "Hello, World!"
-                            </code></pre>
-
-                            <p>String with quotes:</p>
-                            <pre><code>
-                                'She said "Hello"'
-                            </code></pre>
-                            <pre><code>
-                                "It's a beautiful day"
-                            </code></pre>
-
-                            <p>Multiline string:</p>
-                            <pre><code>
-                                """This is a
-                                multi-line
-                                string"""
-                            </code></pre>
-
-                            <p>String concatenation:</p>
-                            <pre><code>
-                                "Hello" + " " + "World"  # "Hello World"
-                            </code></pre>
-
-                            <p>String in print:</p>
-                            <pre><code>
-                                print("Welcome to the program!")
-                            </code></pre>
-
-                            <p>Turtle text:</p>
-                            <pre><code>
-                                turtle.write("Hello!", font=("Arial", 16, "normal"))
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="text-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="text-block-example-codes"></div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Variables Descriptions -->
                 <div class="help-section-items-list">
                     <h2>Variable Blocks</h2>
@@ -1473,7 +1520,7 @@
 
                 <button id="backToTopBtn" class="back-to-top" title="Go to top">
                     <i class="fas fa-arrow-up"></i>
-                  </button>
+                </button>
 
             </div>
         </div>
