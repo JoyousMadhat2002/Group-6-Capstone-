@@ -1194,3 +1194,15 @@ code {
 .back-to-top:active {
   transform: translateY(1px);
 }
+
+.section-label {
+  background-color: #444;
+  color: white;
+  padding: 8px 10px;
+  font-weight: bold;
+  text-align: center;
+  height: fit-content;
+  
+  border-bottom: 1px solid #000;
+  user-select: none;
+}
