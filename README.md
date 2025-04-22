@@ -52,7 +52,17 @@ Python-PencilCode was built as part of a team project with the goal of lowering 
 
 ## How to Run
 
+### Prerequisites:
+- Modern browser
+- Visual Studio Code and 'Live Server' extension
+- Google Firebase database (if you want project files to be saved to your own)
+
 1. Clone the repository
-2. Open `index.html` in a modern browser (make sure Firebase config is updated)
+2. Open the directory in Visual Studio Code and open it using 'Live Server'
 3. Use the dashboard to open or create new projects
-4. View the Help page to learn more
+4. View the Help page to learn more about the blocks
+
+### If you want to use Google Firebase functionality:
+1. Create a Firebase Project
+2. Enable Authentication (Email/Password) and Firestore Database
+3. Open Project Settings and replace `firebaseConfig` with your own credentials 
