@@ -17,7 +17,7 @@ function getBlockDropdownList(blockID) {
 
   switch (blockID) {
     case "movement":
-      return ["---", "right", "left", "forward", "backward"]
+      return ["---", "forward", "backward"]
     case "turn":
       return ["---", "right", "left"]
     case "setCoordinates":
@@ -42,6 +42,8 @@ function getBlockDropdownList(blockID) {
       return ["---", "log", "log10", "exp", "sqrt", "pow"];
     case "trigFunctions":
       return ["---", "sin", "cos", "tan", "asin", "acos", "atan", "radians", "degrees"];
+    case "random":
+      return ["---", "random", "randint", "uniform", "choice", "sample", "shuffle"];
     default:
       return ["---"]; // Default case for blocks without specific types
   }

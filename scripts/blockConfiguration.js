@@ -3,11 +3,11 @@
 // ==========================
 
 const categoryColors = {
-  movement: "#669999 ", 
+  movement: "#669999 ",
   logic: "#5a80a5",
   math: "#5abd42",
-  comparison: "#ffcc99", 
-  boolean: "#99cccc", 
+  comparison: "#ffcc99",
+  boolean: "#99cccc",
   functions: "#996699",
   variables: "#996666",
   default: "#cccccc",
@@ -142,6 +142,14 @@ const blockCategory = {
         parentElement: "block",
         childElement: ["block", "operator", "operand1", "operand2"],
       },
+      {
+        name: "Comma Separated",
+        blockID: "commaSeparated",
+        description: "A block that combines values with commas",
+        type: "logical",
+        parentElement: "block",
+        childElement: ["block", "operand1", "operand2"],
+      },
     ],
   },
 
@@ -222,6 +230,14 @@ const blockCategory = {
         childElement: ["text"],
       },
       {
+        name: "Random",
+        blockID: "random",
+        description: "Generate a random number",
+        type: "random",
+        parentElement: "block",
+        childElement: ["min", "max"],
+      },
+      {
         name: "Math Constants",
         blockID: "mathConstants",
         description: "Includes commonly used mathematical constants such as pi (π), Euler's number (e), tau (τ), infinity (inf), and not-a-number (nan).",
@@ -293,6 +309,6 @@ const blockCategory = {
     ],
   },
 };
-  
+
 
 export { categoryColors, blockCategory };

@@ -744,6 +744,7 @@ function runCode() {
   var turtleSetupCode = `
 import turtle
 import math
+import random
 `;
 
   var cleanedProg = prog.trimStart();
