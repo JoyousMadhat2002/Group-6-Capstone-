@@ -13,37 +13,17 @@ import {
 } from "./scripts/blockCreation.js";
 import { userVariables } from "./scripts/blockCreation.js";
 
-import {
-  openLoginDialog,
-  createLoginDialog,
-  createSignupDialog,
-  attemptLogin,
-  attemptSignup,
-  logoutUser,
-  closeDialogBoxes
-} from "./scripts/authDialogs.js";
-
-
 // Import Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
-
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCteFAmh1TjbbQB0hsbBwcbqwK8mofMO4Y",
-  authDomain: "b-coders-database.firebaseapp.com",
-  projectId: "b-coders-database",
-  storageBucket: "b-coders-database.appspot.com",
-  messagingSenderId: "268773123996",
-  appId: "1:268773123996:web:fec77ef63557a9c6b50a59",
-  measurementId: "G-92LTT20BXB"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+import { openLoginDialog, showNotification, updateUIAfterLogin } from "./scripts/authDialogs.js";
+import { 
+  auth, 
+  db, 
+  onAuthStateChanged, 
+  collection, 
+  doc, 
+  setDoc, 
+  serverTimestamp 
+} from "./scripts/firebaseConfig.js";
 
 // Wait for Firebase authentication state
 onAuthStateChanged(auth, (user) => {
@@ -864,71 +844,6 @@ function setupButtonFunctionalityListeners() {
     textToBlock("box-container");
   });
   document.getElementById("toggleButton").addEventListener("click", toggleView);
-}
-
-// ==========================
-// 12. Login Updates
-// ==========================
-
-// Function to update the UI after user login/logout
-export function updateUIAfterLogin(user) {
-  const loginButton = document.getElementById("loginButton");
-
-  if (user) {
-    loginButton.textContent = "Log Out";
-    loginButton.removeEventListener("click", openLoginDialog);
-    loginButton.addEventListener("click", logoutUser);
-  } else {
-    loginButton.textContent = "Log In";
-    loginButton.removeEventListener("click", logoutUser);
-    loginButton.addEventListener("click", openLoginDialog);
-  }
-}
-
-export function showNotification(message, color = "gold") {
-  // Remove existing notification if present
-  const existingNotification = document.getElementById("notification-box");
-  if (existingNotification) existingNotification.remove();
-
-  // Create notification container
-  const notification = document.createElement("div");
-  notification.id = "notification-box";
-  notification.classList.add("notification");
-  notification.style.backgroundColor = color;
-
-  // Create notification text
-  const messageText = document.createElement("span");
-  messageText.textContent = message;
-
-  // Create close button (X)
-  const closeButton = document.createElement("span");
-  closeButton.textContent = "✖";
-  closeButton.classList.add("close-button");
-  closeButton.addEventListener("click", () => fadeOutNotification(notification));
-
-  // Append elements to notification
-  notification.appendChild(messageText);
-  notification.appendChild(closeButton);
-  document.body.appendChild(notification);
-
-  // Timer to fade out and remove notification
-  let removeTimeout = setTimeout(() => {
-    fadeOutNotification(notification);
-  }, 3000); // 3 seconds
-
-  // Pause timer when hovering
-  notification.addEventListener("mouseenter", () => clearTimeout(removeTimeout));
-
-  // Resume timer when mouse leaves
-  notification.addEventListener("mouseleave", () => {
-    removeTimeout = setTimeout(() => fadeOutNotification(notification), 3000);
-  });
-}
-
-// Function to fade out notification before removing it
-function fadeOutNotification(notification) {
-  notification.classList.add("fade-out");
-  setTimeout(() => notification.remove(), 500); // Wait for fade-out transition
 }
 
 

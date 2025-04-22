@@ -1,43 +1,26 @@
 // Import Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+//
+// import { 
+//   collection, 
+//   doc, 
+//   getDocs, 
+//   Timestamp,
+//   updateDoc,
+//   deleteDoc,
+// } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
+import { openLoginDialog } from "./scripts/authDialogs.js";
 import { 
-    getFirestore, 
-    collection, 
-    doc, 
-    setDoc, 
-    getDoc, 
-    getDocs, 
-    Timestamp,
-    updateDoc,
-    deleteDoc,
-  } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
-
-import {
-    openLoginDialog,
-    createLoginDialog,
-    createSignupDialog,
-    attemptLogin,
-    attemptSignup,
-    logoutUser,
-    closeDialogBoxes
-  } from "./scripts/authDialogs.js";
-
-// Firebase configuration
-const firebaseConfig = {
-	apiKey: "AIzaSyCteFAmh1TjbbQB0hsbBwcbqwK8mofMO4Y",
-	authDomain: "b-coders-database.firebaseapp.com",
-	projectId: "b-coders-database",
-	storageBucket: "b-coders-database.appspot.com",
-	messagingSenderId: "268773123996",
-	appId: "1:268773123996:web:fec77ef63557a9c6b50a59",
-	measurementId: "G-92LTT20BXB"
-  };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  auth, 
+  db, 
+  collection, 
+  doc, 
+  getDocs, 
+  Timestamp,
+  updateDoc,
+  deleteDoc,
+  onAuthStateChanged, 
+} from "./scripts/firebaseConfig.js";
 
 function timeAgo(date) {
   const now = new Date();
