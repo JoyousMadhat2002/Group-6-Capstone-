@@ -181,9 +181,10 @@ function blockToText(pc) {
       for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
         textBuilder += "  ";
       }
-      if (curBlock.innerText == "else if:") {
-        textBuilder += "else if";
-        colonC = 1;
+      if (curBlock.dataset.elifelsetype == "elif") {
+        console.log("i = " + `${i}`);
+        textBuilder += "\n" + "else if";
+        cCount += 1;
         tDepth = curBlock.dataset.blockDepth;
       }
       else if (curBlock.innerText == "else:") {
@@ -205,13 +206,14 @@ function blockToText(pc) {
     }
 
     if(curBlock.dataset.blockID == "comparisonBlock"){
-      if(fCount == 0){
-        textBuilder += "\n"
-      }
-      else if(fCount == 1){
-        fCount -= 1;
-      }
-      mCount += 1;
+      // if(fCount == 0){
+      //   textBuilder += "\n"
+      // }
+      // else if(fCount == 1){
+      //   fCount -= 1;
+      // }
+      
+      // mCount += 1;
     }
 
 
