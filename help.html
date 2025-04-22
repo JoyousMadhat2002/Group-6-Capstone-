@@ -30,23 +30,7 @@
     <div class="main-content">
         <div class="help-container">
             <div class="help-section-list">
-                <!-- Movement Section -->
-                <div class="help-section-list-items">
-                    <h2>Movement</h2>
-                    <div class="block-example-container">
-                        <div class="block-example" data-target="move-description">Move</div>
-                        <div class="block-example" data-target="turn-description">Turn</div>
-                        <div class="block-example" data-target="speed-description">Speed</div>
-                        <div class="block-example" data-target="home-description">Home</div>
-                        <div class="block-example" data-target="color-description">Color</div>
-                        <div class="block-example" data-target="penup-description">Pen Up</div>
-                        <div class="block-example" data-target="pendown-description">Pen Down</div>
-                        <div class="block-example" data-target="goto-description">Go To</div>
-                        <div class="block-example" data-target="setposition-description">Set Position</div>
-                        <div class="block-example" data-target="pause-description">Pause</div>
-                    </div>
-                </div>
-
+                
                 <!-- Logic Section -->
                 <div class="help-section-list-items">
                     <h2>Logic</h2>
@@ -100,427 +84,36 @@
                         <div class="block-example" data-target="variableblock-description">Variable Block</div>
                     </div>
                 </div>
-            </div>
 
-            <div class="help-section-items">
-                <!-- Movement Descriptions -->
-                <div class="help-section-items-list">
-                    <h2>Movement Blocks</h2>
-
-                    <!-- Move Block -->
-                    <div id="move-description" class="block-description">
-                        <h3>Move</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Move block controls the turtle's movement forward or backward by a specified number
-                                of units.
-                                Each unit typically corresponds to a pixel on the screen. Positive values move the
-                                turtle forward
-                                in its current heading direction, while negative values move it backward. The turtle
-                                draws a line
-                                as it moves if the pen is down.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Move forward 100 units:</p>
-                            <pre><code>
-                                t.forward(100)
-                            </code></pre>
-
-                            <p>Move backward 50 units:</p>
-                            <pre><code>
-                                t.backward(50)
-                            </code></pre>
-
-                            <p>Move in a square pattern:</p>
-                            <pre><code>
-                                for _ in range(4):
-                                    t.forward(100)
-                                    t.right(90)
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="move-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="move-block-example-codes"></div>
-                        </div>
-                    </div>
-
-                    <!-- Turn Block -->
-                    <div id="turn-description" class="block-description">
-                        <h3>Turn</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Turn block rotates the turtle by a specified angle in degrees. Positive angles turn
-                                the turtle
-                                to the right (clockwise), while negative angles turn it to the left (counter-clockwise).
-                                The turtle's
-                                heading changes but its position remains the same. This is useful for changing direction
-                                before moving.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Turn right 90 degrees:</p>
-                            <pre><code>
-                                t.right(90)
-                            </code></pre>
-
-                            <p>Turn left 45 degrees:</p>
-                            <pre><code>
-                                t.left(45)
-                            </code></pre>
-
-                            <p>Draw a star pattern:</p>
-                            <pre><code>
-                                for _ in range(5):
-                                    t.forward(100)
-                                    t.right(144)
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="turn-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="turn-block-example-codes"></div>
-                        </div>
-                    </div>
-
-                    <!-- Speed Block -->
-                    <div id="speed-description" class="block-description">
-                        <h3>Speed</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Speed block controls how fast the turtle moves. The speed can be set from 0 (fastest)
-                                to 10 (slowest).
-                                Speed 0 means no animation - the turtle jumps instantly to the new position. This is
-                                useful when you want
-                                to draw complex shapes quickly without watching the animation.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Set slow speed (1):</p>
-                            <pre><code>
-                                turtle.speed(1)
-                            </code></pre>
-
-                            <p>Set fastest speed (0):</p>
-                            <pre><code>
-                                turtle.speed(0)
-                            </code></pre>
-
-                            <p>Gradually increase speed:</p>
-                            <pre><code>
-                                for i in range(1, 11):
-                                    turtle.speed(i)
-                                    turtle.forward(50)
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="speed-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="speed-block-example-codes"></div>
-                        </div>
-                    </div>
-
-                    <!-- Home Block -->
-                    <div id="home-description" class="block-description">
-                        <h3>Home</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Home block moves the turtle to the origin (coordinates 0,0) and sets its heading to
-                                the default
-                                (facing right/east). This is useful for resetting the turtle's position without changing
-                                other attributes
-                                like pen state or color. The turtle draws a line if the pen is down during this
-                                movement.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Return to home position:</p>
-                            <pre><code>
-                                turtle.home()
-                            </code></pre>
-
-                            <p>Draw from center and return:</p>
-                            <pre><code>
-                                turtle.forward(100)
-                                turtle.right(90)
-                                turtle.forward(50)
-                                turtle.home()
-                            </code></pre>
-
-                            <p>Draw multiple lines from center:</p>
-                            <pre><code>
-                                for angle in range(0, 360, 30):
-                                    turtle.home()
-                                    turtle.setheading(angle)
-                                    turtle.forward(100)
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="home-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="home-block-example-codes"></div>
-                        </div>
-                    </div>
-
-                    <!-- Color Block -->
-                    <div id="color-description" class="block-description">
-                        <h3>Color</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Color block sets the turtle's pen color. Colors can be specified by name (like "red",
-                                "blue")
-                                or using hexadecimal RGB values (like "#FF0000" for red). The color affects all
-                                subsequent drawing
-                                until changed again. You can also set separate colors for the pen and fill using
-                                advanced options.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Set pen color to red:</p>
-                            <pre><code>
-                                turtle.color("red")
-                            </code></pre>
-
-                            <p>Set using RGB values:</p>
-                            <pre><code>
-                                turtle.color("#FF5733")
-                            </code></pre>
-
-                            <p>Rainbow spiral:</p>
-                            <pre><code>
-                                colors = 
-                                [
-                                    "red", 
-                                    "orange", 
-                                    "yellow", 
-                                    "green", 
-                                    "blue", 
-                                    "purple"
-                                ]
-
-                                for i in range(36):
-                                    turtle.color(colors[i % 6])
-                                    turtle.forward(i * 2)
-                                    turtle.left(10)
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="color-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="color-block-example-codes"></div>
-                        </div>
-                    </div>
-
-                    <!-- Pen Up Block -->
-                    <div id="penup-description" class="block-description">
-                        <h3>Pen Up</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Pen Up block lifts the turtle's pen so it stops drawing while moving. This is useful
-                                for
-                                repositioning the turtle without leaving a trail. The pen state remains up until you use
-                                the
-                                Pen Down block. Combining Pen Up and Pen Down allows you to create disconnected shapes
-                                or
-                                move between drawing areas.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Move without drawing:</p>
-                            <pre><code>
-                                turtle.penup()
-                                turtle.goto(100, 100)
-                            </code></pre>
-
-                            <p>Draw disconnected squares:</p>
-                            <pre><code>
-                                for i in range(5):
-                                    turtle.penup()
-                                    turtle.goto(i * 50, i * 50)
-                                    turtle.pendown()
-                                    for _ in range(4):
-                                        turtle.forward(40)
-                                        turtle.right(90)
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="penup-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="penup-block-example-codes"></div>
-                        </div>
-                    </div>
-
-                    <!-- Pen Down Block -->
-                    <div id="pendown-description" class="block-description">
-                        <h3>Pen Down</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Pen Down block lowers the turtle's pen so it draws while moving. This is the default
-                                state
-                                when the program starts. After using Pen Up, you must use Pen Down to resume drawing.
-                                The pen
-                                draws in the current color and at the current width until changed.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Resume drawing:</p>
-                            <pre><code>
-                                turtle.pendown()
-                            </code></pre>
-
-                            <p>Draw dashed line:</p>
-                            <pre><code>
-                                for _ in range(10):
-                                    turtle.pendown()
-                                    turtle.forward(10)
-                                    turtle.penup()
-                                    turtle.forward(10)
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="pendown-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="pendown-block-example-codes"></div>
-                        </div>
-                    </div>
-
-                    <!-- Go To Block -->
-                    <div id="goto-description" class="block-description">
-                        <h3>Go To</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Go To block moves the turtle to an absolute position (x,y) on the canvas. The
-                                turtle's
-                                heading remains unchanged unless specified. If the pen is down, it draws a straight line
-                                from
-                                the current position to the new position. This is useful for precise positioning without
-                                calculating movement vectors.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Move to (100, 100):</p>
-                            <pre><code>
-                                turtle.goto(100, 100)
-                            </code></pre>
-
-                            <p>Draw a triangle:</p>
-                            <pre><code>
-                                turtle.goto(100, 0)
-                                turtle.goto(50, 86.6)
-                                turtle.goto(0, 0)
-                            </code></pre>
-
-                            <p>Random walk:</p>
-                            <pre><code>
-                                import random
-
-                                for _ in range(20):
-                                    turtle.goto(
-                                        random.randint(-200, 200), 
-                                        random.randint(-200, 200)
-                                    )
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="goto-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="goto-block-example-codes"></div>
-                        </div>
-                    </div>
-
-                    <!-- Set Position Block -->
-                    <div id="setposition-description" class="block-description">
-                        <h3>Set Position</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Set Position block moves the turtle to a specific (x,y) coordinate and optionally
-                                sets
-                                its heading (angle). Unlike Go To, this can change both position and orientation in one
-                                operation.
-                                If the pen is down, it will draw a line during the movement. This is useful for precise
-                                positioning and orientation control.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Set position and angle:</p>
-                            <pre><code>
-                                turtle.setposition(100, 100, 45)
-                            </code></pre>
-
-                            <p>Reset to center facing north:</p>
-                            <pre><code>
-                                turtle.setposition(0, 0, 90)
-                            </code></pre>
-
-                            <p>Draw a star pattern:</p>
-                            <pre><code>
-                                for angle in range(0, 360, 144):
-                                    turtle.setposition(0, 0, angle)
-                                    turtle.forward(100)
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="setposition-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="setposition-block-example-codes"></div>
-                        </div>
-                    </div>
-
-                    <!-- Pause Block -->
-                    <div id="pause-description" class="block-description">
-                        <h3>Pause</h3>
-                        <div class="description-section">
-                            <h4>Description:</h4>
-                            <p>The Pause block stops the turtle's movement for a specified number of seconds. This is
-                                useful
-                                for creating animations where you want to show intermediate steps or slow down the
-                                drawing process
-                                for demonstration purposes. The pause doesn't affect the turtle's state or position.</p>
-                        </div>
-                        <div class="python-example-section">
-                            <h4>Python Code Examples:</h4>
-
-                            <p>Pause for 2 seconds:</p>
-                            <pre><code>
-                                turtle.pause(2)
-                            </code></pre>
-
-                            <p>Animated drawing:</p>
-                            <pre><code>
-                                for i in range(36):
-                                    turtle.forward(10)
-                                    turtle.right(10)
-                                    turtle.pause(0.1)
-                            </code></pre>
-                        </div>
-                        <div class="block-code-section">
-                            <h4>Block Code:</h4>
-                            <div class="block-preview" id="pause-block-preview"></div>
-                            <h4>Block Code Examples:</h4>
-                            <div class="block-example-codes" id="pause-block-example-codes"></div>
-                        </div>
+                <!-- Movement Section -->
+                <div class="help-section-list-items">
+                    <h2>Movement</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="move-description">Move</div>
+                        <div class="block-example" data-target="turn-description">Turn</div>
+                        <div class="block-example" data-target="speed-description">Speed</div>
+                        <div class="block-example" data-target="home-description">Home</div>
+                        <div class="block-example" data-target="color-description">Color</div>
+                        <div class="block-example" data-target="penup-description">Pen Up</div>
+                        <div class="block-example" data-target="pendown-description">Pen Down</div>
+                        <div class="block-example" data-target="goto-description">Go To</div>
+                        <div class="block-example" data-target="setposition-description">Set Position</div>
+                        <div class="block-example" data-target="pause-description">Pause</div>
                     </div>
                 </div>
 
+                <!-- Screen Section -->
+                <div class="help-section-list-items">
+                    <h2>Screen</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="screen-description">Screen</div>
+                    </div>
+                </div>    
+
+            </div>
+
+            <div class="help-section-items">
+            
                 <!-- Logic Descriptions -->
                 <div class="help-section-items-list">
                     <h2>Logic Blocks</h2>
@@ -1518,6 +1111,425 @@
                     </div>
                 </div>
 
+                <!-- Movement Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Movement Blocks</h2>
+
+                    <!-- Move Block -->
+                    <div id="move-description" class="block-description">
+                        <h3>Move</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Move block controls the turtle's movement forward or backward by a specified number
+                                of units.
+                                Each unit typically corresponds to a pixel on the screen. Positive values move the
+                                turtle forward
+                                in its current heading direction, while negative values move it backward. The turtle
+                                draws a line
+                                as it moves if the pen is down.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Move forward 100 units:</p>
+                            <pre><code>
+                                t.forward(100)
+                            </code></pre>
+
+                            <p>Move backward 50 units:</p>
+                            <pre><code>
+                                t.backward(50)
+                            </code></pre>
+
+                            <p>Move in a square pattern:</p>
+                            <pre><code>
+                                for _ in range(4):
+                                    t.forward(100)
+                                    t.right(90)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="move-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="move-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Turn Block -->
+                    <div id="turn-description" class="block-description">
+                        <h3>Turn</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Turn block rotates the turtle by a specified angle in degrees. Positive angles turn
+                                the turtle
+                                to the right (clockwise), while negative angles turn it to the left (counter-clockwise).
+                                The turtle's
+                                heading changes but its position remains the same. This is useful for changing direction
+                                before moving.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Turn right 90 degrees:</p>
+                            <pre><code>
+                                t.right(90)
+                            </code></pre>
+
+                            <p>Turn left 45 degrees:</p>
+                            <pre><code>
+                                t.left(45)
+                            </code></pre>
+
+                            <p>Draw a star pattern:</p>
+                            <pre><code>
+                                for _ in range(5):
+                                    t.forward(100)
+                                    t.right(144)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="turn-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="turn-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Speed Block -->
+                    <div id="speed-description" class="block-description">
+                        <h3>Speed</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Speed block controls how fast the turtle moves. The speed can be set from 0 (fastest)
+                                to 10 (slowest).
+                                Speed 0 means no animation - the turtle jumps instantly to the new position. This is
+                                useful when you want
+                                to draw complex shapes quickly without watching the animation.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Set slow speed (1):</p>
+                            <pre><code>
+                                turtle.speed(1)
+                            </code></pre>
+
+                            <p>Set fastest speed (0):</p>
+                            <pre><code>
+                                turtle.speed(0)
+                            </code></pre>
+
+                            <p>Gradually increase speed:</p>
+                            <pre><code>
+                                for i in range(1, 11):
+                                    turtle.speed(i)
+                                    turtle.forward(50)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="speed-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="speed-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Home Block -->
+                    <div id="home-description" class="block-description">
+                        <h3>Home</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Home block moves the turtle to the origin (coordinates 0,0) and sets its heading to
+                                the default
+                                (facing right/east). This is useful for resetting the turtle's position without changing
+                                other attributes
+                                like pen state or color. The turtle draws a line if the pen is down during this
+                                movement.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Return to home position:</p>
+                            <pre><code>
+                                turtle.home()
+                            </code></pre>
+
+                            <p>Draw from center and return:</p>
+                            <pre><code>
+                                turtle.forward(100)
+                                turtle.right(90)
+                                turtle.forward(50)
+                                turtle.home()
+                            </code></pre>
+
+                            <p>Draw multiple lines from center:</p>
+                            <pre><code>
+                                for angle in range(0, 360, 30):
+                                    turtle.home()
+                                    turtle.setheading(angle)
+                                    turtle.forward(100)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="home-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="home-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Color Block -->
+                    <div id="color-description" class="block-description">
+                        <h3>Color</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Color block sets the turtle's pen color. Colors can be specified by name (like "red",
+                                "blue")
+                                or using hexadecimal RGB values (like "#FF0000" for red). The color affects all
+                                subsequent drawing
+                                until changed again. You can also set separate colors for the pen and fill using
+                                advanced options.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Set pen color to red:</p>
+                            <pre><code>
+                                turtle.color("red")
+                            </code></pre>
+
+                            <p>Set using RGB values:</p>
+                            <pre><code>
+                                turtle.color("#FF5733")
+                            </code></pre>
+
+                            <p>Rainbow spiral:</p>
+                            <pre><code>
+                                colors = 
+                                [
+                                    "red", 
+                                    "orange", 
+                                    "yellow", 
+                                    "green", 
+                                    "blue", 
+                                    "purple"
+                                ]
+
+                                for i in range(36):
+                                    turtle.color(colors[i % 6])
+                                    turtle.forward(i * 2)
+                                    turtle.left(10)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="color-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="color-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pen Up Block -->
+                    <div id="penup-description" class="block-description">
+                        <h3>Pen Up</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Pen Up block lifts the turtle's pen so it stops drawing while moving. This is useful
+                                for
+                                repositioning the turtle without leaving a trail. The pen state remains up until you use
+                                the
+                                Pen Down block. Combining Pen Up and Pen Down allows you to create disconnected shapes
+                                or
+                                move between drawing areas.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Move without drawing:</p>
+                            <pre><code>
+                                turtle.penup()
+                                turtle.goto(100, 100)
+                            </code></pre>
+
+                            <p>Draw disconnected squares:</p>
+                            <pre><code>
+                                for i in range(5):
+                                    turtle.penup()
+                                    turtle.goto(i * 50, i * 50)
+                                    turtle.pendown()
+                                    for _ in range(4):
+                                        turtle.forward(40)
+                                        turtle.right(90)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="penup-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="penup-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pen Down Block -->
+                    <div id="pendown-description" class="block-description">
+                        <h3>Pen Down</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Pen Down block lowers the turtle's pen so it draws while moving. This is the default
+                                state
+                                when the program starts. After using Pen Up, you must use Pen Down to resume drawing.
+                                The pen
+                                draws in the current color and at the current width until changed.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Resume drawing:</p>
+                            <pre><code>
+                                turtle.pendown()
+                            </code></pre>
+
+                            <p>Draw dashed line:</p>
+                            <pre><code>
+                                for _ in range(10):
+                                    turtle.pendown()
+                                    turtle.forward(10)
+                                    turtle.penup()
+                                    turtle.forward(10)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="pendown-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="pendown-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Go To Block -->
+                    <div id="goto-description" class="block-description">
+                        <h3>Go To</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Go To block moves the turtle to an absolute position (x,y) on the canvas. The
+                                turtle's
+                                heading remains unchanged unless specified. If the pen is down, it draws a straight line
+                                from
+                                the current position to the new position. This is useful for precise positioning without
+                                calculating movement vectors.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Move to (100, 100):</p>
+                            <pre><code>
+                                turtle.goto(100, 100)
+                            </code></pre>
+
+                            <p>Draw a triangle:</p>
+                            <pre><code>
+                                turtle.goto(100, 0)
+                                turtle.goto(50, 86.6)
+                                turtle.goto(0, 0)
+                            </code></pre>
+
+                            <p>Random walk:</p>
+                            <pre><code>
+                                import random
+
+                                for _ in range(20):
+                                    turtle.goto(
+                                        random.randint(-200, 200), 
+                                        random.randint(-200, 200)
+                                    )
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="goto-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="goto-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Set Position Block -->
+                    <div id="setposition-description" class="block-description">
+                        <h3>Set Position</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Set Position block moves the turtle to a specific (x,y) coordinate and optionally
+                                sets
+                                its heading (angle). Unlike Go To, this can change both position and orientation in one
+                                operation.
+                                If the pen is down, it will draw a line during the movement. This is useful for precise
+                                positioning and orientation control.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Set position and angle:</p>
+                            <pre><code>
+                                turtle.setposition(100, 100, 45)
+                            </code></pre>
+
+                            <p>Reset to center facing north:</p>
+                            <pre><code>
+                                turtle.setposition(0, 0, 90)
+                            </code></pre>
+
+                            <p>Draw a star pattern:</p>
+                            <pre><code>
+                                for angle in range(0, 360, 144):
+                                    turtle.setposition(0, 0, angle)
+                                    turtle.forward(100)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="setposition-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="setposition-block-example-codes"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pause Block -->
+                    <div id="pause-description" class="block-description">
+                        <h3>Pause</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Pause block stops the turtle's movement for a specified number of seconds. This is
+                                useful
+                                for creating animations where you want to show intermediate steps or slow down the
+                                drawing process
+                                for demonstration purposes. The pause doesn't affect the turtle's state or position.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Pause for 2 seconds:</p>
+                            <pre><code>
+                                turtle.pause(2)
+                            </code></pre>
+
+                            <p>Animated drawing:</p>
+                            <pre><code>
+                                for i in range(36):
+                                    turtle.forward(10)
+                                    turtle.right(10)
+                                    turtle.pause(0.1)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="pause-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="pause-block-example-codes"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- -->
                 <button id="backToTopBtn" class="back-to-top" title="Go to top">
                     <i class="fas fa-arrow-up"></i>
                 </button>

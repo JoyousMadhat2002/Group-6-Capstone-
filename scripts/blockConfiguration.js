@@ -142,14 +142,6 @@ const blockCategory = {
         parentElement: "block",
         childElement: ["block", "operator", "operand1", "operand2"],
       },
-      {
-        name: "Comma Separated",
-        blockID: "commaSeparated",
-        description: "A block that combines values with commas",
-        type: "logical",
-        parentElement: "block",
-        childElement: ["block", "operand1", "operand2"],
-      },
     ],
   },
 
