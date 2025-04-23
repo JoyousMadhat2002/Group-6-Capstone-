@@ -189,12 +189,10 @@ body {
 .handle1:hover,
 .handle2:hover {
   background-color: #999999;
-  width: 25px;
 }
 
 .handle3:hover {
   background-color: #999999;
-  height: 25px;
 }
 
 .code-container {
@@ -1196,9 +1194,9 @@ code {
 }
 
 .section-label {
-  background-color: #444;
-  color: white;
-  padding: 8px 10px;
+  background-color: #E0E0E0;
+  color: #000000;
+  padding: 6px 12px;
   font-weight: bold;
   text-align: center;
   height: fit-content;
