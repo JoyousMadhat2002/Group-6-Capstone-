@@ -716,7 +716,7 @@ function runCode() {
   mypre.innerHTML = ""; // Clear previous output
 
   Sk.pre = "output";
-  console.log(Sk);
+  //console.log(Sk);
   Sk.configure({ output: outf, read: builtinRead });
   (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = "mycanvas";
 
@@ -727,14 +727,23 @@ import math
 import random
 `;
 
+  const setupLines = turtleSetupCode.split("\n").length;
   var cleanedProg = prog.trimStart();
   console.log("user code:", prog);
   var fullProg = turtleSetupCode + "\n" + cleanedProg;
-  console.log("Combined code:", fullProg);
+  //console.log("Combined code:", fullProg);
 
-  var myPromise = Sk.misceval.asyncToPromise(function () {
-    return Sk.importMainWithBody("<stdin>", false, fullProg, true);
-  });
+  try {
+    Sk.misceval
+      .asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, fullProg, true))
+      .catch(err => {
+        const formatted = formatSkulptError(err, setupLines);
+        mypre.innerHTML += formatted;
+      });
+  } catch (err) {
+    const formatted = formatSkulptError(err, setupLines);
+    mypre.innerHTML += formatted;
+  }
 }
 
 window.runCode = runCode;
@@ -795,6 +804,27 @@ function builtinRead(x) {
   )
     throw "File not found: '" + x + "'";
   return Sk.builtinFiles["files"][x];
+}
+
+function formatSkulptError(err, offset) {
+  let errorText = "";
+  if (err instanceof Sk.builtin.BaseException) {
+    errorText = err.toString();
+  } else {
+    errorText = err.toString();
+  }
+
+  errorText = errorText.replace(/on line (\d+)/g, function (match, p1) {
+    const lineNum = parseInt(p1, 10) - offset;
+    return `on line ${lineNum > 0 ? lineNum : 1}`;
+  });
+
+  errorText = errorText
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br>");
+
+  return `<span style="color: red;">${errorText}</span><br>`;
 }
 
 // ==========================
