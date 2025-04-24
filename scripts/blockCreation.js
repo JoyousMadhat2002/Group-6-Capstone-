@@ -130,7 +130,7 @@ export function newBlock(blockID, customContainer = null) {
     } else if (blockID === "mathConstants" || blockID === "roundAbs" || blockID === "basicArithmetic" || 
                blockID === "logExp" || blockID === "trigFunctions") {
         handleMathFunctionBlock(newBlock, blockID);
-    } else if (blockID === "range") {
+    } else if (blockID === "range" || blockID === "inBlock") {
         handleRangeBlock(newBlock);
     } else if (blockID === 'random') {
         handleRandomBlock(newBlock, blockID);
@@ -594,7 +594,12 @@ function handleRangeBlock(block) {
     container.appendChild(leftContainer);
 
     const inRangeText = document.createElement("span");
-    inRangeText.textContent = "in range";
+    if (block.dataset.blockID === "range") {
+        inRangeText.textContent = "in range";
+    }
+    else if (block.dataset.blockID === "inBlock") {
+        inRangeText.textContent = "in";
+    }
     container.appendChild(inRangeText);
 
     const rightContainer = createChildBoxHorizontal(block.id, block.dataset.blockID);

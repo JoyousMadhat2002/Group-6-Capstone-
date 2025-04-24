@@ -200,6 +200,14 @@ const blockCategory = {
         parentElement: "block",
         childElement: ["start", "end", "step"],
       },
+      {
+        name: "In Block",
+        blockID: "inBlock",
+        description: "Range function for loops with different names",
+        type: "loop",
+        parentElement: "block",
+        childElement: ["value", "range"],
+      },
     ],
   },
 
