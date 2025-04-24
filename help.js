@@ -1,4 +1,4 @@
-import { newBlock, userVariables } from './scripts/blockCreation.js';
+import { newBlock } from './scripts/blockCreation.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const backToTopBtn = document.getElementById('backToTopBtn');
