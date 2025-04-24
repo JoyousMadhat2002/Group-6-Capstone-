@@ -816,6 +816,28 @@ function setupKeydownListener() {
   });
 }
 
+function setUpTutorialListener() {
+  function launchTutorial() {
+    const intro = introJs();
+
+    intro.oncomplete(() => {
+      localStorage.setItem("tutorialCompleted", "true");
+    });
+
+    intro.start();
+  }
+
+  // Auto-run tutorial if it's the user's first time (stored in localStorage in browser>: Insepct Element>Application>Local Storage) 
+  if (!localStorage.getItem("tutorialCompleted")) {
+    launchTutorial();
+  }
+
+  // Run tutorial from burger menu
+  document.getElementById("viewTutorialBtn").addEventListener("click", () => {
+    launchTutorial();
+  });
+}
+
 function setupFileNameModalEvents() {
   const input = document.getElementById("fileNameInput");
   const modal = document.getElementById("fileNameModal");
@@ -1270,6 +1292,7 @@ function setUpApp() {
   setupClearHighlightsOnClickListener();
   loadSavedFileFromDashboard();
   setupFileNameModalEvents();
+  setUpTutorialListener();
   //initializeMiscellaneous();
 }
 
