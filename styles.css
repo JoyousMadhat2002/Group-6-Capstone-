@@ -348,7 +348,8 @@ button:hover {
   cursor: pointer;
 }
 
-#variableNameInput {
+#variableNameInput,
+#fileNameInput {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
@@ -357,6 +358,8 @@ button:hover {
 }
 
 #submitVariable,
+#submitFileName,
+#cancelFileName,
 #cancelVariable {
   padding: 10px 20px;
   margin: 5px;
@@ -365,12 +368,14 @@ button:hover {
   cursor: pointer;
 }
 
-#submitVariable {
+#submitVariable,
+#submitFileName {
   background-color: #4CAF50;
   color: white;
 }
 
-#cancelVariable {
+#cancelVariable,
+#cancelFileName {
   background-color: #f44336;
   color: white;
 }

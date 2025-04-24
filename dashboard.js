@@ -15,7 +15,9 @@ import {
   db, 
   collection, 
   doc, 
-  getDocs, 
+  getDoc,
+  getDocs,
+  setDoc,
   Timestamp,
   updateDoc,
   deleteDoc,
@@ -132,10 +134,29 @@ onAuthStateChanged(auth, async (user) => {
                   const newName = input.value.trim();
                   if (newName && newName !== originalName) {
                     try {
-                      await updateDoc(doc(db, "users", userId, "projects", fileId), {
-                        name: newName,
-                        timestamp: Timestamp.now()
-                      });
+                      const oldDocRef = doc(db, "users", userId, "projects", fileId);
+                      const newDocRef = doc(db, "users", userId, "projects", newName);
+                      
+                      // Get old data
+                      const oldDocSnap = await getDoc(oldDocRef);
+                      if (oldDocSnap.exists()) {
+                        const oldData = oldDocSnap.data();
+                      
+                        // Create new doc with updated name
+                        await setDoc(newDocRef, {
+                          ...oldData,
+                          name: newName,
+                          timestamp: Timestamp.now()
+                        });
+                      
+                        // Delete old doc
+                        await deleteDoc(oldDocRef);
+                      
+                        location.reload(); // Refresh dashboard
+                      } else {
+                        alert("Original file not found.");
+                      }
+                      
                       location.reload(); // Refresh list
                     } catch (err) {
                       alert("Rename failed");
@@ -203,3 +224,10 @@ async function deleteFile(userId, fileId) {
     alert("Failed to delete file.");
   }
 }
+
+// New project button
+document.getElementById("newProjectButton").addEventListener("click", () => {
+  localStorage.removeItem("loadedFileName");
+  localStorage.removeItem("loadedFileContent");
+  window.location.href = "index.html";
+});

@@ -807,6 +807,46 @@ function setupKeydownListener() {
       runCode();
     }
   });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.ctrlKey && event.key === "s") {
+      event.preventDefault();
+      saveFile();
+    }
+  });
+}
+
+function setupFileNameModalEvents() {
+  const input = document.getElementById("fileNameInput");
+  const modal = document.getElementById("fileNameModal");
+
+  document.getElementById("submitFileName").addEventListener("click", () => {
+    const name = input.value.trim();
+    if (name) {
+      modal.style.display = "none";
+      input.value = "";
+      saveFile(name);
+    } else {
+      showNotification("Please enter a valid filename.", "red");
+    }
+  });
+
+  document.getElementById("fileNameInput").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("submitFileName").click();
+    }
+  });
+
+  document.getElementById("cancelFileName").addEventListener("click", () => {
+    modal.style.display = "none";
+    input.value = "";
+  });
+
+  document.getElementById("closeFileNameModal").addEventListener("click", () => {
+    modal.style.display = "none";
+    input.value = "";
+  });
 }
 
 function setupClearHighlightsOnClickListener() {
@@ -854,17 +894,23 @@ function setupButtonFunctionalityListeners() {
 let currentFileName = null;
 
 // Function to save or update a file in Firestore
-function saveFile() {
+function saveFile(filenameOverride = null) {
   const user = auth.currentUser;
   if (!user) {  //check if user is logged in
     showNotification("You must be logged in to save files.", "red");
     return;
   }
 
-  let fileName = currentFileName;   //check if updating an existing file
+  let fileName = filenameOverride || currentFileName;   //check if updating an existing file
+
   if (!fileName) {
-    fileName = prompt("Enter a file name (e.g., my_script.py):");
-    if (!fileName) return; //if user cancels, do nothing
+    const modal = document.getElementById("fileNameModal");
+    const input = document.getElementById("fileNameInput");
+  
+    modal.style.display = "block";
+    setTimeout(() => input.focus(), 100); // Wait a tick to ensure modal is visible
+  
+    return;
   }
 
   const fileContent = getCode();  //get the code from the editor
@@ -873,8 +919,12 @@ function saveFile() {
     return;
   }
 
-  const fileType = fileName.endsWith(".py") ? "python" : "text";  //allows saving as .py or .txt
+  const fileType = typeof fileName === "string" && fileName.endsWith(".py") ? "python" : "text";
   const userFilesRef = collection(db, "users", user.uid, "projects");
+  if (typeof fileName !== "string") {
+    showNotification("Invalid filename. Please save with a valid name.", "red");
+    return;
+  }
   const fileDoc = doc(userFilesRef, fileName);
 
   setDoc(fileDoc, {   //save the file in database
@@ -900,7 +950,9 @@ function saveFile() {
 }
 
 //event listener for save button (might move to SetUpApp() later)
-document.getElementById("saveButton").addEventListener("click", saveFile);
+document.getElementById("saveButton").addEventListener("click", () => {
+  saveFile();
+});
 
 // Function to load a saved file from Firestore
 function loadSavedFileFromDashboard() {
@@ -1217,6 +1269,7 @@ function setUpApp() {
   setupDraggableBlocks();
   setupClearHighlightsOnClickListener();
   loadSavedFileFromDashboard();
+  setupFileNameModalEvents();
   //initializeMiscellaneous();
 }
 
