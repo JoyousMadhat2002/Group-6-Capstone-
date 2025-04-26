@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/introjs.css">
     <title>Pencil-PythonCode</title>
     <script type="importmap">
         {
@@ -20,29 +21,30 @@
 <body>
     <div class="header">
         <div class="nav-left">
-            <button class="burgerbtn"><i class="fa fa-bars"></i></button>
+            <button class="burgerbtn" data-intro="Hover here to open the menu for navigation, help, and settings. You can also access the tutorial again here." data-step="5"><i class="fa fa-bars"></i></button>
             <div class="burger-menu" id="burgerMenu">
                 <button id="homeButton"><a href="dashboard.html">Home</a></button>
                 <button id="aboutButton">About</button>
                 <button id="settingsButton">Settings</button>
+                <button id="viewTutorialBtn">Tutorial</button>
+                <button id="helpButton"><a href="help.html">Help</a></button>
                 <button id="loginButton">Log in</button>
+
             </div>
         </div>
-        
+
         <span id="file-name-display" class="file-name-display">(no file loaded)</span>
 
         <div class="nav-right">
             <button class="Button" name="btt">btt</button>
             <button class="Button" name="ttb">ttb</button>
-            <button class="Button" name="toggleView" id="toggleButton">Python</button>
+            <button class="Button" name="toggleView" id="toggleButton" data-intro="Toggle between visual blocks and raw Python code." data-step="2">Python</button>
 
-            <button id="run-code-btn" class="run-code-btn" onclick="runCode()" 
-                    data-tooltip="Run Program (Ctrl+Enter)">
+            <button id="run-code-btn" class="run-code-btn" onclick="runCode()" data-tooltip="Run Program (Ctrl+Enter)" data-intro="Click here to run your Python code. You can also press Ctrl + Enter." data-step="3">
                 <i class="icon-play"></i>
             </button>
 
-            <button id="saveButton" class="saveButton run-code-btn" 
-                    data-tooltip="Save Program (Ctrl+S)">
+            <button id="saveButton" class="saveButton run-code-btn" data-tooltip="Save Program (Ctrl+S)" data-intro="Click here or press Ctrl + S to save your code." data-step="4">
                 <i class="fas fa-save"></i>
             </button>
 
@@ -52,7 +54,8 @@
 
     <div class="body-container">
         <div class="code-container">
-            <div class="category">
+            <div class="section-label">Block Categories</div>
+            <div class="category" data-intro="Click block categories to expand them and click a block to add it into the workspace." data-step="1">
                 <div class="category-header">
                     <h4>Logic</h4>
                 </div>
@@ -97,19 +100,16 @@
 
             <div class="code-result">
 
-                <div class="codes">
+                <div class="block-code-result-container" id="block-container" data-blockDepth=0>
+                    <!-- Block code input area -->
+                    <div class="code-lines"></div>
 
-                    <div class="block-code-result-container" id="block-container" data-blockDepth=0>
-                        <!-- Block code input area -->
-                        <div class="code-lines"></div>
+                    <div class="block-code-result" id="box-container" data-block-depth=0></div>
+                </div>
 
-                        <div class="block-code-result" id="box-container" data-block-depth=0></div>
-                    </div>
-
-                    <div class="python-code-result hidden" id="python-code-result">
-                        <!-- Python text input area -->
-                        <div id="pythontext"></div>
-                    </div>
+                <div class="python-code-result hidden" id="python-code-result">
+                    <!-- Python text input area -->
+                    <div id="pythontext"></div>
                 </div>
             </div>
         </div>
@@ -117,13 +117,15 @@
         <div class="handle2"></div>
 
         <div class="output-graph">
+            <div class="section-label">Graph</div>
             <div id="mycanvas"></div>
             <div class="handle3"></div>
+            <div class="section-label">Program Output</div>
             <div id="output"></div>
-        </div>
+          </div>
     </div>
 
-    
+
 
     <div id="variableModal" class="modal">
         <div class="modal-content">
@@ -134,13 +136,24 @@
             <button id="cancelVariable">Cancel</button>
         </div>
     </div>
-    
+
     <div class="bottom-bar"></div>
+
+    <div id="fileNameModal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="closeFileNameModal">&times;</span>
+          <h2>Save File</h2>
+          <input type="text" id="fileNameInput" placeholder="Enter filename (e.g., my_code.py)">
+          <button id="submitFileName">Save</button>
+          <button id="cancelFileName">Cancel</button>
+        </div>
+    </div>
 </body>
 
 <!-- link to script file for functions -->
 <script type="module" src="scripts/authDialogs.js"></script>
 <script type="module" src="/scripts.js"></script>
+<script src="https://unpkg.com/intro.js/intro.js"></script>
 <script src="skulpt-dist-master/skulpt.min.js" type="text/javascript"></script>
 <script src="skulpt-dist-master/skulpt-stdlib.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script>

@@ -1,43 +1,28 @@
 // Import Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+//
+// import { 
+//   collection, 
+//   doc, 
+//   getDocs, 
+//   Timestamp,
+//   updateDoc,
+//   deleteDoc,
+// } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
+import { openLoginDialog } from "./scripts/authDialogs.js";
 import { 
-    getFirestore, 
-    collection, 
-    doc, 
-    setDoc, 
-    getDoc, 
-    getDocs, 
-    Timestamp,
-    updateDoc,
-    deleteDoc,
-  } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
-
-import {
-    openLoginDialog,
-    createLoginDialog,
-    createSignupDialog,
-    attemptLogin,
-    attemptSignup,
-    logoutUser,
-    closeDialogBoxes
-  } from "./scripts/authDialogs.js";
-
-// Firebase configuration
-const firebaseConfig = {
-	apiKey: "AIzaSyCteFAmh1TjbbQB0hsbBwcbqwK8mofMO4Y",
-	authDomain: "b-coders-database.firebaseapp.com",
-	projectId: "b-coders-database",
-	storageBucket: "b-coders-database.appspot.com",
-	messagingSenderId: "268773123996",
-	appId: "1:268773123996:web:fec77ef63557a9c6b50a59",
-	measurementId: "G-92LTT20BXB"
-  };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  auth, 
+  db, 
+  collection, 
+  doc, 
+  getDoc,
+  getDocs,
+  setDoc,
+  Timestamp,
+  updateDoc,
+  deleteDoc,
+  onAuthStateChanged, 
+} from "./scripts/firebaseConfig.js";
 
 function timeAgo(date) {
   const now = new Date();
@@ -149,10 +134,29 @@ onAuthStateChanged(auth, async (user) => {
                   const newName = input.value.trim();
                   if (newName && newName !== originalName) {
                     try {
-                      await updateDoc(doc(db, "users", userId, "projects", fileId), {
-                        name: newName,
-                        timestamp: Timestamp.now()
-                      });
+                      const oldDocRef = doc(db, "users", userId, "projects", fileId);
+                      const newDocRef = doc(db, "users", userId, "projects", newName);
+                      
+                      // Get old data
+                      const oldDocSnap = await getDoc(oldDocRef);
+                      if (oldDocSnap.exists()) {
+                        const oldData = oldDocSnap.data();
+                      
+                        // Create new doc with updated name
+                        await setDoc(newDocRef, {
+                          ...oldData,
+                          name: newName,
+                          timestamp: Timestamp.now()
+                        });
+                      
+                        // Delete old doc
+                        await deleteDoc(oldDocRef);
+                      
+                        location.reload(); // Refresh dashboard
+                      } else {
+                        alert("Original file not found.");
+                      }
+                      
                       location.reload(); // Refresh list
                     } catch (err) {
                       alert("Rename failed");
@@ -220,3 +224,10 @@ async function deleteFile(userId, fileId) {
     alert("Failed to delete file.");
   }
 }
+
+// New project button
+document.getElementById("newProjectButton").addEventListener("click", () => {
+  localStorage.removeItem("loadedFileName");
+  localStorage.removeItem("loadedFileContent");
+  window.location.href = "index.html";
+});

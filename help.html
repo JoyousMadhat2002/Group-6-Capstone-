@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencil-Python - Help</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="nav-left">
+            <button class="burgerbtn" onclick="toggleBurgerMenu()"><i class="fa fa-bars"></i></button>
+            <div class="burger-menu" id="burgerMenu">
+                <button id="homeButton"><a href="dashboard.html">Home</a></button>
+                <button id="aboutButton">About</button>
+                <button id="settingsButton">Settings</button>
+                <button id="helpButton"><a href="help.html">Help</a></button>
+                <button id="loginButton">Log in</button>
+            </div>
+        </div>
+        <span id="file-name-display" class="file-name-display">(no file loaded)</span>
+        <div class="nav-right">
+            <button class="Button" onclick="window.location.href='index.html'">Back to Editor</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="help-container">
+            <div class="help-section-list">
+                
+                <!-- Logic Section -->
+                <div class="help-section-list-items">
+                    <h2>Logic</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="if-description">if</div>
+                        <div class="block-example" data-target="while-description">while</div>
+                        <div class="block-example" data-target="for-description">for</div>
+                        <div class="block-example" data-target="logicalblock-description">Logical Block</div>
+                    </div>
+                </div>
+
+                <!-- Math Section -->
+                <div class="help-section-list-items">
+                    <h2>Math</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="mathtext-description">Math Text Block</div>
+                        <div class="block-example" data-target="mathblock-description">Math Block</div>
+                    </div>
+                </div>
+
+                <!-- Comparison Section -->
+                <div class="help-section-list-items">
+                    <h2>Comparison</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="comparisonblock-description">Comparison Block</div>
+                        <div class="block-example" data-target="range-description">Range</div>
+                    </div>
+                </div>
+
+                <!-- Functions Section -->
+                <div class="help-section-list-items">
+                    <h2>Functions</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="print-description">print</div>
+                        <div class="block-example" data-target="text-description">Text</div>
+                        <div class="block-example" data-target="random-description">Random</div>
+                        <div class="block-example" data-target="mathconstants-description">Math Constants</div>
+                        <div class="block-example" data-target="roundabs-description">Rounding and Absolute Value</div>
+                        <div class="block-example" data-target="basicarithmetic-description">Basic Arithmetic</div>
+                        <div class="block-example" data-target="logexp-description">Logarithms and Exponents</div>
+                        <div class="block-example" data-target="trigfunctions-description">Trigonometry</div>
+                    </div>
+                </div>
+
+                <!-- Variables Section -->
+                <div class="help-section-list-items">
+                    <h2>Variables</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="vardeclaration-description">Variable Declaration</div>
+                        <div class="block-example" data-target="varoperations-description">Variable Operations</div>
+                        <div class="block-example" data-target="variableblock-description">Variable Block</div>
+                    </div>
+                </div>
+
+                <!-- Movement Section -->
+                <div class="help-section-list-items">
+                    <h2>Movement</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="move-description">Move</div>
+                        <div class="block-example" data-target="turn-description">Turn</div>
+                        <div class="block-example" data-target="speed-description">Speed</div>
+                        <div class="block-example" data-target="home-description">Home</div>
+                        <div class="block-example" data-target="color-description">Color</div>
+                        <div class="block-example" data-target="penup-description">Pen Up</div>
+                        <div class="block-example" data-target="pendown-description">Pen Down</div>
+                        <div class="block-example" data-target="goto-description">Go To</div>
+                        <div class="block-example" data-target="setposition-description">Set Position</div>
+                        <div class="block-example" data-target="pause-description">Pause</div>
+                    </div>
+                </div>
+
+                <!-- Screen Section -->
+                <div class="help-section-list-items">
+                    <h2>Screen</h2>
+                    <div class="block-example-container">
+                        <div class="block-example" data-target="screen-description">Screen</div>
+                    </div>
+                </div>    
+
+            </div>
+
+            <div class="help-section-items">
+            
+                <!-- Logic Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Logic Blocks</h2>
+
+                    <!-- If Block -->
+                    <div id="if-description" class="block-description">
+                        <h3>if</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The If block executes code only when a specified condition is true. Conditions typically
+                                involve
+                                comparisons (like x > 5) or boolean values. You can chain multiple conditions using
+                                'elif' (else if)
+                                and provide an 'else' case for when no conditions are met. This is fundamental for
+                                creating
+                                decision-making in your programs.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Simple if statement:</p>
+                            <pre><code>
+                                if x > 10:
+                                    print("x is greater than 10")
+                            </code></pre>
+
+                            <p>If-elif-else chain:</p>
+                            <pre><code>
+                                if score >= 90:
+                                    grade = "A"
+                                elif score >= 80:
+                                    grade = "B"
+                                else:
+                                    grade = "C"
+                            </code></pre>
+
+                            <p>Nested if statements:</p>
+                            <pre><code>
+                                if temperature > 30:
+                                    if is_sunny:
+                                        print("Go to the beach!")
+                                    else:
+                                        print("It's hot but not sunny")
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="if-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="if-block-example-codes">
+                                <p>Simple if statement:</p>
+                                <div class="block-example-code" id="if-block-example-code-1">
+                                    <img src="images/simple-if-statement.png" 
+                                    alt="image of simple if statement">
+                                </div>
+
+                                <p>If-elif-else chain:</p>
+                                <div class="block-example-code" id="if-block-example-code-2">
+                                    <img src="images/if-elif-else-chain.png" 
+                                    alt="image of if-elif-else chain">
+                                </div>
+
+                                <p>Nested if statements:</p>
+                                <div class="block-example-code" id="if-block-example-code-3">
+                                    <img src="images/nested-if-statements.png" 
+                                    alt="image of nested-if statements">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- While Block -->
+                    <div id="while-description" class="block-description">
+                        <h3>while</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The While block repeatedly executes code as long as a condition remains true. It's useful
+                                for
+                                creating loops that continue until some condition changes. Be careful to ensure the
+                                condition
+                                eventually becomes false to avoid infinite loops. While loops are ideal when you don't
+                                know
+                                in advance how many iterations will be needed.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Countdown loop:</p>
+                            <pre><code>
+                                count = 5
+                                while count > 0:
+                                    print(count)
+                                    count -= 1
+                            </code></pre>
+
+                            <p>Turtle spiral:</p>
+                            <pre><code>
+                                length = 10
+                                while length < 200:
+                                    turtle.forward(length)
+                                    turtle.right(90)
+                                    length += 5
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="while-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="while-block-example-codes">
+                                <p>Countdown loop:</p>
+                                <div class="block-example-code" id="while-block-example-code-1">
+                                    <img src="images/countdown-loop.png" 
+                                    alt="image of countdown loop">
+                                </div>
+
+                                <p>Turtle spiral:</p>
+                                <div class="block-example-code" id="while-block-example-code-2">
+                                    <img src="images/turtle-spiral.png" 
+                                    alt="image of turtle spiral">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- For Block -->
+                    <div id="for-description" class="block-description">
+                        <h3>for</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The For block repeats code a specific number of times, typically iterating over a
+                                sequence
+                                of items. It's ideal when you know in advance how many times you want to repeat an
+                                operation.
+                                The loop variable automatically takes each value in the sequence, eliminating the need
+                                for
+                                manual counter management.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Simple count:</p>
+                            <pre><code>
+                                for i in range(5):
+                                    print(i)
+                            </code></pre>
+
+                            <p>Iterate through a list:</p>
+                            <pre><code>
+                                colors = ["red", "green", "blue"]
+                                for color in colors:
+                                    turtle.color(color)
+                                    turtle.forward(50)
+                                    turtle.right(120)
+                            </code></pre>
+
+                            <p>Nested loops for grid:</p>
+                            <pre><code>
+                                for x in range(0, 200, 50):
+                                    for y in range(0, 200, 50):
+                                        turtle.penup()
+                                        turtle.goto(x, y)
+                                        turtle.pendown()
+                                        turtle.circle(20)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="for-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="for-block-example-codes">
+                                <p>Simple count:</p>
+                                <div class="block-example-code" id="for-block-example-code-1">
+                                    <img src="images/simple-count.png" 
+                                    alt="image of simple count">
+                                </div>
+
+                                <p>Iterate through a list:</p>
+                                <div class="block-example-code" id="for-block-example-code-2">
+                                    <img src="images/iterate-through-list.png" 
+                                    alt="image of iterate through list">
+                                </div>
+
+                                <p>Nested loops for grid:</p>
+                                <div class="block-example-code" id="for-block-example-code-3">
+                                    <img src="images/nested-loops-for-grid.png" 
+                                    alt="image of nested loops grid">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logical Block -->
+                    <div id="logicalblock-description" class="block-description">
+                        <h3>Logical Block</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Logical Block combines boolean conditions using AND, OR, and NOT operations. AND
+                                requires
+                                both conditions to be true, OR requires at least one to be true, and NOT inverts the
+                                condition.
+                                These are essential for creating complex conditional statements by combining simpler
+                                conditions.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>AND operator:</p>
+                            <pre><code>
+                                if x > 5 and y < 10:
+                                    print("Condition met")
+                            </code></pre>
+
+                            <p>OR operator:</p>
+                            <pre><code>
+                                if color == "red" or color == "blue":
+                                    print("Primary color")
+                            </code></pre>
+
+                            <p>NOT operator:</p>
+                            <pre><code>
+                                if not is_raining:
+                                    print("Let's go outside!")
+                            </code></pre>
+
+                            <p>Combined conditions:</p>
+                            <pre><code>
+                                if (age >= 18 and has_id) or is_with_parent:
+                                    print("Allowed to enter")
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="logical-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="logical-block-example-codes">
+                                <p>AND operator:</p>
+                                <div class="block-example-code" id="logical-block-example-code-1">
+                                    <img src="images/and-operator.png" 
+                                    alt="image of and operator">
+                                </div>
+
+                                <p>Combined Conditions:</p>
+                                <div class="block-example-code" id="logical-block-example-code-2">
+                                    <img src="images/combined-operator.png" 
+                                    alt="image of combined conditions">
+                                </div>
+                            </div>
+                        </div>
+                    </div>               
+                </div>
+
+                <!-- Math Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Math Blocks</h2>
+
+                    <!-- Math Text Block -->
+                    <div id="mathtext-description" class="block-description">
+                        <h3>Math Text Block</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Math Text Block allows numeric input that can be used in calculations and other math
+                                operations.
+                                It validates that the input is a valid number (integer or decimal). This block is often
+                                used as
+                                input for other math operations or as parameters for movement commands.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Simple number:</p>
+                            <pre><code>
+                                42
+                            </code></pre>
+
+                            <p>Decimal number:</p>
+                            <pre><code>
+                                3.14159
+                            </code></pre>
+
+                            <p>Negative number:</p>
+                            <pre><code>
+                                -15
+                            </code></pre>
+
+                            <p>Used in calculation:</p>
+                            <pre><code>
+                                radius = 10
+                                circumference = 2 * 3.14159 * radius
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="mathtext-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="mathtext-block-example-codes">
+                                <p>Used in calculation:</p>
+                                <div class="block-example-code" id="mathtext-block-example-code-1">
+                                    <img src="images/used-in-calculation.png" 
+                                    alt="image of used in calculation">
+                                </div>
+                            </div>    
+                        </div>
+                    </div>
+
+                    <!-- Math Block -->
+                    <div id="mathblock-description" class="block-description">
+                        <h3>Math Block</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Math Block performs arithmetic operations (addition, subtraction, multiplication,
+                                division)
+                                and more advanced mathematical functions. It can combine multiple operations with proper
+                                operator
+                                precedence. This is the fundamental block for all mathematical calculations in your
+                                programs.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Basic arithmetic:</p>
+                            <pre><code>
+                                5 + 3
+                            </code></pre>
+                            <pre><code>
+                                10 - 4
+                            </code></pre>
+                            <pre><code>
+                                6 * 7
+                            </code></pre>
+                            <pre><code>
+                                20 / 5
+                            </code></pre>
+
+                            <p>Combined operations:</p>
+                            <pre><code>
+                                (5 + 3) * (10 - 2)
+                            </code></pre>
+
+                            <p>Using variables:</p>
+                            <pre><code>
+                                x = 10
+                                y = x * 2 + 5
+                            </code></pre>
+
+                            <p>Turtle example:</p>
+                            <pre><code>
+                                for i in range(4):
+                                    turtle.forward(50 + i * 10)
+                                    turtle.right(90)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="math-block-preview"></div>
+                            <h4>Block Code Examples:</h4>
+                            <div class="block-example-codes" id="math-block-example-codes">
+                                <p>Combined operations:</p>
+                                <div class="block-example-code" id="math-block-example-code-2">
+                                    <img src="images/combined-operations.png" 
+                                    alt="image of combined operations">
+                                </div>
+
+                                <p>Turtle example:</p>
+                                <div class="block-example-code" id="math-block-example-code-3">
+                                    <img src="images/turtle-example.png" 
+                                    alt="image of turtle example">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Comparison Blocks</h2>
+
+                    <!-- Comparison Block -->
+                    <div id="comparisonblock-description" class="block-description">
+                        <h3>Comparison Block</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Comparison Block compares two values using standard comparison operators: equal (==),
+                                not equal (!=),
+                                greater than (>), less than (<), greater than or equal (>=), and less than or equal (
+                                    <=). These are fundamental for creating conditional statements and controlling
+                                        program flow.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Equality:</p>
+                            <pre><code>
+                                5 == 5     # True
+                            </code></pre>
+                            <pre><code>
+                                5 == 3     # False
+                            </code></pre>
+
+                            <p>Inequality:</p>
+                            <pre><code>
+                                5 != 3     # True
+                            </code></pre>
+                            <pre><code>
+                                5 != 5     # False
+                            </code></pre>
+
+                            <p>Greater/less than:</p>
+                            <pre><code>
+                                10 > 5     # True
+                            </code></pre>
+                            <pre><code>
+                                5 < 3      # False
+                            </code></pre>
+
+                            <p>Greater/less than or equal:</p>
+                            <pre><code>
+                                5 >= 5     # True
+                            </code></pre>
+                            <pre><code>
+                                4 <= 3     # False
+                            </code></pre>
+
+                            <p>In conditional statements:</p>
+                            <pre><code>
+                                if temperature > 30:
+                                    print("It's hot!")
+                                elif temperature < 10:
+                                    print("It's cold!")
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="comparison-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Range -->
+                    <div id="range-description" class="block-description">
+                        <h3>Range</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Range block generates a sequence of numbers, typically used for controlling loops. It
+                                can create
+                                sequences from start to stop with a specified step size. This is particularly useful
+                                with For loops
+                                to repeat an operation a specific number of times or to iterate through numerical
+                                ranges.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Basic range:</p>
+                            <pre><code>
+                                for i in range(5):      # 0,1,2,3,4
+                                    print(i)
+                            </code></pre>
+
+                            <p>With start and stop:</p>
+                            <pre><code>
+                                for i in range(2, 6):   # 2,3,4,5
+                                    print(i)
+                            </code></pre>
+
+                            <p>With step:</p>
+                            <pre><code>
+                                for i in range(0, 10, 2):  # 0,2,4,6,8
+                                    print(i)
+                            </code></pre>
+
+                            <p>Negative step:</p>
+                            <pre><code>
+                                for i in range(5, 0, -1):  # 5,4,3,2,1
+                                    print(i)
+                            </code></pre>
+
+                            <p>Turtle example:</p>
+                            <pre><code>
+                                for i in range(0, 360, 15):
+                                    turtle.setheading(i)
+                                    turtle.forward(50)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="range-block-preview"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Functions Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Function Blocks</h2>
+
+                    <!-- Print -->
+                    <div id="print-description" class="block-description">
+                        <h3>print</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Print block outputs text or values to the console. This is essential for debugging,
+                                showing
+                                program results, or providing user feedback. You can print multiple items separated by
+                                commas,
+                                and the output will automatically include spaces between items.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Simple print:</p>
+                            <pre><code>
+                                print("Hello, World!")
+                            </code></pre>
+
+                            <p>Printing variables:</p>
+                            <pre><code>
+                                name = "Alice"
+                                age = 25
+                                print("Name:", name, "Age:", age)
+                            </code></pre>
+
+                            <p>Formatted output:</p>
+                            <pre><code>
+                                print(f"{name} is {age} years old")
+                            </code></pre>
+
+                            <p>Printing calculations:</p>
+                            <pre><code>
+                                print("5 + 3 =", 5 + 3)
+                            </code></pre>
+
+                            <p>Multiple lines:</p>
+                            <pre><code>
+                                print("Line 1\nLine 2")
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="print-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Text -->
+                    <div id="text-description" class="block-description">
+                        <h3>Text</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Text block represents string values (sequences of characters) in your program.
+                                Strings are
+                                used for text output, user input processing, and as identifiers in many contexts.
+                                Strings can
+                                include letters, numbers, symbols, and spaces, enclosed in quotes.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Simple string:</p>
+                            <pre><code>
+                                "Hello, World!"
+                            </code></pre>
+
+                            <p>String with quotes:</p>
+                            <pre><code>
+                                'She said "Hello"'
+                            </code></pre>
+                            <pre><code>
+                                "It's a beautiful day"
+                            </code></pre>
+
+                            <p>Multiline string:</p>
+                            <pre><code>
+                                """This is a
+                                multi-line
+                                string"""
+                            </code></pre>
+
+                            <p>String concatenation:</p>
+                            <pre><code>
+                                "Hello" + " " + "World"  # "Hello World"
+                            </code></pre>
+
+                            <p>String in print:</p>
+                            <pre><code>
+                                print("Welcome to the program!")
+                            </code></pre>
+
+                            <p>Turtle text:</p>
+                            <pre><code>
+                                turtle.write("Hello!", font=("Arial", 16, "normal"))
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="text-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Random Function -->
+                    <div id="random-description" class="block-description">
+                        <h3>Random Function</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Random Function block generates random numbers or selects random items from a list.
+                                This is
+                                useful for creating unpredictable behavior in your programs, such as random movements,
+                                game mechanics,
+                                or sampling data. The random module provides various functions for generating random
+                                integers,
+                                floating-point numbers, and choices from sequences.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Random integer:</p>
+                            <pre><code>
+                                import random
+                                random.randint(1, 10)  # Random number between 1 and 10
+                            </code></pre>
+
+                            <p>Random float:</p>
+                            <pre><code>
+                                random.uniform(0, 1)   # Random float between 0 and 1
+                            </code></pre>
+
+                            <p>Random choice from a list:</p>
+                            <pre><code>
+                                colors = ["red", "green", "blue"]
+                                random.choice(colors)  # Randomly selects one color
+                            </code></pre>
+
+                            <p>Turtle example:</p>
+                            <pre><code>
+                                for _ in range(10):
+                                    turtle.goto(random.randint(-200, 200), random.randint(-200, 200))
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="random-block-preview"></div>
+                        </div>
+                    </div>
+                    <!-- Math Constants -->
+                    <div id="mathconstants-description" class="block-description">
+                        <h3>Math Constants</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Math Constants block provides common mathematical constants including π (pi,
+                                approximately 3.14159),
+                                e (Euler's number, approximately 2.71828), τ (tau, 2π), inf (infinity), and nan (not a
+                                number).
+                                These are useful for geometric calculations, exponential functions, and special
+                                mathematical operations.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Using pi for circle calculations:</p>
+                            <pre><code>
+                                import math
+                                radius = 5
+                                circumference = 2 * math.pi * radius
+                            </code></pre>
+
+                            <p>Using e for exponential growth:</p>
+                            <pre><code>
+                                population = 100 * math.e ** (0.02 * time)
+                            </code></pre>
+
+                            <p>Using tau (2*pi):</p>
+                            <pre><code>
+                                angle = math.tau / 8  # 45 degrees
+                            </code></pre>
+
+                            <p>Special values:</p>
+                            <pre><code>
+                                positive_infinity = float('inf')
+                                not_a_number = float('nan')
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="mathconstants-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Rounding and Absolute Value -->
+                    <div id="roundabs-description" class="block-description">
+                        <h3>Rounding and Absolute Value</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>This block provides functions for rounding numbers (ceil, floor, round, trunc) and
+                                getting absolute values.
+                                Ceil rounds up to the nearest integer, floor rounds down, round rounds to nearest, and
+                                trunc removes
+                                the decimal part. Absolute value gives the magnitude of a number without regard to its
+                                sign.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Rounding functions:</p>
+                            <pre><code>
+                                math.ceil(3.2)   # 4
+                            </code></pre>
+                            <pre><code>
+                                math.floor(3.8)  # 3
+                            </code></pre>
+                            <pre><code>
+                                round(3.5)       # 4
+                            </code></pre>
+                            <pre><code>
+                                math.trunc(3.8)  # 3
+                            </code></pre>
+
+                            <p>Absolute value:</p>
+                            <pre><code>
+                                abs(-10)         # 10
+                            </code></pre>
+                            <pre><code>
+                                abs(5)           # 5
+                            </code></pre>
+
+                            <p>Practical example:</p>
+                            <pre><code>
+                                x = -3.7
+                                rounded_x = math.floor(abs(x))  # 3
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="roundabs-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Basic Arithmetic -->
+                    <div id="basicarithmetic-description" class="block-description">
+                        <h3>Basic Arithmetic</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>This block provides fundamental arithmetic operations beyond the basic four operations,
+                                including
+                                greatest common divisor (gcd), least common multiple (lcm), factorial, sum, and product.
+                                These are
+                                essential for many mathematical calculations and algorithms.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Greatest common divisor:</p>
+                            <pre><code>
+                                math.gcd(48, 18)  # 6
+                            </code></pre>
+
+                            <p>Least common multiple:</p>
+                            <pre><code>
+                                math.lcm(4, 6)    # 12
+                            </code></pre>
+
+                            <p>Factorial:</p>
+                            <pre><code>
+                                math.factorial(5) # 120 (5*4*3*2*1)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="basicarithmetic-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Logarithms and Exponents -->
+                    <div id="logexp-description" class="block-description">
+                        <h3>Logarithms and Exponents</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>This block provides functions for working with exponents and logarithms, including square
+                                roots,
+                                powers, natural logarithms, and base-10 logarithms. These are essential for scientific
+                                calculations,
+                                growth/decay models, and many algorithms.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Square root:</p>
+                            <pre><code>
+                                math.sqrt(16)      # 4.0
+                            </code></pre>
+
+                            <p>Power:</p>
+                            <pre><code>
+                                math.pow(2, 3)     # 8.0
+                            </code></pre>
+                            <pre><code>
+                                2 ** 3             # 8 (alternative)
+                            </code></pre>
+
+                            <p>Natural logarithm (base e):</p>
+                            <pre><code>
+                                math.log(math.e)   # 1.0
+                            </code></pre>
+
+                            <p>Base-10 logarithm:</p>
+                            <pre><code>
+                                math.log10(100)    # 2.0
+                            </code></pre>
+
+                            <p>Exponential function:</p>
+                            <pre><code>
+                                math.exp(1)        # e (~2.718)
+                            </code></pre>
+
+                            <p>Compound interest:</p>
+                            <pre><code>
+                                principal = 1000
+                                rate = 0.05
+                                years = 10
+                                amount = principal * math.exp(rate * years)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="logexp-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Trigonometry -->
+                    <div id="trigfunctions-description" class="block-description">
+                        <h3>Trigonometry</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>This block provides trigonometric functions (sin, cos, tan) and their inverses (asin,
+                                acos, atan),
+                                as well as functions to convert between degrees and radians. These are essential for
+                                geometric
+                                calculations, rotations, and periodic functions.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Basic trig functions (radians):</p>
+                            <pre><code>
+                                math.sin(math.pi/2)  # 1.0
+                            </code></pre>
+                            <pre><code>
+                                math.cos(math.pi)    # -1.0
+                            </code></pre>
+                            <pre><code>
+                                math.tan(math.pi/4)  # ~1.0
+                            </code></pre>
+
+                            <p>Inverse trig functions:</p>
+                            <pre><code>
+                                math.asin(1)         # π/2 radians
+                            </code></pre>
+                            <pre><code>
+                                math.acos(0)         # π/2 radians
+                            </code></pre>
+                            <pre><code>
+                                math.atan(1)         # π/4 radians
+                            </code></pre>
+
+                            <p>Degree conversions:</p>
+                            <pre><code>
+                                math.degrees(math.pi)   # 180.0
+                            </code></pre>
+                            <pre><code>
+                                math.radians(180)       # π
+                            </code></pre>
+
+                            <p>Turtle polygon:</p>
+                            <pre><code>
+                                sides = 6
+                                angle = 360 / sides
+                                for _ in range(sides):
+                                    turtle.forward(50)
+                                    turtle.right(angle)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="trigfunctions-block-preview"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Variables Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Variable Blocks</h2>
+
+                    <!-- Variable Declaration -->
+                    <div id="vardeclaration-description" class="block-description">
+                        <h3>Variable Declaration</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Variable Declaration block creates a new variable with a specified name and initial
+                                value.
+                                Variables store data that can be used and modified throughout your program. They can
+                                hold numbers,
+                                strings, or other data types. Good variable names are descriptive and follow naming
+                                conventions
+                                (like using lowercase with underscores).</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Simple variable:</p>
+                            <pre><code>
+                                x = 10
+                            </code></pre>
+
+                            <p>String variable:</p>
+                            <pre><code>
+                                name = "Alice"
+                            </code></pre>
+
+                            <p>Multiple variables:</p>
+                            <pre><code>
+                                width = 100
+                                height = 50
+                                area = width * height
+                            </code></pre>
+
+                            <p>Turtle example:</p>
+                            <pre><code>
+                                side_length = 50
+                                for _ in range(4):
+                                    turtle.forward(side_length)
+                                    turtle.right(90)
+                            </code></pre>
+
+                            <p>Updating variable:</p>
+                            <pre><code>
+                                counter = 0
+                                counter = counter + 1
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="vardeclaration-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Variable Operations -->
+                    <div id="varoperations-description" class="block-description">
+                        <h3>Variable Operations</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Variable Operations block performs operations on existing variables, including
+                                assignment,
+                                increment/decrement, and compound assignments. These operations modify the variable's
+                                value
+                                in place, providing a concise way to update variables based on their current value.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Simple assignment:</p>
+                            <pre><code>
+                                x = 10
+                            </code></pre>
+
+                            <p>Increment:</p>
+                            <pre><code>
+                                x += 5      # Equivalent to x = x + 5
+                            </code></pre>
+
+                            <p>Decrement:</p>
+                            <pre><code>
+                                x -= 3      # Equivalent to x = x - 3
+                            </code></pre>
+
+                            <p>Multiplication assignment:</p>
+                            <pre><code>
+                                x *= 2      # Equivalent to x = x * 2
+                            </code></pre>
+
+                            <p>Division assignment:</p>
+                            <pre><code>
+                                x /= 4      # Equivalent to x = x / 4
+                            </code></pre>
+
+                            <p>Turtle example:</p>
+                            <pre><code>
+                                step = 10
+                                for _ in range(5):
+                                    turtle.forward(step)
+                                    turtle.right(90)
+                                    step += 5  # Increase step each iteration
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="varoperations-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Variable Block -->
+                    <div id="variableblock-description" class="block-description">
+                        <h3>Variable Block</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Variable Block references the value of a previously declared variable. This allows
+                                you to
+                                use the stored value in calculations, conditions, or other operations. The block shows a
+                                dropdown
+                                of all available variables in your program.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Using variable values:</p>
+                            <pre><code>
+                                x = 10
+                                y = x * 2  # y is now 20
+                            </code></pre>
+
+                            <p>In conditions:</p>
+                            <pre><code>
+                                if x > 5:
+                                print("x is greater than 5")
+                            </code></pre>
+
+                            <p>Turtle example:</p>
+                            <pre><code>
+                                size = 30
+                                for _ in range(6):
+                                    turtle.forward(size)
+                                    turtle.right(60)
+                                    size += 10
+                            </code></pre>
+
+                            <p>Printing variable:</p>
+                            <pre><code>
+                                name = "Alice"
+                                print("Hello,", name)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="variable-block-preview"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Movement Descriptions -->
+                <div class="help-section-items-list">
+                    <h2>Movement Blocks</h2>
+
+                    <!-- Move Block -->
+                    <div id="move-description" class="block-description">
+                        <h3>Move</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Move block controls the turtle's movement forward or backward by a specified number
+                                of units.
+                                Each unit typically corresponds to a pixel on the screen. Positive values move the
+                                turtle forward
+                                in its current heading direction, while negative values move it backward. The turtle
+                                draws a line
+                                as it moves if the pen is down.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Move forward 100 units:</p>
+                            <pre><code>
+                                t.forward(100)
+                            </code></pre>
+
+                            <p>Move backward 50 units:</p>
+                            <pre><code>
+                                t.backward(50)
+                            </code></pre>
+
+                            <p>Move in a square pattern:</p>
+                            <pre><code>
+                                for _ in range(4):
+                                    t.forward(100)
+                                    t.right(90)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="move-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Turn Block -->
+                    <div id="turn-description" class="block-description">
+                        <h3>Turn</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Turn block rotates the turtle by a specified angle in degrees. Positive angles turn
+                                the turtle
+                                to the right (clockwise), while negative angles turn it to the left (counter-clockwise).
+                                The turtle's
+                                heading changes but its position remains the same. This is useful for changing direction
+                                before moving.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Turn right 90 degrees:</p>
+                            <pre><code>
+                                t.right(90)
+                            </code></pre>
+
+                            <p>Turn left 45 degrees:</p>
+                            <pre><code>
+                                t.left(45)
+                            </code></pre>
+
+                            <p>Draw a star pattern:</p>
+                            <pre><code>
+                                for _ in range(5):
+                                    t.forward(100)
+                                    t.right(144)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="turn-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Speed Block -->
+                    <div id="speed-description" class="block-description">
+                        <h3>Speed</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Speed block controls how fast the turtle moves. The speed can be set from 0 (fastest)
+                                to 10 (slowest).
+                                Speed 0 means no animation - the turtle jumps instantly to the new position. This is
+                                useful when you want
+                                to draw complex shapes quickly without watching the animation.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Set slow speed (1):</p>
+                            <pre><code>
+                                turtle.speed(1)
+                            </code></pre>
+
+                            <p>Set fastest speed (0):</p>
+                            <pre><code>
+                                turtle.speed(0)
+                            </code></pre>
+
+                            <p>Gradually increase speed:</p>
+                            <pre><code>
+                                for i in range(1, 11):
+                                    turtle.speed(i)
+                                    turtle.forward(50)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="speed-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Home Block -->
+                    <div id="home-description" class="block-description">
+                        <h3>Home</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Home block moves the turtle to the origin (coordinates 0,0) and sets its heading to
+                                the default
+                                (facing right/east). This is useful for resetting the turtle's position without changing
+                                other attributes
+                                like pen state or color. The turtle draws a line if the pen is down during this
+                                movement.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Return to home position:</p>
+                            <pre><code>
+                                turtle.home()
+                            </code></pre>
+
+                            <p>Draw from center and return:</p>
+                            <pre><code>
+                                turtle.forward(100)
+                                turtle.right(90)
+                                turtle.forward(50)
+                                turtle.home()
+                            </code></pre>
+
+                            <p>Draw multiple lines from center:</p>
+                            <pre><code>
+                                for angle in range(0, 360, 30):
+                                    turtle.home()
+                                    turtle.setheading(angle)
+                                    turtle.forward(100)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="home-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Color Block -->
+                    <div id="color-description" class="block-description">
+                        <h3>Color</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Color block sets the turtle's pen color. Colors can be specified by name (like "red",
+                                "blue")
+                                or using hexadecimal RGB values (like "#FF0000" for red). The color affects all
+                                subsequent drawing
+                                until changed again. You can also set separate colors for the pen and fill using
+                                advanced options.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Set pen color to red:</p>
+                            <pre><code>
+                                turtle.color("red")
+                            </code></pre>
+
+                            <p>Set using RGB values:</p>
+                            <pre><code>
+                                turtle.color("#FF5733")
+                            </code></pre>
+
+                            <p>Rainbow spiral:</p>
+                            <pre><code>
+                                colors = 
+                                [
+                                    "red", 
+                                    "orange", 
+                                    "yellow", 
+                                    "green", 
+                                    "blue", 
+                                    "purple"
+                                ]
+
+                                for i in range(36):
+                                    turtle.color(colors[i % 6])
+                                    turtle.forward(i * 2)
+                                    turtle.left(10)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="color-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pen Up Block -->
+                    <div id="penup-description" class="block-description">
+                        <h3>Pen Up</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Pen Up block lifts the turtle's pen so it stops drawing while moving. This is useful
+                                for
+                                repositioning the turtle without leaving a trail. The pen state remains up until you use
+                                the
+                                Pen Down block. Combining Pen Up and Pen Down allows you to create disconnected shapes
+                                or
+                                move between drawing areas.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Move without drawing:</p>
+                            <pre><code>
+                                turtle.penup()
+                                turtle.goto(100, 100)
+                            </code></pre>
+
+                            <p>Draw disconnected squares:</p>
+                            <pre><code>
+                                for i in range(5):
+                                    turtle.penup()
+                                    turtle.goto(i * 50, i * 50)
+                                    turtle.pendown()
+                                    for _ in range(4):
+                                        turtle.forward(40)
+                                        turtle.right(90)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="penup-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pen Down Block -->
+                    <div id="pendown-description" class="block-description">
+                        <h3>Pen Down</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Pen Down block lowers the turtle's pen so it draws while moving. This is the default
+                                state
+                                when the program starts. After using Pen Up, you must use Pen Down to resume drawing.
+                                The pen
+                                draws in the current color and at the current width until changed.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Resume drawing:</p>
+                            <pre><code>
+                                turtle.pendown()
+                            </code></pre>
+
+                            <p>Draw dashed line:</p>
+                            <pre><code>
+                                for _ in range(10):
+                                    turtle.pendown()
+                                    turtle.forward(10)
+                                    turtle.penup()
+                                    turtle.forward(10)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="pendown-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Go To Block -->
+                    <div id="goto-description" class="block-description">
+                        <h3>Go To</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Go To block moves the turtle to an absolute position (x,y) on the canvas. The
+                                turtle's
+                                heading remains unchanged unless specified. If the pen is down, it draws a straight line
+                                from
+                                the current position to the new position. This is useful for precise positioning without
+                                calculating movement vectors.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Move to (100, 100):</p>
+                            <pre><code>
+                                turtle.goto(100, 100)
+                            </code></pre>
+
+                            <p>Draw a triangle:</p>
+                            <pre><code>
+                                turtle.goto(100, 0)
+                                turtle.goto(50, 86.6)
+                                turtle.goto(0, 0)
+                            </code></pre>
+
+                            <p>Random walk:</p>
+                            <pre><code>
+                                import random
+
+                                for _ in range(20):
+                                    turtle.goto(
+                                        random.randint(-200, 200), 
+                                        random.randint(-200, 200)
+                                    )
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="goto-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Set Position Block -->
+                    <div id="setposition-description" class="block-description">
+                        <h3>Set Position</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Set Position block moves the turtle to a specific (x,y) coordinate and optionally
+                                sets
+                                its heading (angle). Unlike Go To, this can change both position and orientation in one
+                                operation.
+                                If the pen is down, it will draw a line during the movement. This is useful for precise
+                                positioning and orientation control.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Set position and angle:</p>
+                            <pre><code>
+                                turtle.setposition(100, 100, 45)
+                            </code></pre>
+
+                            <p>Reset to center facing north:</p>
+                            <pre><code>
+                                turtle.setposition(0, 0, 90)
+                            </code></pre>
+
+                            <p>Draw a star pattern:</p>
+                            <pre><code>
+                                for angle in range(0, 360, 144):
+                                    turtle.setposition(0, 0, angle)
+                                    turtle.forward(100)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="setposition-block-preview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pause Block -->
+                    <div id="pause-description" class="block-description">
+                        <h3>Pause</h3>
+                        <div class="description-section">
+                            <h4>Description:</h4>
+                            <p>The Pause block stops the turtle's movement for a specified number of seconds. This is
+                                useful
+                                for creating animations where you want to show intermediate steps or slow down the
+                                drawing process
+                                for demonstration purposes. The pause doesn't affect the turtle's state or position.</p>
+                        </div>
+                        <div class="python-example-section">
+                            <h4>Python Code Examples:</h4>
+
+                            <p>Pause for 2 seconds:</p>
+                            <pre><code>
+                                turtle.pause(2)
+                            </code></pre>
+
+                            <p>Animated drawing:</p>
+                            <pre><code>
+                                for i in range(36):
+                                    turtle.forward(10)
+                                    turtle.right(10)
+                                    turtle.pause(0.1)
+                            </code></pre>
+                        </div>
+                        <div class="block-code-section">
+                            <h4>Block Code:</h4>
+                            <div class="block-preview" id="pause-block-preview"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- -->
+                <button id="backToTopBtn" class="back-to-top" title="Go to top">
+                    <i class="fas fa-arrow-up"></i>
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/810299bc4f.js" crossorigin="anonymous"></script>
+    <script type="module" src="help.js"></script>
+</body>
+
+</html>

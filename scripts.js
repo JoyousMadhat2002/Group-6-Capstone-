@@ -13,37 +13,17 @@ import {
 } from "./scripts/blockCreation.js";
 import { userVariables } from "./scripts/blockCreation.js";
 
-import {
-  openLoginDialog,
-  createLoginDialog,
-  createSignupDialog,
-  attemptLogin,
-  attemptSignup,
-  logoutUser,
-  closeDialogBoxes
-} from "./scripts/authDialogs.js";
-
-
 // Import Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
-
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCteFAmh1TjbbQB0hsbBwcbqwK8mofMO4Y",
-  authDomain: "b-coders-database.firebaseapp.com",
-  projectId: "b-coders-database",
-  storageBucket: "b-coders-database.appspot.com",
-  messagingSenderId: "268773123996",
-  appId: "1:268773123996:web:fec77ef63557a9c6b50a59",
-  measurementId: "G-92LTT20BXB"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+import { openLoginDialog, showNotification, updateUIAfterLogin } from "./scripts/authDialogs.js";
+import { 
+  auth, 
+  db, 
+  onAuthStateChanged, 
+  collection, 
+  doc, 
+  setDoc, 
+  serverTimestamp 
+} from "./scripts/firebaseConfig.js";
 
 // Wait for Firebase authentication state
 onAuthStateChanged(auth, (user) => {
@@ -116,28 +96,51 @@ function blockToText(pc) {
   } // end of depth recalculation
 
   let tDepth = 1;
-  let pCount = 0;
-  let cCount = 0;
-  let mCount = 0;
-  let tCount = 0;
+  let pCount = 0; //counter for parenthesis
+  let cCount = 0; //counter for colon
+  let mCount = 0; //counter for dropdown spaces
+  let tCount = 0; //counter for when to ignore dropdown spacing
+  let fCount = 1; //counter for first block
+  let eCount = 1;
   
 
   for (let i = 0; i < blockChildElements.length; i++) {
     let curBlock = blockChildElements[i];
-
-
     
+    if(curBlock.dataset.blockDepth != tDepth){
 
-    if (curBlock.dataset.blockID == "if" || curBlock.dataset.blockID == "for" || curBlock.dataset.blockID == "while") {
+
       if(pCount > 0){
-        textBuilder += ")\n";
+        textBuilder += ")";
         pCount -= 1;
-      }
+      }     
       if(cCount > 0){
-        textBuilder += ":\n";
+        textBuilder += ":";
         cCount -= 1;
       }
-      
+      tDepth = curBlock.dataset.blockDepth;
+    }
+
+    if (curBlock.dataset.blockID == "if" || curBlock.dataset.blockID == "for" || curBlock.dataset.blockID == "while") {
+      // if(pCount > 0){
+      //   textBuilder += ")\n";
+      //   pCount -= 1;
+      // }
+      // if(cCount > 0){
+      //   textBuilder += ":\n";
+      //   cCount -= 1;
+      // }
+      // eCount +
+      if(fCount == 0){
+        textBuilder += "\n";
+        
+      }
+      else if(fCount == 1){
+        fCount -= 1;
+      }
+      if(mCount > 0){
+        mCount -= 1;
+      }
       cCount += 1;
 
       for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
@@ -147,27 +150,55 @@ function blockToText(pc) {
       
       tDepth = curBlock.dataset.blockDepth;
     }
-    else if (curBlock.innerText == "else if:" || curBlock.innerText == "else:") {
-      if(pCount > 0){
-        textBuilder += ")";
-        pCount -= 1;
-      }
+    else if (curBlock.dataset.elifElseType == "elif" || curBlock.dataset.elifElseType == "else") {
+      // if(pCount > 0){
+      //   textBuilder += ")";
+      //   pCount -= 1;
+      // }
       if(cCount > 0){
         textBuilder += ":";
         cCount -= 1;
       }
-      textBuilder += "\n";
+      //textBuilder += "\n";
+
+
       for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
         textBuilder += "  ";
       }
-      if (curBlock.innerText == "else if:") {
-        textBuilder += "else if";
-        // colonC = 1;
+      if (curBlock.dataset.elifElseType == "elif") {
+        console.log("i = " + `${i}`);
+        textBuilder += "\n" + "else if";
+        cCount += 1;
         tDepth = curBlock.dataset.blockDepth;
       }
-      else if (curBlock.innerText == "else:") {
-        textBuilder += `${curBlock.innerText}` + "\n"
-      };
+      else if (curBlock.dataset.elifElseType == "else") {
+        textBuilder += "\n" + "else:";
+      }
+    }
+
+    if(curBlock.dataset.blockID == "varOps"){
+      if(fCount == 0){
+        textBuilder += "\n"
+      }
+      else if(fCount == 1){
+        fCount -= 1;
+      }
+      for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
+        textBuilder += "  ";
+      }
+      mCount += 1;
+    }
+    
+
+    if(curBlock.dataset.blockID == "comparisonBlock"){
+      // if(fCount == 0){
+      //   textBuilder += "\n"
+      // }
+      // else if(fCount == 1){
+      //   fCount -= 1;
+      // }
+      
+      // mCount += 1;
     }
 
 
@@ -195,31 +226,48 @@ function blockToText(pc) {
 
     if (curBlock.dataset.blockID == "print") {
       if(pCount > 0){
-        textBuilder += ")\n";
+        textBuilder += ")" + "\n";
         pCount -= 1;
       }
       if(cCount > 0){
-        textBuilder += ":\n";
-        cCount -= 1;
+        textBuilder += ":";
       }
-      if (curBlock.dataset.blockDepth > tDepth) {
-        textBuilder += "\n";
-        tDepth = curBlock.dataset.blockDepth;
+      textBuilder += "\n";
+      for (let d = 0; d < (curBlock.dataset.blockDepth - 1); d++) {
+        textBuilder += "  ";
       }
       textBuilder += "print(";
       pCount += 1;
     }
+
+    if(curBlock.dataset.blockID == "printText"){
+      textBuilder += curBlock.innerText;
+    }
     if (curBlock.className == "text-input") {
-      if (curBlock.dataset.blockDepth > tDepth) {
-        textBuilder += "\n";
-        tDepth = curBlock.dataset.blockDepth;
+      // if (curBlock.dataset.blockDepth > tDepth) {
+      //   textBuilder += "\n";
+      //   tDepth = curBlock.dataset.blockDepth;
+      // }
+      // else 
+      if(curBlock.dataset.blockDepth = tDepth){
+        textBuilder += " ";
+      }
+      if(mCount > 0){
+        mCount -= 1;
       }
       textBuilder += "\"" + `${curBlock.value}` + "\"";
     }
     if (curBlock.className == "math-input") {
-      if (curBlock.dataset.blockDepth > tDepth) {
-        textBuilder += "\n";
-        tDepth = curBlock.dataset.blockDepth;
+      // if (curBlock.dataset.blockDepth > tDepth) {
+      //   textBuilder += "\n";
+      //   tDepth = curBlock.dataset.blockDepth;
+      // }
+      // else 
+      if(curBlock.dataset.blockDepth = tDepth){
+        if(tCount == 0){
+          textBuilder += " ";
+        }
+        
       }
       if(tCount > 0){
         textBuilder += '(' + `${curBlock.value}` + ')' ;
@@ -227,6 +275,9 @@ function blockToText(pc) {
       }
       else{
         textBuilder += `${curBlock.value}`;
+      }
+      if(mCount > 0){
+        mCount -= 1;
       }
       
       
@@ -236,18 +287,22 @@ function blockToText(pc) {
       mCount += 1;
     }
     if (curBlock.dataset.blockID == "movement") {
+      textBuilder += "\n";
       textBuilder += "turtle.";
       tCount += 1;
-      mCount += 1;
+      mCount += 2;
     }
     if (curBlock.dataset.blockID == "home") {
+      textBuilder += "\n";
       textBuilder += "turtle.home()";      
     }
     if (curBlock.dataset.blockID == "speed") {
+      textBuilder += "\n";
       textBuilder += "turtle.speed";
       tCount += 1;
     }
     if (curBlock.dataset.blockID == "penup" || curBlock.dataset.blockID == "pendown") {
+      textBuilder += "\n";
       textBuilder += 'turtle.' + `${curBlock.dataset.blockID}` + '()';
     }
     
@@ -255,14 +310,14 @@ function blockToText(pc) {
 
     if(i == blockChildElements.length - 1){
       console.log("CLOSING TIME");
-      if(pCount > 0){
-        textBuilder += ")\n";
-        pCount -= 1;
-      }
-      if(cCount > 0){
-        textBuilder += ":\n";
-        cCount -= 1;
-      }
+      // if(pCount > 0){
+      //   textBuilder += ")\n";
+      //   pCount -= 1;
+      // }
+      // if(cCount > 0){
+      //   textBuilder += ":\n";
+      //   cCount -= 1;
+      // }
     }
   }
   
@@ -334,9 +389,8 @@ function textToBlock(container) {
 
     // logic to build blocks
     if (tokens != "") {
-      console.log(`${tokens[0][0]}`);
 
-      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for" || tokens[1] == "if") {
+      if (tokens[0] == "if" || tokens[0] == "while" || tokens[0] == "for" || tokens[1] == "if" ){
 
 
         console.log(`${tokens[0]}` + " statement");
@@ -402,24 +456,24 @@ function textToBlock(container) {
 
 
       // building CONTINUE and BREAK
-      else if (tokens[0] == "continue" || tokens[0] == "break") {
-        console.log(tokens[0]);
-        let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
-        let nbRef = document.getElementById(nbCons); // created reference to newblock
-        nbRef.dataset.blockDepth = currDepth;
-        depthBuilder[currDepth] = nbRef;
-        console.log(depthBuilder);
+      // else if (tokens[0] == "continue" || tokens[0] == "break") {
+      //   console.log(tokens[0]);
+      //   let nbCons = newBlock(tokens[0]); // newblock construction based on keyword
+      //   let nbRef = document.getElementById(nbCons); // created reference to newblock
+      //   nbRef.dataset.blockDepth = currDepth;
+      //   depthBuilder[currDepth] = nbRef;
+      //   console.log(depthBuilder);
 
-        if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-if-elif-else-id") > "0") {
-          console.log("PARENT IS AN ELSE")
-          let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelectorAll(".child-box-container");
-          parentBlock[parentBlock.length - 1].append(document.getElementById(nbCons));
-        }
-        else {
-          let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
-          parentBlock.append(document.getElementById(nbCons));
-        }
-      }
+      //   if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-if-elif-else-id") > "0") {
+      //     console.log("PARENT IS AN ELSE")
+      //     let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelectorAll(".child-box-container");
+      //     parentBlock[parentBlock.length - 1].append(document.getElementById(nbCons));
+      //   }
+      //   else {
+      //     let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
+      //     parentBlock.append(document.getElementById(nbCons));
+      //   }
+      // }
       else if(tokens[0][0] == 'p' && tokens[0][1] == 'r' && tokens[0][2] == 'i' && tokens[0][3] == 'n' && tokens[0][4] == 't'){
         console.log("PRINT IN TTB");
         let nbCons = newBlock("print"); // newblock construction based on keyword
@@ -429,13 +483,14 @@ function textToBlock(container) {
         depthBuilder[currDepth] = nbRef;
 
         if (depthBuilder[currDepth - 1] != "box-container") {
-          if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-if-elif-else-id") == "1") {
+          if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-if-elif-else-id") >= "1") {
             console.log("PARENT IS AN ELSE")
             let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelectorAll(".child-box-container");
             parentBlock[parentBlock.length - 1].append(document.getElementById(nbCons));
           }
           else {
             let parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
+            console.log(document.getElementById(nbCons))
             parentBlock.append(document.getElementById(nbCons));
 
           }
@@ -444,8 +499,32 @@ function textToBlock(container) {
         blockBuilder(tokens, nbRef.querySelector(".child-box-container-horizontal"))
       }
 
+      else if(tokens[2] == "in"){
+        if (depthBuilder[currDepth - 1] != "box-container") {
+          if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-else-if-count") > "0") {
+            console.log("PARENT IS AN ELSE")
+            let nbRef = document.getElementById(depthBuilder[currDepth - 1]).querySelectorAll(".child-box-container");
+            parentBlock = nbRef[nbRef.length - 1];
+          }
+          else {
+          parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
+          }
+        }
+        else{
+          parentBlock = document.getElementById("box-container");
+        }
+
+
+
+        blockBuilder(tokens, parentBlock);
+        console.log("END OF ALL ELSE");
+
+      }
+
       else {
+        console.log('current string is: ' + `${tokens}`);
         let parentBlock;
+        if (depthBuilder[currDepth - 1] != "box-container") {
         if (document.getElementById(depthBuilder[currDepth - 1]).getAttribute("data-else-if-count") > "0") {
           console.log("PARENT IS AN ELSE")
           let nbRef = document.getElementById(depthBuilder[currDepth - 1]).querySelectorAll(".child-box-container");
@@ -454,6 +533,10 @@ function textToBlock(container) {
         else {
           parentBlock = document.getElementById(depthBuilder[currDepth - 1]).querySelector(".child-box-container");
         }
+      }
+      else{
+        parentBlock = document.getElementById("box-container");
+      }
 
 
 
@@ -471,240 +554,1239 @@ function textToBlock(container) {
 } // END OF TTB()
 
 function blockBuilder(arr, container) {
-  let oArray = arr;
-  let rmBlock = [];
-  let retArray = [];
-  let arrCount = 0;
-  let block_T;
-  for (let i = 0; i < oArray.length; i++) {
 
+  //sets for comparison block, math block, and variable ops block checking
+  let compValues = ["==", "!=", ">", "<", "<=", ">="];
+  let mathValues = ["+", "-", "*", "/", "%", "**", "//"];
+  let varValues = ["=", "+=", "-=", "*=", "/="];
 
+  let mathConstants = ["e", "pi", "tau", "inf", "nan"];
 
-    if (oArray[i] == "or" || oArray[i] == "||" || oArray[i] == "and" || oArray[i] == "&&" || oArray[i] == "not") {
-      let nbCons = newBlock("logicalOps"); // newblock construction based on keyword
-      let nbRef = document.getElementById(nbCons); // created reference to newblock
-      rmBlock.push(document.getElementById(nbCons));
-      nbRef.querySelector(".block-dropdown").value = oArray[i]
+  let varArray = [];
+  let rightMostBlock; //for storing the rightmost block.
+  let returnArray = [];
 
+  for (let i = 0; i < arr.length; i++) {
+    console.log(arr[i]);
 
-      if (oArray[i - 1] >= "0" && oArray[i - 1] <= "9") {
-        let tempNb = newBlock("mathText");
-        let tempRef = document.getElementById(tempNb);
-        let mathInput = tempRef.querySelector(".math-input")
-        mathInput.value = oArray[i - 1];
-        tempRef.dataset.blockValue = oArray[i - 1];
-
-        rmBlock[arrCount - 1].append(tempRef);
-      }
-      else {
-        let nbComp = newBlock("printText");
-        let elText = document.getElementById(nbComp);
-        elText.querySelector(".text-input").value += oArray[i - 1];
-        compElems.append(elText);
-      }
-
-
-
-    }
-
-    else if (oArray[i] == "=" || oArray[i] == "+=" || oArray[i] == "-=" || oArray[i] == "*=" || oArray[i] == "/=") {
-      if (!userVariables.includes(oArray[i - 1])) {
-        userVariables.push(oArray[i - 1]);
-      }
-
-      // console.log("IT EQUALS");
-      let nbComp = newBlock("varOps");
-      let nbRef = document.getElementById(nbComp);
-      let nbHz = nbRef.querySelector(".childBox-Container-Horizontal")
-      nbRef.querySelector(".block-dropdown").value = oArray[i];
-
-
-      let tempVar = newBlock("variableBlock");
-      let varRef = document.getElementById(tempVar);
-      varRef.querySelector(".block-dropdown").value = oArray[i - 1];
-      nbHz.childNodes[0].append(varRef);
-
-      retArray[arrCount] = nbHz;
-      arrCount++;
-
-      rmBlock.push(nbRef);
-
-    }
-
-    else if (oArray[i] == "in") {
-      let nbComp = newBlock("printText");
-      let elText = document.getElementById(nbComp);
-      elText.querySelector(".text-input").value += oArray[i - 1] + " ";
-      elText.querySelector(".text-input").value += oArray[i] + " ";
-      elText.querySelector(".text-input").value += oArray[i + 1];
-      rmBlock.push(elText);
-    }
-    else if (i < oArray.length - 1) {
-      if (oArray[i] == "==" || oArray[i] == "!=" || oArray[i] == ">=" || oArray[i] == "<=" || oArray[i] == "<" || oArray[i] == ">") {
-        block_T = "comparisonBlock";
-      }
-      else if (oArray[i] == "+" || oArray[i] == "-" || oArray[i] == "*" || oArray[i] == "/" || oArray[i] == "%" || oArray[i] == "**" || oArray[i] == "//") {
-        block_T = "mathBlock";
-      }
-      else {
-        block_T = "";
-        continue;
-      }
-      let nbComp = newBlock(block_T);
-      console.log("nbComp: " + `${nbComp}`);
-
-      let compElems = document.getElementById(nbComp).querySelector(".childBox-Container-Horizontal"); // comparison/math block node
-      console.log("compElems: " + `${compElems}`);
-
-      let compElems2 = compElems.querySelectorAll("*");
-      console.log("compElems2: " + `${compElems2}`);
-
-      console.log("compElems2 length: " + `${compElems2.length}`);
-
-
-      if (block_T == "comparisonBlock") {
-        rmBlock.push(document.getElementById(nbComp));
-
-      }
-      if (oArray[i - 1] >= "0" && oArray[i - 1] <= "9") {
-        let tempNb = newBlock("mathText");
-        let tempRef = document.getElementById(tempNb);
-        let mathInput = tempRef.querySelector(".math-input")
-        mathInput.value = oArray[i - 1];
-        tempRef.dataset.blockValue = oArray[i - 1];
-
-        compElems2[0].append(tempRef);
-      }
-      else {
-        let nbComp = newBlock("printText");
-        let elText = document.getElementById(nbComp);
-        elText.querySelector(".text-input").value += oArray[i - 1];
-        compElems2[0].append(elText);
-        //compElems[0].append(elText);
-      }
-
-      let elDrop = compElems.querySelector(".block-dropdown");
-      elDrop.value = oArray[i];
-
-
-
-      console.log('i: ' + `${i}`);
-
-      retArray[arrCount] = compElems;
-      if (retArray.length > 1) {
-        retArray[arrCount - 1].append(document.getElementById(nbComp));
-      }
-
-
-      arrCount++;
-      //rmBlock = document.getElementById(nbComp);
-      console.log("retArray: " + `${retArray}`);
-
-
-    }
-    else if(oArray[0][0] == 'p' ){
-      
-        console.log("PRINT STATEMENT");
-
-        if(oArray[0][6] == "\"" && oArray.length == 1){
-          let nbComp = newBlock("printText");
-          let elText = document.getElementById(nbComp);
-          elText.querySelector(".text-input").value += oArray[0].substring(7, oArray[0].length -2);
-          console.log("rmBlock: " + `${rmBlock}`);
-
-          retArray[arrCount] = elText;
-          arrCount++;
-          rmBlock.push(elText);
+    //loop to identify variables
+    for(let j = 0; j < arr.length; j++){
+      if(arr[i] == "="){
+        if (!userVariables.includes(arr[i - 1])) {
+          userVariables.push(arr[i - 1]);
         }
-        else if(oArray[0][6] == "\"" && oArray.length > 0){
-          let nbComp = newBlock("printText");
-          let elText = document.getElementById(nbComp);
-          elText.querySelector(".text-input").value += oArray[0].substring(7, oArray[0].length);
+      }
+    }
 
-          for(let j = 1; j < oArray.length-1; j++){
-            elText.querySelector(".text-input").value += " " + oArray[j];
+
+    //comparison logic
+    if(compValues.includes(arr[i])){
+
+      //check for rightmost block
+      //if no rightmost block -> store this block
+      //if rightmost block exists -> must be or/and
+
+
+
+
+      console.log("COMPARISON FOUND")
+      
+      // create new block
+      let nbCons = newBlock("comparisonBlock"); //new comparison block
+      let compRef = document.getElementById(nbCons); //reference to comparison block
+      let compContainers = compRef.querySelectorAll(".child-box-container-horizontal");
+
+      //check for multiple comparisons
+      if(arr.length <= 4){                
+        console.log("CONTAINERS CONTAINED");
+
+        //select dropdown from comparison block
+        console.log(compRef.querySelector(" .block-dropdown"));
+        compRef.querySelector(" .block-dropdown").value = arr[i];
+
+        if(userVariables.includes(arr[i-1])){
+          //new block for variable
+          //refrence for variable block
+          let newVar = newBlock("variableBlock");
+          let newRef = document.getElementById(newVar);
+
+          //assign value to variable block
+          newRef.querySelector(".block-dropdown").value = arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+        else if(arr[i-1][0] >= "0" && arr[i-1][0] <= "9"){
+
+          //new block for variable
+          //refrence for variable block
+          let newMathtext = newBlock("mathText");
+          let newRef = document.getElementById(newMathtext);
+
+
+          
+          //assign value to variable block
+          let mathInput = newRef.querySelector(".math-input")
+          mathInput.value = arr[i - 1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+
+        }
+        else{
+          //new block for variable
+          //refrence for variable block
+          let newText = newBlock("printText");
+          let newRef = document.getElementById(newText);
+
+          //assign value to variable block
+          newRef.querySelector(".text-input").value += arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+        //end left side assignment
+
+
+        //append right side
+
+        if(userVariables.includes(arr[i+1])){
+          //new block for variable
+          //refrence for variable block
+          let newVar = newBlock("variableBlock");
+          let newRef = document.getElementById(newVar);
+
+          //assign value to variable block
+          newRef.querySelector(".block-dropdown").value = arr[i+1];
+
+          //append variable block to comparison block left side
+          compContainers[1].appendChild(newRef);
+        }
+        else if(arr[i+1][0] >= "0" && arr[i+1][0] <= "9"){
+
+          //new block for variable
+          //refrence for variable block
+          let newMathtext = newBlock("mathText");
+          let newRef = document.getElementById(newMathtext);
+
+
+          
+          //assign value to variable block
+          let mathInput = newRef.querySelector(".math-input")
+          mathInput.value = arr[i+1];
+
+          //append variable block to comparison block left side
+          compContainers[1].appendChild(newRef);
+
+        }
+        else{
+          //new block for variable
+          //refrence for variable block
+          let newText = newBlock("printText");
+          let newRef = document.getElementById(newText);
+
+          //assign value to variable block
+          newRef.querySelector(".text-input").value += arr[i+1];
+
+          //append variable block to comparison block left side
+          compContainers[1].appendChild(newRef);
+
+
+        }
+
+        //push block to return array
+        returnArray.push(compRef);
+      }
+      else{
+        let clickRef = compRef.querySelector(" .fa-plus");
+
+        //select leftmost dropdown
+        console.log(compRef.querySelector(" .block-dropdown"));
+        compRef.querySelector(" .block-dropdown").value = arr[i];
+
+        //placeholder for current container
+        let currContainer;
+
+        //assign left variable
+        if(userVariables.includes(arr[i-1])){
+          //new block for variable
+          //refrence for variable block
+          let newVar = newBlock("variableBlock");
+          let newRef = document.getElementById(newVar);
+
+          //assign value to variable block
+          newRef.querySelector(".block-dropdown").value = arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+        else if(arr[i-1][0] >= "0" && arr[i-1][0] <= "9"){
+
+          //new block for variable
+          //refrence for variable block
+          let newMathtext = newBlock("mathText");
+          let newRef = document.getElementById(newMathtext);
+
+
+          
+          //assign value to variable block
+          let mathInput = newRef.querySelector(".math-input")
+          mathInput.value = arr[i - 1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+
+        }
+        else{
+          //new block for variable
+          //refrence for variable block
+          let newText = newBlock("printText");
+          let newRef = document.getElementById(newText);
+
+          
+
+          //assign value to variable block
+          newRef.querySelector(".text-input").value += arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+
+
+
+
+
+        //loop through array for to expand right side and create current rightmost block
+        for(let j = i+1; j < arr.length; j++){
+           if(compValues.includes(arr[j])){
+            i = j;
+            
+            compContainers = compRef.querySelectorAll(".child-box-container-horizontal"); //refreshes containers
+
+            //find rightmost container
+            currContainer = compContainers[compContainers.length -1];
+            console.log(currContainer);
+
+
+
+            //create variable
+            if(userVariables.includes(arr[j-1])){
+              //new block for variable
+              //refrence for variable block
+              let newVar = newBlock("variableBlock");
+              let newRef = document.getElementById(newVar);
+    
+              //assign value to variable block
+              newRef.querySelector(".block-dropdown").value = arr[j-1];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
+            else if(arr[j-1][0] >= "0" && arr[j-1][0] <= "9"){
+    
+              //new block for variable
+              //refrence for variable block
+              let newMathtext = newBlock("mathText");
+              let newRef = document.getElementById(newMathtext);
+    
+    
+              
+              //assign value to variable block
+              let mathInput = newRef.querySelector(".math-input")
+              mathInput.value = arr[j - 1];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+    
+            }
+            else{
+              //new block for variable
+              //refrence for variable block
+              let newText = newBlock("printText");
+              let newRef = document.getElementById(newText);
+    
+              //assign value to variable block
+              newRef.querySelector(".text-input").value += arr[j-1];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
+            //end of middle block assignments
+
+
+            clickRef.dispatchEvent(clickEvent); //clicks to add another container
+
+            //update dropdown list
+            let dropList = compRef.querySelectorAll(" .block-dropdown");
+            dropList[dropList.length-1].value = arr[j];
+            console.log("DROPDOWN POINTER");
+            console.log(dropList.length);
+           }
+
+          //assign last block to rightmost container
+          if(j == arr.length -1){
+            compContainers = compRef.querySelectorAll(".child-box-container-horizontal"); //refreshes containers
+            currContainer = compContainers[compContainers.length -1];
+
+            console.log("THIS IS THE LAST ONE");
+            if(userVariables.includes(arr[j])){
+              //new block for variable
+              //refrence for variable block
+              let newVar = newBlock("variableBlock");
+              let newRef = document.getElementById(newVar);
+    
+              //assign value to variable block
+              newRef.querySelector(".block-dropdown").value = arr[j];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
+            else if(arr[j][0] >= "0" && arr[j][0] <= "9"){
+    
+              //new block for variable
+              //refrence for variable block
+              let newMathtext = newBlock("mathText");
+              let newRef = document.getElementById(newMathtext);
+    
+    
+              
+              //assign value to variable block
+              let mathInput = newRef.querySelector(".math-input")
+              mathInput.value = arr[j];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+    
+            }
+            else{
+              //new block for variable
+              //refrence for variable block
+              let newText = newBlock("printText");
+              let newRef = document.getElementById(newText);
+    
+              //assign value to variable block
+              newRef.querySelector(".text-input").value += arr[j];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
           }
 
-          elText.querySelector(".text-input").value += " " + oArray[oArray.length - 1].substring(0, oArray[oArray.length - 1].length -2);
 
-
-          console.log("rmBlock: " + `${rmBlock}`);
-
-          retArray[arrCount] = elText;
-          arrCount++;
-          rmBlock.push(elText);
-          i = oArray.length+1;
+           console.log(arr[j]);
         }
-        else if(oArray[0][6] >= '0' && oArray[0][6] <= '9'){
-          console.log("PRINT INT");
-          let nbComp = newBlock("mathText");
-          let elText = document.getElementById(nbComp);
-          let tempString = oArray[0].substring(6, oArray[0].length -1);
-          console.log(tempString);
-          let mText = parseInt(tempString, 10);
-          console.log(mText);
-          elText.querySelector(".math-input").value += mText;
-          console.log("rmBlock: " + `${rmBlock}`);
+        returnArray.push(compRef);
+      }
 
-          retArray[arrCount] = elText;
-          arrCount++;
-          rmBlock.push(elText);
-          
-        }
-        else if(userVariables.includes(oArray[0].substring(6, oArray[0].length -1))){
-          let tempVar = newBlock("variableBlock");
-          let varRef = document.getElementById(tempVar);
-          varRef.querySelector(".block-dropdown").value = oArray[0].substring(6, oArray[0].length -1);
-          
-
-          retArray[arrCount] = varRef;
-          arrCount++;
-
-          rmBlock.push(varRef);
-          
-        }
-      
-      
     }
 
-    else if (i == oArray.length - 1) {
-      if (oArray[i] >= "0" && oArray[i] <= "9") {
-        let nbComp = newBlock("mathText");
-        let nbRef = document.getElementById(nbComp);
-        let mathInput = nbRef.querySelector(".math-input")
-        mathInput.value = oArray[i];
-        nbRef.dataset.blockValue = oArray[i];
-        rmBlock[0].querySelectorAll(".childBox-Container-Horizontal .child-box-container-horizontal")[1].append(nbRef);
+    
+
+    //math block logic
+    else if(mathValues.includes(arr[i])){
+
+      //check for rightmost block
+      //if no rightmost block -> store this block
+      //if rightmost block exists -> must be or/and
 
 
-        // let rCont = rmBlock.querySelectorAll(".childbox-container-horizontal");
-        // console.log(rCont);
 
+
+      console.log("COMPARISON FOUND")
+      
+      // create new block
+      let nbCons = newBlock("mathBlock"); //new comparison block
+      let compRef = document.getElementById(nbCons); //reference to comparison block
+      let compContainers = compRef.querySelectorAll(".child-box-container-horizontal");
+
+      //check for multiple comparisons
+      if(arr.length <= 3){                
+        console.log("CONTAINERS CONTAINED");
+
+        //select dropdown from comparison block
+        console.log(compRef.querySelector(" .block-dropdown"));
+        compRef.querySelector(" .block-dropdown").value = arr[i];
+
+        if(userVariables.includes(arr[i-1])){
+          //new block for variable
+          //refrence for variable block
+          let newVar = newBlock("variableBlock");
+          let newRef = document.getElementById(newVar);
+
+          //assign value to variable block
+          newRef.querySelector(".block-dropdown").value = arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+        else if(arr[i-1][0] >= "0" && arr[i-1][0] <= "9"){
+
+          //new block for variable
+          //refrence for variable block
+          let newMathtext = newBlock("mathText");
+          let newRef = document.getElementById(newMathtext);
+
+
+          
+          //assign value to variable block
+          let mathInput = newRef.querySelector(".math-input")
+          mathInput.value = arr[i - 1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+
+        }
+        else{
+          //new block for variable
+          //refrence for variable block
+          let newText = newBlock("printText");
+          let newRef = document.getElementById(newText);
+
+          //assign value to variable block
+          newRef.querySelector(".text-input").value += arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+        //end left side assignment
+
+
+        //append right side
+
+        if(userVariables.includes(arr[i+1])){
+          //new block for variable
+          //refrence for variable block
+          let newVar = newBlock("variableBlock");
+          let newRef = document.getElementById(newVar);
+
+          //assign value to variable block
+          newRef.querySelector(".block-dropdown").value = arr[i+1];
+
+          //append variable block to comparison block left side
+          compContainers[1].appendChild(newRef);
+        }
+        else if(arr[i+1][0] >= "0" && arr[i+1][0] <= "9"){
+
+          //new block for variable
+          //refrence for variable block
+          let newMathtext = newBlock("mathText");
+          let newRef = document.getElementById(newMathtext);
+
+
+          
+          //assign value to variable block
+          let mathInput = newRef.querySelector(".math-input")
+          mathInput.value = arr[i+1];
+
+          //append variable block to comparison block left side
+          compContainers[1].appendChild(newRef);
+
+        }
+        else{
+          //new block for variable
+          //refrence for variable block
+          let newText = newBlock("printText");
+          let newRef = document.getElementById(newText);
+
+          //assign value to variable block
+          newRef.querySelector(".text-input").value += arr[i+1];
+
+          //append variable block to comparison block left side
+          compContainers[1].appendChild(newRef);
+
+
+        }
+
+        //push block to return array
+        returnArray.push(compRef);
       }
-      else if(userVariables.includes(oArray[i])) {
-        let tempVar = newBlock("variableBlock");
-        let varRef = document.getElementById(tempVar);
-        varRef.querySelector(".block-dropdown").value = oArray[i];
-        rmBlock[0].querySelectorAll(".childBox-Container-Horizontal .child-box-container-horizontal")[1].append(varRef);
+      else{
+        let clickRef = compRef.querySelector(" .fa-plus");
+
+        //select leftmost dropdown
+        console.log(compRef.querySelector(" .block-dropdown"));
+        compRef.querySelector(" .block-dropdown").value = arr[i];
+
+        //placeholder for current container
+        let currContainer;
+
+        //assign left variable
+        if(userVariables.includes(arr[i-1])){
+          //new block for variable
+          //refrence for variable block
+          let newVar = newBlock("variableBlock");
+          let newRef = document.getElementById(newVar);
+
+          //assign value to variable block
+          newRef.querySelector(".block-dropdown").value = arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+        else if(arr[i-1][0] >= "0" && arr[i-1][0] <= "9"){
+
+          //new block for variable
+          //refrence for variable block
+          let newMathtext = newBlock("mathText");
+          let newRef = document.getElementById(newMathtext);
+
+
+          
+          //assign value to variable block
+          let mathInput = newRef.querySelector(".math-input")
+          mathInput.value = arr[i - 1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+
+        }
+        else{
+          //new block for variable
+          //refrence for variable block
+          let newText = newBlock("printText");
+          let newRef = document.getElementById(newText);
+
+          
+
+          //assign value to variable block
+          newRef.querySelector(".text-input").value += arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+
+
+
+
+
+        //loop through array for to expand right side and create current rightmost block
+        for(let j = i+1; j < arr.length; j++){
+           if(mathValues.includes(arr[j])){
+            i = j;
+            
+            compContainers = compRef.querySelectorAll(".child-box-container-horizontal"); //refreshes containers
+
+            //find rightmost container
+            currContainer = compContainers[compContainers.length -1];
+            console.log(currContainer);
+
+
+
+            //create variable
+            if(userVariables.includes(arr[j-1])){
+              //new block for variable
+              //refrence for variable block
+              let newVar = newBlock("variableBlock");
+              let newRef = document.getElementById(newVar);
+    
+              //assign value to variable block
+              newRef.querySelector(".block-dropdown").value = arr[j-1];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
+            else if(arr[j-1][0] >= "0" && arr[j-1][0] <= "9"){
+    
+              //new block for variable
+              //refrence for variable block
+              let newMathtext = newBlock("mathText");
+              let newRef = document.getElementById(newMathtext);
+    
+    
+              
+              //assign value to variable block
+              let mathInput = newRef.querySelector(".math-input")
+              mathInput.value = arr[j - 1];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+    
+            }
+            else{
+              //new block for variable
+              //refrence for variable block
+              let newText = newBlock("printText");
+              let newRef = document.getElementById(newText);
+    
+              //assign value to variable block
+              newRef.querySelector(".text-input").value += arr[j-1];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
+            //end of middle block assignments
+
+
+            clickRef.dispatchEvent(clickEvent); //clicks to add another container
+
+            //update dropdown list
+            let dropList = compRef.querySelectorAll(" .block-dropdown");
+            dropList[dropList.length-1].value = arr[j];
+            console.log("DROPDOWN POINTER");
+            console.log(dropList.length);
+           }
+
+          //assign last block to rightmost container
+          if(j == arr.length -1){
+            compContainers = compRef.querySelectorAll(".child-box-container-horizontal"); //refreshes containers
+            currContainer = compContainers[compContainers.length -1];
+
+            console.log("THIS IS THE LAST ONE");
+            if(userVariables.includes(arr[j])){
+              //new block for variable
+              //refrence for variable block
+              let newVar = newBlock("variableBlock");
+              let newRef = document.getElementById(newVar);
+    
+              //assign value to variable block
+              newRef.querySelector(".block-dropdown").value = arr[j];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
+            else if(arr[j][0] >= "0" && arr[j][0] <= "9"){
+    
+              //new block for variable
+              //refrence for variable block
+              let newMathtext = newBlock("mathText");
+              let newRef = document.getElementById(newMathtext);
+    
+    
+              
+              //assign value to variable block
+              let mathInput = newRef.querySelector(".math-input")
+              mathInput.value = arr[j];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+    
+            }
+            else{
+              //new block for variable
+              //refrence for variable block
+              let newText = newBlock("printText");
+              let newRef = document.getElementById(newText);
+    
+              //assign value to variable block
+              newRef.querySelector(".text-input").value += arr[j];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
+          }
+
+
+           console.log(arr[j]);
+        }
+        returnArray.push(compRef);
       }
 
-      else {
-        let nbComp = newBlock("printText");
-        let elText = document.getElementById(nbComp);
-        elText.querySelector(".text-input").value += oArray[i];
-        rmBlock.push(elText);
-        //compElems[0].append(elText);
-      }
     }
 
-  } // end for loop over array of tokens
+    //variable operations logic
+    else if(varValues.includes(arr[i])){
 
-  console.log('return array: ');
-  console.log(rmBlock);
-  console.log('return container: ' + `${container}`);
-  for (let i = 0; i < rmBlock.length; i++) {
-    container.appendChild(rmBlock[i]);
+      //check for rightmost block
+      //if no rightmost block -> store this block
+      //if rightmost block exists -> must be or/and
+
+
+
+
+      console.log("COMPARISON FOUND")
+      
+      // create new block
+      let nbCons = newBlock("varOps"); //new comparison block
+      let compRef = document.getElementById(nbCons); //reference to comparison block
+      let compContainers = compRef.querySelectorAll(".child-box-container-horizontal");
+
+      //check for multiple comparisons
+      if(arr.length <= 3){                
+        console.log("CONTAINERS CONTAINED");
+
+        //select dropdown from comparison block
+        console.log(compRef.querySelector(" .block-dropdown"));
+        compRef.querySelector(" .block-dropdown").value = arr[i];
+
+        if(userVariables.includes(arr[i-1])){
+          //new block for variable
+          //refrence for variable block
+          let newVar = newBlock("variableBlock");
+          let newRef = document.getElementById(newVar);
+
+          //assign value to variable block
+          newRef.querySelector(".block-dropdown").value = arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+        else if(arr[i-1][0] >= "0" && arr[i-1][0] <= "9"){
+
+          //new block for variable
+          //refrence for variable block
+          let newMathtext = newBlock("mathText");
+          let newRef = document.getElementById(newMathtext);
+
+
+          
+          //assign value to variable block
+          let mathInput = newRef.querySelector(".math-input")
+          mathInput.value = arr[i - 1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+
+        }
+        else{
+          //new block for variable
+          //refrence for variable block
+          let newText = newBlock("printText");
+          let newRef = document.getElementById(newText);
+
+          //assign value to variable block
+          newRef.querySelector(".text-input").value += arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+        //end left side assignment
+
+
+        //append right side
+
+        if(userVariables.includes(arr[i+1])){
+          //new block for variable
+          //refrence for variable block
+          let newVar = newBlock("variableBlock");
+          let newRef = document.getElementById(newVar);
+
+          //assign value to variable block
+          newRef.querySelector(".block-dropdown").value = arr[i+1];
+
+          //append variable block to comparison block left side
+          compContainers[1].appendChild(newRef);
+        }
+        else if(arr[i+1][0] >= "0" && arr[i+1][0] <= "9"){
+
+          //new block for variable
+          //refrence for variable block
+          let newMathtext = newBlock("mathText");
+          let newRef = document.getElementById(newMathtext);
+
+
+          
+          //assign value to variable block
+          let mathInput = newRef.querySelector(".math-input")
+          mathInput.value = arr[i+1];
+
+          //append variable block to comparison block left side
+          compContainers[1].appendChild(newRef);
+
+        }
+        else{
+          //new block for variable
+          //refrence for variable block
+          let newText = newBlock("printText");
+          let newRef = document.getElementById(newText);
+
+          //assign value to variable block
+          newRef.querySelector(".text-input").value += arr[i+1];
+
+          //append variable block to comparison block left side
+          compContainers[1].appendChild(newRef);
+
+
+        }
+
+        //push block to return array
+        returnArray.push(compRef);
+      }
+      else{
+        let clickRef = compRef.querySelector(" .fa-plus");
+
+        //select leftmost dropdown
+        console.log(compRef.querySelector(" .block-dropdown"));
+        compRef.querySelector(" .block-dropdown").value = arr[i];
+
+        //placeholder for current container
+        let currContainer;
+
+        //assign left variable
+        if(userVariables.includes(arr[i-1])){
+          //new block for variable
+          //refrence for variable block
+          let newVar = newBlock("variableBlock");
+          let newRef = document.getElementById(newVar);
+
+          //assign value to variable block
+          newRef.querySelector(".block-dropdown").value = arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+        else if(arr[i-1][0] >= "0" && arr[i-1][0] <= "9"){
+
+          //new block for variable
+          //refrence for variable block
+          let newMathtext = newBlock("mathText");
+          let newRef = document.getElementById(newMathtext);
+
+
+          
+          //assign value to variable block
+          let mathInput = newRef.querySelector(".math-input")
+          mathInput.value = arr[i - 1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+
+        }
+        else{
+          //new block for variable
+          //refrence for variable block
+          let newText = newBlock("printText");
+          let newRef = document.getElementById(newText);
+
+          
+
+          //assign value to variable block
+          newRef.querySelector(".text-input").value += arr[i-1];
+
+          //append variable block to comparison block left side
+          compContainers[0].appendChild(newRef);
+        }
+
+
+
+
+
+        //loop through array for to expand right side and create current rightmost block
+        for(let j = i+1; j < arr.length; j++){
+           if(varValues.includes(arr[j])){
+            i = j;
+            
+            compContainers = compRef.querySelectorAll(".child-box-container-horizontal"); //refreshes containers
+
+            //find rightmost container
+            currContainer = compContainers[compContainers.length -1];
+            console.log(currContainer);
+
+
+
+            //create variable
+            if(userVariables.includes(arr[j-1])){
+              //new block for variable
+              //refrence for variable block
+              let newVar = newBlock("variableBlock");
+              let newRef = document.getElementById(newVar);
+    
+              //assign value to variable block
+              newRef.querySelector(".block-dropdown").value = arr[j-1];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
+            else if(arr[j-1][0] >= "0" && arr[j-1][0] <= "9"){
+    
+              //new block for variable
+              //refrence for variable block
+              let newMathtext = newBlock("mathText");
+              let newRef = document.getElementById(newMathtext);
+    
+    
+              
+              //assign value to variable block
+              let mathInput = newRef.querySelector(".math-input")
+              mathInput.value = arr[j - 1];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+    
+            }
+            else{
+              //new block for variable
+              //refrence for variable block
+              let newText = newBlock("printText");
+              let newRef = document.getElementById(newText);
+    
+              //assign value to variable block
+              newRef.querySelector(".text-input").value += arr[j-1];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
+            //end of middle block assignments
+
+
+            clickRef.dispatchEvent(clickEvent); //clicks to add another container
+
+            //update dropdown list
+            let dropList = compRef.querySelectorAll(" .block-dropdown");
+            dropList[dropList.length-1].value = arr[j];
+            console.log("DROPDOWN POINTER");
+            console.log(dropList.length);
+           }
+
+          //assign last block to rightmost container
+          if(j == arr.length -1){
+            compContainers = compRef.querySelectorAll(".child-box-container-horizontal"); //refreshes containers
+            currContainer = compContainers[compContainers.length -1];
+
+            console.log("THIS IS THE LAST ONE");
+            if(userVariables.includes(arr[j])){
+              //new block for variable
+              //refrence for variable block
+              let newVar = newBlock("variableBlock");
+              let newRef = document.getElementById(newVar);
+    
+              //assign value to variable block
+              newRef.querySelector(".block-dropdown").value = arr[j];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
+            else if(arr[j][0] >= "0" && arr[j][0] <= "9"){
+    
+              //new block for variable
+              //refrence for variable block
+              let newMathtext = newBlock("mathText");
+              let newRef = document.getElementById(newMathtext);
+    
+    
+              
+              //assign value to variable block
+              let mathInput = newRef.querySelector(".math-input")
+              mathInput.value = arr[j];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+    
+            }
+            else{
+              //new block for variable
+              //refrence for variable block
+              let newText = newBlock("printText");
+              let newRef = document.getElementById(newText);
+    
+              //assign value to variable block
+              newRef.querySelector(".text-input").value += arr[j];
+    
+              //append variable block to comparison block left side
+              currContainer.appendChild(newRef);
+            }
+          }
+
+
+           console.log(arr[j]);
+        }
+        returnArray.push(compRef);
+      }
+
+    }
+    //range logic
+    else if(arr[0] == "for" && arr[2] == "in"){
+      //logic for range function
+
+      //create range block
+      let rangeCons = newBlock("range");
+      let rangeRef = document.getElementById(rangeCons);
+      let rangeBox = rangeRef.querySelectorAll(".child-box-container-horizontal");
+
+
+      //append left value
+      let tempText = newBlock("printText");
+      let ttRef = document.getElementById(tempText);
+      ttRef.innerText += arr[1];
+      rangeBox[0].append(ttRef);
+
+      //append right value
+      let tempRange = newBlock("printText");
+      let trRef = document.getElementById(tempRange);
+      let textRange = "";
+      for(let j = 3; j < arr.length; j++){
+        textRange += arr[j];
+      }
+      textRange = textRange.substring(6, textRange.length-1);
+      trRef.innerText += textRange;
+
+      
+      rangeBox[1].append(trRef);
+      
+      //not implemented at this time
+      returnArray.push(rangeRef);
+
+      i = arr.length;
+
+    }
+    
+    //print logic
+    else if(arr[0][0] == "p" && arr[0][1] == "r"){
+      
+      //append left value
+      let tempText = newBlock("printText");
+      let ttRef = document.getElementById(tempText);
+      let fullLen = 0;
+      
+
+      let textRange = "";
+      for(let j = 0; j < arr.length; j++){
+        textRange += arr[j] + " ";
+      }
+      textRange = textRange.substring(6, textRange.length-2);
+      ttRef.innerText += textRange;
+
+      
+      //not implemented at this time
+      returnArray.push(ttRef);
+
+      i = arr.length;
+
+    }
+
+    //math functions logic
+    else if(arr[0][0] == "m" && arr[0][1] == "a" && arr[0][2] == "t" && arr[0][3] == "h"){
+
+      // let matha = ["(round)", "(ceil)", "(floor)", "(truc)", "(abs)"];
+      // let mathb = ["(gcd)", "(lcm)", "(factorial)", "(sum)", "(prod)"];
+      // let mathc = ["(log)", "(log10)", "(exp)", "(sqrt)", "(pow)"];
+      // let mathd = ["(sin)", "(cos)", "(tan)", "(asin)", "(acos)", "(atan)", "(radians)", "(degrees)"];
+
+      console.log("MATH DETECTED");
+      let mathBuilder = arr[0].substring(5, arr[0].length);
+      console.log("MATH SUBSTRING: ");
+      console.log(mathBuilder);
+      let threeChar = mathBuilder.substring(0,3);
+      console.log(threeChar);
+      let dropItem;
+      let remainder;
+      let mathType;
+      let nbCons;
+      let compRef;
+
+      //mathType = "roundAbs";
+      //mathType = "basicArithmatic";
+      //mathType = "logExp";
+      //mathType = "trigFunctions";
+      if(mathBuilder[0] == 'p' && mathBuilder[1] == 'i'){
+        console.log("CONSTANT");
+        nbCons = newBlock("mathConstants"); //new comparison block
+        compRef = document.getElementById(nbCons); //reference to comparison block
+        let mathDrop = compRef.querySelector(" .block-dropdown");
+        mathDrop.value = "pi";
+      }
+      else if(mathBuilder[0] == 'e'){
+        console.log("CONSTANT");
+        nbCons = newBlock("mathConstants"); //new comparison block
+        compRef = document.getElementById(nbCons); //reference to comparison block
+        let mathDrop = compRef.querySelector(" .block-dropdown");
+        mathDrop.value = "e";
+
+      }
+      else if(mathBuilder[0] == 't' && mathBuilder[1] == 'a' && mathBuilder[2] == 'u'){
+        console.log("CONSTANT");
+        nbCons = newBlock("mathConstants"); //new comparison block
+        compRef = document.getElementById(nbCons); //reference to comparison block
+        let mathDrop = compRef.querySelector(" .block-dropdown");
+        mathDrop.value = "tau";
+
+      }
+      else if(mathBuilder[0] == 'i' && mathBuilder[1] == 'n' && mathBuilder[2] == 'f'){
+        console.log("CONSTANT");
+        nbCons = newBlock("mathConstants"); //new comparison block
+        compRef = document.getElementById(nbCons); //reference to comparison block
+        let mathDrop = compRef.querySelector(" .block-dropdown");
+        mathDrop.value = "inf";
+
+      }
+      else if(mathBuilder[0] == 'n' && mathBuilder[1] == 'a' && mathBuilder[2] == 'n'){
+        console.log("CONSTANT");
+        nbCons = newBlock("mathConstants"); //new comparison block
+        compRef = document.getElementById(nbCons); //reference to comparison block
+        let mathDrop = compRef.querySelector(" .block-dropdown");
+        mathDrop.value = "nan";
+
+      }
+      else{
+        switch(threeChar){
+          case "rou":
+            dropItem = "round";
+            remainder = mathBuilder.substring(6,mathBuilder.length-1);
+            mathType = "roundAbs"
+
+            // nbCons = newBlock(mathType); //new comparison block
+            // compRef = document.getElementById(nbCons); //reference to comparison block
+            // let mathDrop = compRef.querySelector(" .block-dropdown");
+            // mathDrop.value = dropItem;
+            break;
+
+          case "cei":
+            dropItem = "ceil";
+            remainder = mathBuilder.substring(5,mathBuilder.length-1);
+            mathType = "roundAbs";
+            break;
+
+          case "flo":
+            dropItem = "floor";
+            remainder = mathBuilder.substring(6,mathBuilder.length-1);
+            mathType = "roundAbs";
+            break;
+
+          case "tru":
+            dropItem = "truc";
+            remainder = mathBuilder.substring(5,mathBuilder.length-1);
+            mathType = "roundAbs";
+            break;
+
+          case "abs":
+            dropItem = "abs";
+            remainder = mathBuilder.substring(4,mathBuilder.length-1);
+            mathType = "roundAbs";
+            break;
+
+          case "gcd":
+            dropItem = "gcd";
+            remainder = mathBuilder.substring(4,mathBuilder.length-1);
+            mathType = "basicArithmetic";
+            break;
+
+          case "lcm":
+            dropItem = "lcm";
+            remainder = mathBuilder.substring(4,mathBuilder.length-1);
+            mathType = "basicArithmetic";
+            break;
+          case "fac":
+            dropItem = "factorial";
+            remainder = mathBuilder.substring(9,mathBuilder.length-1);
+            mathType = "basicArithmetic";
+            break;
+          case "sum":
+            dropItem = "sum";
+            remainder = mathBuilder.substring(4,mathBuilder.length-1);
+            mathType = "basicArithmetic";
+            break;
+          case "pro":
+            dropItem = "prod";
+            remainder = mathBuilder.substring(5,mathBuilder.length-1);
+            mathType = "basicArithmetic";
+            break;
+          case "log":
+            if(mathBuilder[3] == "1"){
+              dropItem = "log10";
+              remainder = mathBuilder.substring(6,mathBuilder.length-1);
+              mathType = "logExp";
+            }
+            else{
+              dropItem = "log";
+              remainder = mathBuilder.substring(4,mathBuilder.length-1);
+              mathType = "logExp";
+            }
+            
+            break;
+          case "exp":
+            dropItem = "exp";
+            remainder = mathBuilder.substring(4,mathBuilder.length-1);
+            mathType = "logExp";
+            break;
+          case "sqr":
+            dropItem = "sqrt";
+            remainder = mathBuilder.substring(5,mathBuilder.length-1);
+            mathType = "logExp";
+            break;
+          case "pow":
+            dropItem = "pow";
+            remainder = mathBuilder.substring(4,mathBuilder.length-1);
+            mathType = "logExp";
+            break;
+          case "sin":
+            dropItem = "sin";
+            remainder = mathBuilder.substring(4,mathBuilder.length-1);
+            mathType = "trigFunctions";
+            break;
+          case "cos":
+            dropItem = "cos";
+            remainder = mathBuilder.substring(4,mathBuilder.length-1);
+            mathType = "trigFunctions";
+            break;
+          case "tan":
+            dropItem = "tan";
+            remainder = mathBuilder.substring(4,mathBuilder.length-1);
+            mathType = "trigFunctions";
+            break;
+          case "asi":
+            dropItem = "asin";
+            remainder = mathBuilder.substring(5,mathBuilder.length-1);
+            mathType = "trigFunctions";
+            break;
+          case "aco":
+            dropItem = "acos";
+            remainder = mathBuilder.substring(5,mathBuilder.length-1);
+            mathType = "trigFunctions";
+            break;
+          case "ata":
+            dropItem = "atan";
+            remainder = mathBuilder.substring(5,mathBuilder.length-1);
+            mathType = "trigFunctions";
+            break;
+          case "rad": 
+            dropItem = "radians";
+            remainder = mathBuilder.substring(8,mathBuilder.length-1);
+            mathType = "trigFunctions";
+            break;
+          case "deg": 
+            dropItem = "degrees";
+            remainder = mathBuilder.substring(8,mathBuilder.length-1);
+            mathType = "trigFunctions";
+            break;
+        }
+        //end switch statement
+        nbCons = newBlock(mathType); //new comparison block
+        compRef = document.getElementById(nbCons); //reference to comparison block
+        let mathDrop = compRef.querySelector(".block-dropdown");
+        mathDrop.value = dropItem;
+
+        let newText = newBlock("printText");
+        let newRef = document.getElementById(newText);
+        newRef.innerText += remainder;
+
+        let stash = compRef.querySelector(".child-box-container-horizontal");
+        stash.append(newRef);
+
+
+        returnArray.push(compRef);
+
+
+
+
+
+        
+      }
+      //end else
+      
+      
+      //let compContainers = compRef.querySelectorAll(".child-box-container-horizontal");
+    }
+
+    //turtle command logic
+
+    
+    
+
+    //random text logic
+    
   }
+
+
+  // console.log("varArr:");
+  // console.log(varArray);
+  // console.log("rightMostBlock:");
+  // console.log(rightMostBlock);
+  // console.log("returnArray:");
+  // console.log(returnArray);
+
+  for (let i = 0; i < returnArray.length; i++) {
+    container.appendChild(returnArray[i]);
+  }
+
 } // end blockBuilder()
 
 
@@ -736,7 +1818,7 @@ function runCode() {
   mypre.innerHTML = ""; // Clear previous output
 
   Sk.pre = "output";
-  console.log(Sk);
+  //console.log(Sk);
   Sk.configure({ output: outf, read: builtinRead });
   (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = "mycanvas";
 
@@ -744,16 +1826,26 @@ function runCode() {
   var turtleSetupCode = `
 import turtle
 import math
+import random
 `;
 
+  const setupLines = turtleSetupCode.split("\n").length;
   var cleanedProg = prog.trimStart();
   console.log("user code:", prog);
   var fullProg = turtleSetupCode + "\n" + cleanedProg;
-  console.log("Combined code:", fullProg);
+  //console.log("Combined code:", fullProg);
 
-  var myPromise = Sk.misceval.asyncToPromise(function () {
-    return Sk.importMainWithBody("<stdin>", false, fullProg, true);
-  });
+  try {
+    Sk.misceval
+      .asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, fullProg, true))
+      .catch(err => {
+        const formatted = formatSkulptError(err, setupLines);
+        mypre.innerHTML += formatted;
+      });
+  } catch (err) {
+    const formatted = formatSkulptError(err, setupLines);
+    mypre.innerHTML += formatted;
+  }
 }
 
 window.runCode = runCode;
@@ -816,6 +1908,27 @@ function builtinRead(x) {
   return Sk.builtinFiles["files"][x];
 }
 
+function formatSkulptError(err, offset) {
+  let errorText = "";
+  if (err instanceof Sk.builtin.BaseException) {
+    errorText = err.toString();
+  } else {
+    errorText = err.toString();
+  }
+
+  errorText = errorText.replace(/on line (\d+)/g, function (match, p1) {
+    const lineNum = parseInt(p1, 10) - offset;
+    return `on line ${lineNum > 0 ? lineNum : 1}`;
+  });
+
+  errorText = errorText
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br>");
+
+  return `<span style="color: red;">${errorText}</span><br>`;
+}
+
 // ==========================
 // 11. Event Listeners
 // ==========================
@@ -825,6 +1938,68 @@ function setupKeydownListener() {
     if (event.ctrlKey && event.key === "Enter") {
       runCode();
     }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.ctrlKey && event.key === "s") {
+      event.preventDefault();
+      saveFile();
+    }
+  });
+}
+
+function setUpTutorialListener() {
+  function launchTutorial() {
+    const intro = introJs();
+
+    intro.oncomplete(() => {
+      localStorage.setItem("tutorialCompleted", "true");
+    });
+
+    intro.start();
+  }
+
+  // Auto-run tutorial if it's the user's first time (stored in localStorage in browser>: Insepct Element>Application>Local Storage) 
+  if (!localStorage.getItem("tutorialCompleted")) {
+    launchTutorial();
+  }
+
+  // Run tutorial from burger menu
+  document.getElementById("viewTutorialBtn").addEventListener("click", () => {
+    launchTutorial();
+  });
+}
+
+function setupFileNameModalEvents() {
+  const input = document.getElementById("fileNameInput");
+  const modal = document.getElementById("fileNameModal");
+
+  document.getElementById("submitFileName").addEventListener("click", () => {
+    const name = input.value.trim();
+    if (name) {
+      modal.style.display = "none";
+      input.value = "";
+      saveFile(name);
+    } else {
+      showNotification("Please enter a valid filename.", "red");
+    }
+  });
+
+  document.getElementById("fileNameInput").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("submitFileName").click();
+    }
+  });
+
+  document.getElementById("cancelFileName").addEventListener("click", () => {
+    modal.style.display = "none";
+    input.value = "";
+  });
+
+  document.getElementById("closeFileNameModal").addEventListener("click", () => {
+    modal.style.display = "none";
+    input.value = "";
   });
 }
 
@@ -865,71 +2040,6 @@ function setupButtonFunctionalityListeners() {
   document.getElementById("toggleButton").addEventListener("click", toggleView);
 }
 
-// ==========================
-// 12. Login Updates
-// ==========================
-
-// Function to update the UI after user login/logout
-export function updateUIAfterLogin(user) {
-  const loginButton = document.getElementById("loginButton");
-
-  if (user) {
-    loginButton.textContent = "Log Out";
-    loginButton.removeEventListener("click", openLoginDialog);
-    loginButton.addEventListener("click", logoutUser);
-  } else {
-    loginButton.textContent = "Log In";
-    loginButton.removeEventListener("click", logoutUser);
-    loginButton.addEventListener("click", openLoginDialog);
-  }
-}
-
-export function showNotification(message, color = "gold") {
-  // Remove existing notification if present
-  const existingNotification = document.getElementById("notification-box");
-  if (existingNotification) existingNotification.remove();
-
-  // Create notification container
-  const notification = document.createElement("div");
-  notification.id = "notification-box";
-  notification.classList.add("notification");
-  notification.style.backgroundColor = color;
-
-  // Create notification text
-  const messageText = document.createElement("span");
-  messageText.textContent = message;
-
-  // Create close button (X)
-  const closeButton = document.createElement("span");
-  closeButton.textContent = "✖";
-  closeButton.classList.add("close-button");
-  closeButton.addEventListener("click", () => fadeOutNotification(notification));
-
-  // Append elements to notification
-  notification.appendChild(messageText);
-  notification.appendChild(closeButton);
-  document.body.appendChild(notification);
-
-  // Timer to fade out and remove notification
-  let removeTimeout = setTimeout(() => {
-    fadeOutNotification(notification);
-  }, 3000); // 3 seconds
-
-  // Pause timer when hovering
-  notification.addEventListener("mouseenter", () => clearTimeout(removeTimeout));
-
-  // Resume timer when mouse leaves
-  notification.addEventListener("mouseleave", () => {
-    removeTimeout = setTimeout(() => fadeOutNotification(notification), 3000);
-  });
-}
-
-// Function to fade out notification before removing it
-function fadeOutNotification(notification) {
-  notification.classList.add("fade-out");
-  setTimeout(() => notification.remove(), 500); // Wait for fade-out transition
-}
-
 
 // ==========================
 // 13. Saving and Loading Files
@@ -938,17 +2048,23 @@ function fadeOutNotification(notification) {
 let currentFileName = null;
 
 // Function to save or update a file in Firestore
-function saveFile() {
+function saveFile(filenameOverride = null) {
   const user = auth.currentUser;
   if (!user) {  //check if user is logged in
     showNotification("You must be logged in to save files.", "red");
     return;
   }
 
-  let fileName = currentFileName;   //check if updating an existing file
+  let fileName = filenameOverride || currentFileName;   //check if updating an existing file
+
   if (!fileName) {
-    fileName = prompt("Enter a file name (e.g., my_script.py):");
-    if (!fileName) return; //if user cancels, do nothing
+    const modal = document.getElementById("fileNameModal");
+    const input = document.getElementById("fileNameInput");
+  
+    modal.style.display = "block";
+    setTimeout(() => input.focus(), 100); // Wait a tick to ensure modal is visible
+  
+    return;
   }
 
   const fileContent = getCode();  //get the code from the editor
@@ -957,8 +2073,12 @@ function saveFile() {
     return;
   }
 
-  const fileType = fileName.endsWith(".py") ? "python" : "text";  //allows saving as .py or .txt
+  const fileType = typeof fileName === "string" && fileName.endsWith(".py") ? "python" : "text";
   const userFilesRef = collection(db, "users", user.uid, "projects");
+  if (typeof fileName !== "string") {
+    showNotification("Invalid filename. Please save with a valid name.", "red");
+    return;
+  }
   const fileDoc = doc(userFilesRef, fileName);
 
   setDoc(fileDoc, {   //save the file in database
@@ -984,7 +2104,9 @@ function saveFile() {
 }
 
 //event listener for save button (might move to SetUpApp() later)
-document.getElementById("saveButton").addEventListener("click", saveFile);
+document.getElementById("saveButton").addEventListener("click", () => {
+  saveFile();
+});
 
 // Function to load a saved file from Firestore
 function loadSavedFileFromDashboard() {
@@ -1132,8 +2254,15 @@ function setupDraggableBlocks() {
 
   codeContainer.addEventListener("drop", function (event) {
     event.preventDefault();
+    
+    const container = document.querySelector(".code-container");
+    container.classList.remove("drag-active");
+    
+    const message = container.querySelector(".drag-delete-message");
+    if (message) message.style.display = "none";
+  
     if (dragged) {
-      removeBlock(dragged.id); // Use removeBlock to delete the block
+      dragged.remove();
       dragged = null;
     }
   });
@@ -1157,10 +2286,44 @@ function setupDraggableBlocks() {
   // Delete highlighted block with "Delete" key
   document.addEventListener("keydown", function (event) {
     if (event.key === "Delete" && highlightedBlock) {
-      removeBlock(highlightedBlock.id); // Use removeBlock to delete the block
+      dragged.remove();
       highlightedBlock = null;
     }
   });
+
+  // Creates the drag message element
+  document.addEventListener("DOMContentLoaded", () => {
+  const codeContainer = document.querySelector(".code-container");
+
+  const dragMessage = document.createElement("div");
+  dragMessage.className = "drag-delete-message";
+  dragMessage.textContent = "Drag here to delete";
+  
+  dragMessage.style.display = "none"; // Hide it initially
+
+  codeContainer.appendChild(dragMessage); // Add to code container
+});
+
+// Function to handle drag start event
+document.addEventListener("dragstart", (block) => {
+  if (block.target.classList.contains("box")) {
+    dragged = block.target;
+    const container = document.querySelector(".code-container");
+    container.classList.add("drag-active");
+
+    const message = container.querySelector(".drag-delete-message");
+    if (message) message.style.display = "block";
+  }
+});
+
+// Function to handle drag end event
+document.addEventListener("dragend", () => {
+  const container = document.querySelector(".code-container");
+  container.classList.remove("drag-active");
+
+  const message = container.querySelector(".drag-delete-message");
+  if (message) message.style.display = "none";
+});
 }
 
 
@@ -1260,6 +2423,8 @@ function setUpApp() {
   setupDraggableBlocks();
   setupClearHighlightsOnClickListener();
   loadSavedFileFromDashboard();
+  setupFileNameModalEvents();
+  setUpTutorialListener();
   //initializeMiscellaneous();
 }
 

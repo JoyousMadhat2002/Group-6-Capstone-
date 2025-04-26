@@ -3,11 +3,11 @@
 // ==========================
 
 const categoryColors = {
-  movement: "#669999 ", 
+  movement: "#669999 ",
   logic: "#5a80a5",
   math: "#5abd42",
-  comparison: "#ffcc99", 
-  boolean: "#99cccc", 
+  comparison: "#ffcc99",
+  boolean: "#99cccc",
   functions: "#996699",
   variables: "#996666",
   default: "#cccccc",
@@ -200,6 +200,14 @@ const blockCategory = {
         parentElement: "block",
         childElement: ["start", "end", "step"],
       },
+      {
+        name: "In Block",
+        blockID: "inBlock",
+        description: "Range function for loops with different names",
+        type: "loop",
+        parentElement: "block",
+        childElement: ["value", "range"],
+      },
     ],
   },
 
@@ -220,6 +228,14 @@ const blockCategory = {
         type: "text",
         parentElement: "block",
         childElement: ["text"],
+      },
+      {
+        name: "Random",
+        blockID: "random",
+        description: "Generate a random number",
+        type: "random",
+        parentElement: "block",
+        childElement: ["min", "max"],
       },
       {
         name: "Math Constants",
@@ -293,6 +309,6 @@ const blockCategory = {
     ],
   },
 };
-  
+
 
 export { categoryColors, blockCategory };
