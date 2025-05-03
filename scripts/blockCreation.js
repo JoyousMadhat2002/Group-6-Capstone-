@@ -1,6 +1,7 @@
 import { categoryColors, blockCategory } from "./blockConfiguration.js";
 import { getBlockDropdownList, getBlockProperties, getCategoryByBlockID, createBlockLabel } from "./blockProperties.js";
 import { toggleCategory, addBlockInteractivity, clearDropHighlights, toggleDropdownVisibility } from "./blockUI.js";
+import { blockToText, textToBlock } from "../scripts.js";
 
 let blockCounter = 0;
 let horizontalContainerCounter = 0;
@@ -874,6 +875,7 @@ export function toggleView() {
     var handle1 = document.querySelector(".handle1");
 
     if (x.classList.contains("hidden")) {
+        blockToText("box-container");
         x.classList.remove("hidden");
         y.classList.add("hidden");
         toggleButton.textContent = "Block";
@@ -882,6 +884,7 @@ export function toggleView() {
         if (codeContainer) codeContainer.style.display = "none";
         if (handle1) handle1.style.display = "none";
     } else {
+        textToBlock("box-container");
         x.classList.add("hidden");
         y.classList.remove("hidden");
         toggleButton.textContent = "Python";

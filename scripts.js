@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // 9. Python Code Conversion
 // ==========================
 
-function blockToText(pc) {
+export function blockToText(pc) {
   //pythontext.value = ""; // Clear the text area
 
   let parentContainer = document.getElementById(pc);
@@ -334,7 +334,7 @@ function blockToText(pc) {
 } // END OF BTT()
 
 // Function to convert text programming to block programming
-function textToBlock(container) {
+export function textToBlock(container) {
   // let text = pythontext.value;
   let text = editor.state.doc.text.toString();
   // if (container == "box-container") {
@@ -2030,13 +2030,15 @@ function setupLoginButtonListener() {
 }
 
 function setupButtonFunctionalityListeners() {
-  document.querySelector('[name="btt"]').addEventListener("click", function () {
-    pythontext.value = ""; // Clear the text area
-    blockToText("box-container");
-  });
-  document.querySelector('[name="ttb"]').addEventListener("click", function () {
-    textToBlock("box-container");
-  });
+  // OLD BTT AND TTB BUTTONS
+  //
+  // document.querySelector('[name="btt"]').addEventListener("click", function () {
+  //   pythontext.value = ""; // Clear the text area
+  //   blockToText("box-container");
+  // });
+  // document.querySelector('[name="ttb"]').addEventListener("click", function () {
+  //   textToBlock("box-container");
+  // });
   document.getElementById("toggleButton").addEventListener("click", toggleView);
 }
 
