@@ -1,7 +1,7 @@
 import { categoryColors, blockCategory } from "./blockConfiguration.js";
 import { getBlockDropdownList, getBlockProperties, getCategoryByBlockID, createBlockLabel } from "./blockProperties.js";
 import { toggleCategory, addBlockInteractivity, clearDropHighlights, toggleDropdownVisibility } from "./blockUI.js";
-import { blockToText, textToBlock } from "../scripts.js";
+
 
 let blockCounter = 0;
 let horizontalContainerCounter = 0;
@@ -867,33 +867,6 @@ function setupDropdownMenu(plusIcon, block, elifElseDiv) {
     });
 }
 
-export function toggleView() {
-    var x = document.getElementById("python-code-result");
-    var y = document.getElementById("block-container");
-    var toggleButton = document.getElementById("toggleButton");
-    var codeContainer = document.querySelector(".code-container");
-    var handle1 = document.querySelector(".handle1");
-
-    if (x.classList.contains("hidden")) {
-        blockToText("box-container");
-        x.classList.remove("hidden");
-        y.classList.add("hidden");
-        toggleButton.textContent = "Block";
-        isPythonView = true;
-
-        if (codeContainer) codeContainer.style.display = "none";
-        if (handle1) handle1.style.display = "none";
-    } else {
-        textToBlock("box-container");
-        x.classList.add("hidden");
-        y.classList.remove("hidden");
-        toggleButton.textContent = "Python";
-        isPythonView = false;
-
-        if (codeContainer) codeContainer.style.display = "flex";
-        if (handle1) handle1.style.display = "block";
-    }
-}
 
 export {
     clearDropHighlights,

@@ -7,7 +7,6 @@ import {
   createCategoryButtons,
   newBlock,
   clearDropHighlights,
-  toggleView,
   refreshCategoryButtons,
   updateLineNumbers,
 } from "./scripts/blockCreation.js";
@@ -45,6 +44,36 @@ document.addEventListener("DOMContentLoaded", function () {
 // ==========================
 // 9. Python Code Conversion
 // ==========================
+
+let isPythonView = false;
+
+export function toggleView() {
+  var x = document.getElementById("python-code-result");
+  var y = document.getElementById("block-container");
+  var toggleButton = document.getElementById("toggleButton");
+  var codeContainer = document.querySelector(".code-container");
+  var handle1 = document.querySelector(".handle1");
+
+  if (x.classList.contains("hidden")) {
+      blockToText("box-container");
+      x.classList.remove("hidden");
+      y.classList.add("hidden");
+      toggleButton.textContent = "Block";
+      isPythonView = true;
+
+      if (codeContainer) codeContainer.style.display = "none";
+      if (handle1) handle1.style.display = "none";
+  } else {
+      textToBlock("box-container");
+      x.classList.add("hidden");
+      y.classList.remove("hidden");
+      toggleButton.textContent = "Python";
+      isPythonView = false;
+
+      if (codeContainer) codeContainer.style.display = "flex";
+      if (handle1) handle1.style.display = "block";
+  }
+}
 
 export function blockToText(pc) {
   //pythontext.value = ""; // Clear the text area
