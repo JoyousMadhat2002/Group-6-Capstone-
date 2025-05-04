@@ -38,6 +38,17 @@
             <div id="file-list" class="project-container"></div>
         </div>
     </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+        <p>Choose Theme:</p>
+        <button id="darkModeBtn">Dark Mode</button>
+        <button id="lightModeBtn">Light Mode</button>
+        <button id="cancelSettings">Cancel</button>
+        </div>
+    </div>
+  
 </body>
 
 <script type="module" src="scripts/authDialogs.js"></script>
@@ -56,9 +67,9 @@
         alert("Share functionality not implemented yet.");
     });
 
-    document.getElementById("settingsButton").addEventListener("click", function() {
+    /*document.getElementById("settingsButton").addEventListener("click", function() {
         alert("Settings functionality not implemented yet.");
-    });
+    });*/
 </script>
 
 </html>

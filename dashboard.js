@@ -231,3 +231,21 @@ document.getElementById("newProjectButton").addEventListener("click", () => {
   localStorage.removeItem("loadedFileContent");
   window.location.href = "index.html";
 });
+
+document.getElementById("settingsButton").addEventListener("click", () => {
+  document.getElementById("settingsModal").style.display = "block";
+});
+
+document.getElementById("cancelSettings").addEventListener("click", () => {
+  document.getElementById("settingsModal").style.display = "none";
+});
+
+document.getElementById("darkModeBtn").addEventListener("click", () => {
+  document.body.classList.add("dark-mode");
+  document.getElementById("settingsModal").style.display = "none";
+});
+
+document.getElementById("lightModeBtn").addEventListener("click", () => {
+  document.body.classList.remove("dark-mode");
+  document.getElementById("settingsModal").style.display = "none";
+});
